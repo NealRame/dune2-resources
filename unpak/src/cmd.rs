@@ -75,7 +75,7 @@ impl<T> Iterator for PAKRawEntryReader<T>
     }
 }
 
-pub fn unpak(config: Config) -> Result<(), Box<dyn Error>> {
+pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(&config.output_dirpath)?;
 
     let reader = PAKRawEntryReader::new(io::BufReader::new(fs::File::open(&config.input_filepath)?));

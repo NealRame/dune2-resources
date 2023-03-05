@@ -1,18 +1,16 @@
 mod config;
-mod unpak;
+mod cmd;
 
 use std::env;
-use crate::config::*;
-use crate::unpak::*;
 
 fn main() {
-    let config = Config::build(env::args())
+    let config = config::build(env::args())
         .unwrap_or_else(|err| {
             println!("Error: {}", err);
             std::process::exit(1);
         });
 
-    unpak(config).unwrap_or_else(|err| {
+    cmd::run(config).unwrap_or_else(|err| {
         println!("Error: {}", err);
         std::process::exit(1);
     });
