@@ -16,12 +16,4 @@ fn main() {
         println!("Error: {}", err);
         std::process::exit(1);
     });
-
-    // if config.input_filepath.is_file() {
-    //     println!("Input file {:#?} exists and is a file", config.input_filepath);
-    // } else {
-    //     println!("Input file does not exist");
-    // }
-
-    // println!("Output dir: {:#?}", config.output_dirpath);
 }
