@@ -3,5 +3,9 @@
 version = 3
 
 [[package]]
+name = "bitmap"
+version = "0.1.0"
+
+[[package]]
 name = "unpak"
 version = "0.1.0"
