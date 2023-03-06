@@ -1,5 +1,5 @@
 mod config;
-mod cmd;
+mod command;
 
 use std::env;
 
@@ -10,7 +10,7 @@ fn main() {
             std::process::exit(1);
         });
 
-    cmd::run(config).unwrap_or_else(|err| {
+    command::run(config).unwrap_or_else(|err| {
         println!("Error: {}", err);
         std::process::exit(1);
     });
