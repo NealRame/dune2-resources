@@ -1,4 +1,5 @@
 use std::cmp::{max, min};
+use std::io;
 use std::iter::zip;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -189,6 +190,10 @@ pub struct Bitmap {
     pixels: Vec<Color>,
 }
 
+pub fn ppi2ppm(ppi: u32) -> u32 {
+    ((1000./254.)*(ppi as f32)) as u32
+}
+
 impl Bitmap {
     pub fn new(width: u32, height: u32) -> Self {
         Self {
@@ -277,5 +282,37 @@ impl Bitmap {
         });
 
         self
+    }
+
+    pub fn write<T>(
+        &self,
+        writer: &mut T,
+    ) -> Result<(), io::Error> where T: io::Write + io::Seek {
+        // see https://en.wikipedia.org/wiki/BMP_file_format
+
+        // BMP file header
+        writer.write_all(b"BM")?;
+
+        let file_size_offset = writer.seek(io::SeekFrom::Current(0))?;
+
+        writer.write_all(&[0; 4])?; // file size
+        writer.write_all(&[0; 4])?; // reserved
+
+        let pixel_array_offset = writer.seek(io::SeekFrom::Current(0))?;
+
+        // DIB header
+        writer.write_all(&(40 as u32).to_le_bytes())?;   // DIB header size
+        writer.write_all(&self.width.to_le_bytes())?;    // width
+        writer.write_all(&self.height.to_le_bytes())?;   // height
+        writer.write_all(&(1 as u16).to_le_bytes())?;    // color planes
+        writer.write_all(&(24 as u16).to_le_bytes())?;   // bits per pixel
+        writer.write_all(&[0; 4])?;                      // compression
+        writer.write_all(&[0; 4])?;                      // image size
+        writer.write_all(&ppi2ppm(300).to_be_bytes())?;  // x pixels per meter
+        writer.write_all(&ppi2ppm(300).to_be_bytes())?;  // y pixels per meter
+        writer.write_all(&[0; 4])?;                      // number of colors in the palette
+        writer.write_all(&[0; 4])?;                      // number of important colors used
+
+        Ok(())
     }
 }
