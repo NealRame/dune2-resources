@@ -247,7 +247,8 @@ impl Bitmap {
     }
 
     pub fn blit(
-        &mut self, bitmap: &Bitmap,
+        &mut self,
+        bitmap: &Bitmap,
         src_rect: Rect,
         dst_rect: Rect,
     ) -> &mut Self {
