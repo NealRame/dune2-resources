@@ -1,4 +1,5 @@
 use std::cmp::{max, min};
+use std::iter::zip;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Color(u8, u8, u8);
@@ -9,10 +10,22 @@ pub struct Point {
     y: u32,
 }
 
+impl Point {
+    pub fn zero() -> Self {
+        Self { x: 0, y: 0 }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Size {
     width: u32,
     height: u32,
+}
+
+impl Size {
+    pub fn zero() -> Self {
+        Self { width: 0, height: 0 }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -34,6 +47,13 @@ impl Rect {
         Self {
             top_left,
             size,
+        }
+    }
+
+    pub fn zero() -> Self {
+        Self {
+            top_left: Point::zero(),
+            size: Size::zero(),
         }
     }
 
@@ -224,5 +244,37 @@ impl Bitmap {
 
     pub fn clear(&mut self, color: Color) -> &mut Self {
         self.fill_rect(&self.rect(), color)
+    }
+
+    pub fn blit(
+        &mut self, bitmap: &Bitmap,
+        src_rect: Rect,
+        dst_rect: Rect,
+    ) -> &mut Self {
+        let src_rect = if let Some(rect) = src_rect.intersected(&bitmap.rect()) {
+            rect
+        } else {
+            Rect::zero()
+        };
+
+        let dst_rect = if let Some(rect) = dst_rect.intersected(&self.rect()) {
+            rect
+        } else {
+            Rect::zero()
+        };
+
+        let size = Size {
+            width: min(src_rect.width(), dst_rect.width()),
+            height: min(src_rect.height(), dst_rect.height()),
+        };
+
+        zip(
+            Rect::from_point_and_size(src_rect.top_left(), size).iter(),
+            Rect::from_point_and_size(dst_rect.top_left(), size).iter(),
+        ).for_each(|(src, dst)| {
+            self.put_pixel(dst, bitmap.pixel(src));
+        });
+
+        self
     }
 }
