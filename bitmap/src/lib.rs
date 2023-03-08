@@ -290,17 +290,19 @@ impl Bitmap {
     ) -> Result<(), io::Error> where T: io::Write + io::Seek {
         // see https://en.wikipedia.org/wiki/BMP_file_format
 
-        // BMP file header
+        // write BMP file header
         writer.write_all(b"BM")?;
 
-        let file_size_offset = writer.seek(io::SeekFrom::Current(0))?;
+        let header_file_size_offset = writer.seek(io::SeekFrom::Current(0))?;
 
         writer.write_all(&[0; 4])?; // file size
         writer.write_all(&[0; 4])?; // reserved
 
-        let pixel_array_offset = writer.seek(io::SeekFrom::Current(0))?;
+        let header_pixel_array_offset = writer.seek(io::SeekFrom::Current(0))?;
 
-        // DIB header
+        writer.write_all(&[0; 4])?; // offset of pixel array
+
+        // write DIB header
         writer.write_all(&(40 as u32).to_le_bytes())?;   // DIB header size
         writer.write_all(&self.width.to_le_bytes())?;    // width
         writer.write_all(&self.height.to_le_bytes())?;   // height
@@ -312,6 +314,46 @@ impl Bitmap {
         writer.write_all(&ppi2ppm(300).to_be_bytes())?;  // y pixels per meter
         writer.write_all(&[0; 4])?;                      // number of colors in the palette
         writer.write_all(&[0; 4])?;                      // number of important colors used
+
+        // write offset to pixel array in the section header
+        let pixel_array_offset = writer.seek(io::SeekFrom::Current(0))?;
+
+        writer.seek(io::SeekFrom::Start(header_pixel_array_offset))?;
+        writer.write_all(&(pixel_array_offset as u32).to_le_bytes())?;
+        writer.seek(io::SeekFrom::Start(pixel_array_offset))?;
+
+        // write pixel array
+        let row_size = 4*(f32::ceil(3.*(self.width as f32)/4.) as u32);
+        let pad_size = row_size - 3*self.width;
+        for row in (0..self.height).rev() {
+            let index = self.index(0, row);
+
+            // write row
+            self.pixels[index..index + self.width as usize]
+                .iter()
+                .map(|color| {
+                    let Color(r, g, b) = color;
+                    [*b, *g, *r]
+                })
+                .for_each(|color| {
+                    writer.write_all(&color).unwrap();
+                });
+
+            // write padding
+            (0..pad_size).for_each(|_| {
+                writer.write_all(&[0]).unwrap();
+            });
+        }
+
+        // write file size in the section header
+        let file_size = writer.seek(io::SeekFrom::Current(0))?;
+
+        writer.seek(io::SeekFrom::Start(header_file_size_offset))?;
+        writer.write_all(&(file_size as u32).to_le_bytes())?;
+        writer.seek(io::SeekFrom::Start(file_size))?;
+
+        // flush
+        writer.flush()?;
 
         Ok(())
     }
