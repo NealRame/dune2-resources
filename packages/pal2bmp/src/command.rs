@@ -45,23 +45,15 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         fs::create_dir_all(parent)?;
     }
 
-    println!(" input: {:?}", config.input_filepath);
-
     let palette = PaletteColorReader::new(fs::File::open(&config.input_filepath)?).collect::<Vec<bitmap::Color>>();
 
     let palette_width = 32*16 as u32;
     let palette_height = 32*((palette.len() as f32)/16.).ceil() as u32;
-    
     let mut palette_bitmap = bitmap::Bitmap::new(palette_width, palette_height);
     
-    println!("palette: ({},{}) = {} colors", palette_width, palette_height, palette.len());
-
     for (i, color) in palette.iter().enumerate() {
         let x = 32*(i%16) as u32;
         let y = 32*(i/16) as u32;
-
-        println!("{} - ({},{}) = {:?}", i, x, y, color);
-
         let rect = bitmap::Rect::from_point_and_size(
             bitmap::Point { x, y },
             bitmap::Size { width: 32, height: 32 }
@@ -73,12 +65,6 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut output = fs::File::create(&config.output_filepath)?;
 
     palette_bitmap.write(&mut output)?;
-
-    // for (i, color) in palette.iter().enumerate() {
-    //     println!("{} - {:?}", i, color);
-    // }
-
-    // println!("output: {:?}", config.output_filepath);
 
     Ok(())
 }
