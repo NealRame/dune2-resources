@@ -3,7 +3,25 @@ use std::io;
 use std::iter::zip;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Color(u8, u8, u8);
+pub struct Color {
+    pub red: u8,
+    pub green: u8,
+    pub blue: u8,
+}
+
+impl Color {
+    pub fn new(red: u8, green: u8, blue: u8) -> Self {
+        Self { red, green, blue }
+    }
+
+    pub fn from_array(array: &[u8; 3]) -> Self {
+        Self {
+            red: array[0],
+            green: array[1],
+            blue: array[2],
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Point {
@@ -199,7 +217,7 @@ impl Bitmap {
         Self {
             width,
             height,
-            pixels: vec![Color(0, 0, 0); (width*height) as usize],
+            pixels: vec![Color::new(0, 0, 0); (width*height) as usize],
         }
     }
 
@@ -331,10 +349,7 @@ impl Bitmap {
             // write row
             self.pixels[index..index + self.width as usize]
                 .iter()
-                .map(|color| {
-                    let Color(r, g, b) = color;
-                    [*b, *g, *r]
-                })
+                .map(|color| [color.blue, color.green, color.red])
                 .for_each(|color| {
                     writer.write_all(&color).unwrap();
                 });
