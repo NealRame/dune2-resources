@@ -167,9 +167,9 @@ impl Iterator for RectIterator {
     type Item = Point;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.current.y < self.rect.bottom() {
+        if self.current.y < self.rect.bottom() - 1 {
             let point = self.current;
-            self.current = match self.current.x < self.rect.right() {
+            self.current = match self.current.x < self.rect.right() - 1 {
                 true => Point {
                     x: self.current.x + 1,
                     y: self.current.y,
