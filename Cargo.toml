@@ -1,7 +1,7 @@
 [workspace]
 
 members = [
-    "bitmap",
-    "pal2bmp",
-    "unpak",
+    "packages/bitmap",
+    "packages/pal2bmp",
+    "packages/unpak",
 ]
