@@ -1,27 +1,10 @@
+mod color;
+
 use std::cmp::{max, min};
 use std::io;
 use std::iter::zip;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Color {
-    pub red: u8,
-    pub green: u8,
-    pub blue: u8,
-}
-
-impl Color {
-    pub fn new(red: u8, green: u8, blue: u8) -> Self {
-        Self { red, green, blue }
-    }
-
-    pub fn from_array(array: &[u8; 3]) -> Self {
-        Self {
-            red: array[0],
-            green: array[1],
-            blue: array[2],
-        }
-    }
-}
+pub use crate::color::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Point {

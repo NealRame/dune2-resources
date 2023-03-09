@@ -5,20 +5,6 @@ use std::io;
 
 use crate::config::Config;
 
-fn read_color<T>(reader: &mut T)
-    -> Option<bitmap::Color>
-    where T: io::Read
-{
-    let mut buf = [0; 3];
-    match reader.read(&mut buf) {
-        Ok(3) => {
-            let (red, green, blue) = (buf[0], buf[1], buf[2]);
-            Some(bitmap::Color::new(4*red, 4*green, 4*blue))
-        },
-        _ => None,
-    }
-}
-
 struct PaletteColorReader<T>
     where T: io::Read {
     source: T,
@@ -36,7 +22,11 @@ impl<T> Iterator for PaletteColorReader<T>
     type Item = bitmap::Color;
 
     fn next(&mut self) -> Option<Self::Item> {
-        read_color(&mut self.source)
+        let mut buf = [0; 3];
+        match self.source.read(&mut buf) {
+            Ok(3) => Some(bitmap::Color::new(4*buf[0], 4*buf[1], 4*buf[2])),
+            _ => None,
+        }
     }
 }
 
