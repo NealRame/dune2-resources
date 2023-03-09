@@ -25,8 +25,8 @@ impl Color {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Point {
-    x: u32,
-    y: u32,
+    pub x: u32,
+    pub y: u32,
 }
 
 impl Point {
@@ -37,8 +37,8 @@ impl Point {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Size {
-    width: u32,
-    height: u32,
+    pub width: u32,
+    pub height: u32,
 }
 
 impl Size {
