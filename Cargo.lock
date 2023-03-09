@@ -7,5 +7,12 @@ name = "bitmap"
 version = "0.1.0"
 
 [[package]]
+name = "pal2bmp"
+version = "0.1.0"
+dependencies = [
+ "bitmap",
+]
+
+[[package]]
 name = "unpak"
 version = "0.1.0"
