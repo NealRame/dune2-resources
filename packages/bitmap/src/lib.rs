@@ -1,22 +1,12 @@
 mod color;
+mod point;
 
 use std::cmp::{max, min};
 use std::io;
 use std::iter::zip;
 
 pub use crate::color::*;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Point {
-    pub x: u32,
-    pub y: u32,
-}
-
-impl Point {
-    pub fn zero() -> Self {
-        Self { x: 0, y: 0 }
-    }
-}
+pub use crate::point::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Size {
