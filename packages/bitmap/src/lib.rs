@@ -1,5 +1,6 @@
 mod color;
 mod point;
+mod size;
 
 use std::cmp::{max, min};
 use std::io;
@@ -7,18 +8,7 @@ use std::iter::zip;
 
 pub use crate::color::*;
 pub use crate::point::*;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Size {
-    pub width: u32,
-    pub height: u32,
-}
-
-impl Size {
-    pub fn zero() -> Self {
-        Self { width: 0, height: 0 }
-    }
-}
+pub use crate::size::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Rect {
