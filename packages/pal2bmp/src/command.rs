@@ -37,16 +37,16 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let palette = PaletteColorReader::new(fs::File::open(&config.input_filepath)?).collect::<Vec<bitmap::Color>>();
 
-    let palette_width = 32*16 as u32;
+    let palette_width = 32*16;
     let palette_height = 32*((palette.len() as f32)/16.).ceil() as u32;
     let mut palette_bitmap = bitmap::Bitmap::new(palette_width, palette_height);
 
     let color_watch_size = bitmap::Size { width: 32, height: 32 };
  
-    for (i, color) in palette.iter().enumerate() {
-        let color_watch_pos = 32_u32*bitmap::Point {
-            x: (i%16) as u32,
-            y: (i/16) as u32,
+    for (i, color) in (0_i32..).zip(palette.iter()) {
+        let color_watch_pos = 32*bitmap::Point {
+            x: i%16,
+            y: i/16,
         };
 
         let rect = bitmap::Rect::from_point_and_size(

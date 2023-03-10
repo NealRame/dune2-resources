@@ -64,8 +64,8 @@ impl Rect {
         };
 
         let size = Size {
-            width: bottom_right.x - top_left.x,
-            height: bottom_right.y - top_left.y,
+            width: (bottom_right.x - top_left.x) as u32,
+            height: (bottom_right.y - top_left.y) as u32,
         };
 
         Self { top_left, size }
@@ -77,7 +77,7 @@ impl Rect {
 
     pub fn top_right(&self) -> Point {
         Point {
-            x: self.top_left.x + self.size.width,
+            x: self.top_left.x + self.size.width as i32,
             y: self.top_left.y,
         }
     }
@@ -85,14 +85,14 @@ impl Rect {
     pub fn bottom_left(&self) -> Point {
         Point {
             x: self.top_left.x,
-            y: self.top_left.y + self.size.height,
+            y: self.top_left.y + self.size.height as i32,
         }
     }
 
     pub fn bottom_right(&self) -> Point {
         Point {
-            x: self.top_left.x + self.size.width,
-            y: self.top_left.y + self.size.height,
+            x: self.top_left.x + self.size.width as i32,
+            y: self.top_left.y + self.size.height as i32,
         }
     }
 
@@ -108,20 +108,20 @@ impl Rect {
         self.size
     }
 
-    pub fn left(&self) -> u32 {
+    pub fn left(&self) -> i32 {
         self.top_left.x
     }
 
-    pub fn right(&self) -> u32 {
-        self.top_left.x + self.size.width
+    pub fn right(&self) -> i32 {
+        self.top_left.x + self.size.width as i32
     }
 
-    pub fn top(&self) -> u32 {
+    pub fn top(&self) -> i32 {
         self.top_left.y
     }
 
-    pub fn bottom(&self) -> u32 {
-        self.top_left.y + self.size.height
+    pub fn bottom(&self) -> i32 {
+        self.top_left.y + self.size.height as i32
     }
 
     pub fn intersected(&self, other: &Rect) -> Option<Rect> {
@@ -194,8 +194,8 @@ impl Bitmap {
         }
     }
 
-    fn index(&self, x: u32, y: u32) -> usize {
-        (y*self.width + x) as usize
+    fn index(&self, p: Point) -> usize {
+        (p.y*self.width as i32 + p.x) as usize
     }
 
     pub fn width(&self) -> u32 {
@@ -221,12 +221,12 @@ impl Bitmap {
     }
 
     pub fn pixel(&self, p: Point) -> Color {
-        let index = self.index(p.x, p.y);
+        let index = self.index(p);
         self.pixels[index]
     }
 
     pub fn put_pixel(&mut self, p: Point, color: Color) -> &mut Self {
-        let index = self.index(p.x, p.y);
+        let index = self.index(p);
         self.pixels[index] = color;
         self
     }
@@ -317,7 +317,7 @@ impl Bitmap {
         let row_size = 4*(f32::ceil(3.*(self.width as f32)/4.) as u32);
         let pad_size = row_size - 3*self.width;
         for row in (0..self.height).rev() {
-            let index = self.index(0, row);
+            let index = self.index(Point { x: 0, y: row as i32 });
 
             // write row
             self.pixels[index..index + self.width as usize]
