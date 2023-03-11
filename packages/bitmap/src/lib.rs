@@ -12,14 +12,14 @@ pub use crate::point::*;
 pub use crate::rect::*;
 pub use crate::size::*;
 
+fn ppi2ppm(ppi: u32) -> u32 {
+    ((1000./254.)*(ppi as f32)) as u32
+}
+
 pub struct Bitmap {
     width: u32,
     height: u32,
     pixels: Vec<Color>,
-}
-
-pub fn ppi2ppm(ppi: u32) -> u32 {
-    ((1000./254.)*(ppi as f32)) as u32
 }
 
 impl Bitmap {
