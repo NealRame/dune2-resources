@@ -109,11 +109,23 @@ impl Bitmap {
         self
     }
 
+    pub fn palette(&self) -> Palette {
+        let mut palette = Palette::new();
+        for color in self.pixels.iter() {
+            palette.add(color);
+        }
+        palette
+    }
+
     pub fn write<T>(
         &self,
         writer: &mut T,
     ) -> Result<(), io::Error> where T: io::Write + io::Seek {
         // see https://en.wikipedia.org/wiki/BMP_file_format
+
+        let palette = self.palette();
+        let palette_size = palette.len() as u32;
+        let bits_per_pixel = if palette_size <= 256 { 8 } else { 24 } as u16;
 
         // write BMP file header
         writer.write_all(b"BM")?;
@@ -128,17 +140,24 @@ impl Bitmap {
         writer.write_all(&[0; 4])?; // offset of pixel array
 
         // write DIB header
-        writer.write_all(&(40 as u32).to_le_bytes())?;   // DIB header size
-        writer.write_all(&self.width.to_le_bytes())?;    // width
-        writer.write_all(&self.height.to_le_bytes())?;   // height
-        writer.write_all(&(1 as u16).to_le_bytes())?;    // color planes
-        writer.write_all(&(24 as u16).to_le_bytes())?;   // bits per pixel
-        writer.write_all(&[0; 4])?;                      // compression
-        writer.write_all(&[0; 4])?;                      // image size
-        writer.write_all(&ppi2ppm(300).to_be_bytes())?;  // x pixels per meter
-        writer.write_all(&ppi2ppm(300).to_be_bytes())?;  // y pixels per meter
-        writer.write_all(&[0; 4])?;                      // number of colors in the palette
-        writer.write_all(&[0; 4])?;                      // number of important colors used
+        writer.write_all(&(40 as u32).to_le_bytes())?;     // DIB header size
+        writer.write_all(&self.width.to_le_bytes())?;      // width
+        writer.write_all(&self.height.to_le_bytes())?;     // height
+        writer.write_all(&(1 as u16).to_le_bytes())?;      // color planes
+        writer.write_all(&bits_per_pixel.to_le_bytes())?;  // bits per pixel
+        writer.write_all(&[0; 4])?;                        // compression
+        writer.write_all(&[0; 4])?;                        // image size
+        writer.write_all(&ppi2ppm(300).to_le_bytes())?;    // x pixels per meter
+        writer.write_all(&ppi2ppm(300).to_le_bytes())?;    // y pixels per meter
+        writer.write_all(&palette_size.to_le_bytes())?;    // number of colors in the palette
+        writer.write_all(&[0; 4])?;                        // number of important colors used
+
+        // write palette
+        if bits_per_pixel == 8 {
+            palette.iter().for_each(|color| {
+                writer.write_all(&[color.blue, color.green, color.red, 0]).unwrap();
+            });
+        }
 
         // write offset to pixel array in the section header
         let pixel_array_offset = writer.seek(io::SeekFrom::Current(0))?;
@@ -148,17 +167,23 @@ impl Bitmap {
         writer.seek(io::SeekFrom::Start(pixel_array_offset))?;
 
         // write pixel array
-        let row_size = 4*(f32::ceil(3.*(self.width as f32)/4.) as u32);
-        let pad_size = row_size - 3*self.width;
+        let row_size = ((bits_per_pixel as u32)*self.width + 31)/32*4;
+        let pad_size = row_size - ((bits_per_pixel/8) as u32)*self.width;
+
         for row in (0..self.height).rev() {
             let index = self.index(Point { x: 0, y: row as i32 });
 
             // write row
             self.pixels[index..index + self.width as usize]
                 .iter()
-                .map(|color| [color.blue, color.green, color.red])
                 .for_each(|color| {
-                    writer.write_all(&color).unwrap();
+                    if bits_per_pixel == 8 {
+                        writer.write_all(&[palette.color_index(color).unwrap() as u8]).unwrap();
+                    } else {
+                        writer.write_all(&color.blue.to_le_bytes()).unwrap();
+                        writer.write_all(&color.green.to_le_bytes()).unwrap();
+                        writer.write_all(&color.red.to_le_bytes()).unwrap();
+                    }
                 });
 
             // write padding
