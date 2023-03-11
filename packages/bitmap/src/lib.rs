@@ -3,7 +3,7 @@ mod point;
 mod rect;
 mod size;
 
-use std::cmp::{max, min};
+use std::cmp::min;
 use std::io;
 use std::iter::zip;
 
