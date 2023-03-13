@@ -1,5 +1,5 @@
-mod config;
 mod command;
+mod config;
 
 use std::env;
 
