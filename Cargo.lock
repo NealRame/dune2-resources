@@ -9,10 +9,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
-name = "bitmap"
-version = "0.1.0"
-
-[[package]]
 name = "cc"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -54,6 +50,10 @@ checksum = "350b9cf31731f9957399229e9b2adc51eeabdfbe9d71d9a0552275fd12710d09"
 dependencies = [
  "os_str_bytes",
 ]
+
+[[package]]
+name = "dune2"
+version = "0.1.0"
 
 [[package]]
 name = "errno"
@@ -138,8 +138,8 @@ checksum = "9b7820b9daea5457c9f21c69448905d723fbd21136ccf521748f23fd49e723ee"
 name = "pal2bmp"
 version = "0.1.0"
 dependencies = [
- "bitmap",
  "clap",
+ "dune2",
 ]
 
 [[package]]

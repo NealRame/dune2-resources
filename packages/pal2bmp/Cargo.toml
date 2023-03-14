@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bitmap = { path = "../bitmap" }
+dune2 = { path = "../dune2" }
 clap = { version = "4.1.8", features = ["derive", "env"] }
