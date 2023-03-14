@@ -1,14 +1,11 @@
 mod command;
 mod config;
 
-use std::env;
+use clap::Parser;
+use config::Cli;
 
 fn main() {
-    let config = config::build(env::args())
-        .unwrap_or_else(|err| {
-            println!("Error: {}", err);
-            std::process::exit(1);
-        });
+    let config = Cli::parse();
 
     command::run(config).unwrap_or_else(|err| {
         println!("Error: {}", err);

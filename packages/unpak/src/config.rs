@@ -1,50 +1,26 @@
-use std::env;
-use std::path::Path;
 use std::path::PathBuf;
 
-fn get_input_filepath(
-    args: &mut impl Iterator<Item = String>
-) -> Result<PathBuf, &'static str> {
-    match args.next() {
-        Some(arg) => Ok(PathBuf::from(arg)),
-        None => Err("No input pak file specified"),
-    }
-}
+use clap::Parser;
 
-fn get_output_dirpath(
-    args: &mut impl Iterator<Item = String>,
-    input_filepath: &Path,
-) -> Result<PathBuf, &'static str> {
-    if let Some(arg) = args.next() {
-        return Ok(PathBuf::from(arg));
-    }
-
-    if let Some(arg) = env::var("UNPAK_OUTPUT_DIR").ok() {
-        return Ok(PathBuf::from(arg));
-    }
-
-    if let Some(file_stem) = Path::new(&input_filepath).file_stem() {
-        return Ok(PathBuf::from(file_stem));
-    }
-
-    Err("No output directory specified")
-}
-
-pub struct Config {
+#[derive(Parser)]
+#[command(author, about, version)]
+pub struct Cli {
+    /// Input file path
     pub input_filepath: PathBuf,
-    pub output_dirpath: PathBuf,
-}
 
-pub fn build(mut args: impl Iterator<Item = String>)
-    -> Result<Config, &'static str>
-{
-    args.next(); // skip the first arguments as it is the program name
+    /// Output folder path
+    #[arg(short, long, default_value = "output")]
+    pub output_dir: Option<PathBuf>,
 
-    let input_filepath = get_input_filepath(&mut args)?;
-    let output_dirpath = get_output_dirpath(&mut args, &input_filepath)?;
+    /// Overwrite existing files
+    #[arg(short = 'f', long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub overwrite: bool,
 
-    Ok(Config {
-        input_filepath,
-        output_dirpath,
-    })
+    /// Verbose mode
+    #[arg(short = 'v', long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub verbose: bool,
+
+    /// List files
+    #[arg(short = 'l', long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub list: bool,
 }
