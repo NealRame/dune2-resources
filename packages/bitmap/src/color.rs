@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use std::io;
+
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
 pub struct Color {
     pub red: u8,
@@ -26,20 +28,32 @@ impl Palette {
         }
     }
 
-    pub fn add(&mut self, color: &Color) -> usize {
-        match self.colors_index.get(color) {
-            Some(index) => *index,
-            None => {
-                let index = self.colors.len();
-                self.colors_index.insert(*color, index);
-                self.colors.push(*color);
-                index
-            }
+    pub fn load(reader: &mut impl io::Read) -> io::Result<Palette> {
+        let mut palette = Palette::new();
+        let mut buf = [0; 3];
+
+        loop {
+            let color = match reader.read(&mut buf) {
+                Ok(0) => break,
+                Ok(3) => Color::new(4*buf[0], 4*buf[1], 4*buf[2]),
+                Ok(_) => return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid palette file")),
+                Err(err) => return Err(err),
+            };
+            palette.push(&color);
         }
+
+        Ok(palette)
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = Color> + '_ {
-        self.colors.iter().copied()
+    pub fn push(&mut self, color: &Color) -> usize {
+        let index = self.colors.len();
+        self.colors_index.insert(*color, index);
+        self.colors.push(*color);
+        index
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (usize, Color)> + '_ {
+        self.colors.iter().copied().enumerate()
     }
 
     pub fn color_index(&self, color: &Color) -> Option<usize> {

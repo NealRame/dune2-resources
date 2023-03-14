@@ -4,6 +4,7 @@ mod rect;
 mod size;
 
 use std::cmp::min;
+use std::error::Error;
 use std::io;
 use std::iter::zip;
 
@@ -109,21 +110,13 @@ impl Bitmap {
         self
     }
 
-    pub fn palette(&self) -> Palette {
-        let mut palette = Palette::new();
-        for color in self.pixels.iter() {
-            palette.add(color);
-        }
-        palette
-    }
-
-    pub fn write<T>(
+    pub fn write_with_palette<T>(
         &self,
         writer: &mut T,
-    ) -> Result<(), io::Error> where T: io::Write + io::Seek {
+        palette: &Palette,
+    ) -> Result<(), Box<dyn Error>> where T: io::Write + io::Seek {
         // see https://en.wikipedia.org/wiki/BMP_file_format
 
-        let palette = self.palette();
         let palette_size = palette.len() as u32;
         let bits_per_pixel = if palette_size <= 256 { 8 } else { 24 } as u16;
 
@@ -153,10 +146,8 @@ impl Bitmap {
         writer.write_all(&[0; 4])?;                        // number of important colors used
 
         // write palette
-        if bits_per_pixel == 8 {
-            palette.iter().for_each(|color| {
-                writer.write_all(&[color.blue, color.green, color.red, 0]).unwrap();
-            });
+        for (_, color) in palette.iter() {
+            writer.write_all(&[color.blue, color.green, color.red, 0])?;
         }
 
         // write offset to pixel array in the section header
