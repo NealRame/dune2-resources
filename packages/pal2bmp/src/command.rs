@@ -1,9 +1,9 @@
 use std::error::Error;
 use std::fs;
 
-use crate::config::Config;
+use crate::config::Cli;
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
+pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
     if let Some(parent) = config.output_filepath.parent() {
         fs::create_dir_all(parent)?;
     }

@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 bitmap = { path = "../bitmap" }
+clap = { version = "4.1.8", features = ["derive", "env"] }
