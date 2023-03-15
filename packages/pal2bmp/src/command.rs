@@ -33,7 +33,7 @@ pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
     }
 
     let mut output = fs::File::create(&config.output_filepath)?;
-    palette_surface.write_with_palette(&mut output, &palette)?;
+    dune2::write_bmp_with_palette(&palette_surface, &palette, &mut output)?;
 
     Ok(())
 }

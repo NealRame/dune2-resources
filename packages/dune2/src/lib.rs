@@ -1,9 +1,11 @@
+mod bmp_writers;
 mod color;
 mod point;
 mod rect;
 mod size;
 mod surface;
 
+pub use bmp_writers::*;
 pub use color::*;
 pub use point::*;
 pub use rect::*;
