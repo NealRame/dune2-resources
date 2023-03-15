@@ -17,38 +17,33 @@ fn ppi2ppm(ppi: u32) -> u32 {
     ((1000./254.)*(ppi as f32)) as u32
 }
 
-pub struct Bitmap {
-    width: u32,
-    height: u32,
+pub struct Surface {
+    size: Size,
     pixels: Vec<Color>,
 }
 
-impl Bitmap {
-    pub fn new(width: u32, height: u32) -> Self {
+impl Surface {
+    pub fn new(size: Size) -> Self {
         Self {
-            width,
-            height,
-            pixels: vec![Color::new(0, 0, 0); (width*height) as usize],
+            size,
+            pixels: vec![Color::new(0, 0, 0); (size.width*size.height) as usize],
         }
     }
 
     fn index(&self, p: Point) -> usize {
-        (p.y*self.width as i32 + p.x) as usize
+        (p.y*self.size.width as i32 + p.x) as usize
     }
 
     pub fn width(&self) -> u32 {
-        self.width
+        self.size.width
     }
 
     pub fn height(&self) -> u32 {
-        self.height
+        self.size.height
     }
 
     pub fn size(&self) -> Size {
-        Size {
-            width: self.width,
-            height: self.height,
-        }
+        self.size
     }
 
     pub fn rect(&self) -> Rect {
@@ -79,7 +74,7 @@ impl Bitmap {
 
     pub fn blit(
         &mut self,
-        bitmap: &Bitmap,
+        bitmap: &Surface,
         src_rect: Rect,
         dst_rect: Rect,
     ) -> &mut Self {
@@ -133,17 +128,17 @@ impl Bitmap {
         writer.write_all(&[0; 4])?; // offset of pixel array
 
         // write DIB header
-        writer.write_all(&(40 as u32).to_le_bytes())?;     // DIB header size
-        writer.write_all(&self.width.to_le_bytes())?;      // width
-        writer.write_all(&self.height.to_le_bytes())?;     // height
-        writer.write_all(&(1 as u16).to_le_bytes())?;      // color planes
-        writer.write_all(&bits_per_pixel.to_le_bytes())?;  // bits per pixel
-        writer.write_all(&[0; 4])?;                        // compression
-        writer.write_all(&[0; 4])?;                        // image size
-        writer.write_all(&ppi2ppm(300).to_le_bytes())?;    // x pixels per meter
-        writer.write_all(&ppi2ppm(300).to_le_bytes())?;    // y pixels per meter
-        writer.write_all(&palette_size.to_le_bytes())?;    // number of colors in the palette
-        writer.write_all(&[0; 4])?;                        // number of important colors used
+        writer.write_all(&(40 as u32).to_le_bytes())?;       // DIB header size
+        writer.write_all(&self.size.width.to_le_bytes())?;   // Width
+        writer.write_all(&self.size.height.to_le_bytes())?;  // Height
+        writer.write_all(&(1 as u16).to_le_bytes())?;        // Color planes
+        writer.write_all(&bits_per_pixel.to_le_bytes())?;    // Bits per pixel
+        writer.write_all(&[0; 4])?;                          // Compression
+        writer.write_all(&[0; 4])?;                          // Image size
+        writer.write_all(&ppi2ppm(300).to_le_bytes())?;      // X pixels per meter
+        writer.write_all(&ppi2ppm(300).to_le_bytes())?;      // Y pixels per meter
+        writer.write_all(&palette_size.to_le_bytes())?;      // Number of colors in the palette
+        writer.write_all(&[0; 4])?;                          // Number of important colors used
 
         // write palette
         for (_, color) in palette.iter() {
@@ -158,14 +153,14 @@ impl Bitmap {
         writer.seek(io::SeekFrom::Start(pixel_array_offset))?;
 
         // write pixel array
-        let row_size = ((bits_per_pixel as u32)*self.width + 31)/32*4;
-        let pad_size = row_size - ((bits_per_pixel/8) as u32)*self.width;
+        let row_size = ((bits_per_pixel as u32)*self.size.width + 31)/32*4;
+        let pad_size = row_size - ((bits_per_pixel/8) as u32)*self.size.width;
 
-        for row in (0..self.height).rev() {
+        for row in (0..self.size.height).rev() {
             let index = self.index(Point { x: 0, y: row as i32 });
 
             // write row
-            self.pixels[index..index + self.width as usize]
+            self.pixels[index..index + self.size.width as usize]
                 .iter()
                 .for_each(|color| {
                     if bits_per_pixel == 8 {
