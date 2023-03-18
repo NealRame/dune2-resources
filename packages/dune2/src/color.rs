@@ -1,6 +1,9 @@
 use std::collections::HashMap;
 
+use std::fs;
 use std::io;
+use std::path::PathBuf;
+
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
 pub struct Color {
@@ -66,5 +69,14 @@ impl Palette {
 
     pub fn len(&self) -> usize {
         self.colors.len()
+    }
+}
+
+impl std::convert::TryFrom<PathBuf> for Palette {
+    type Error = io::Error;
+
+    fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
+        let mut reader = fs::File::open(path)?;
+        return Palette::from_reader(&mut reader);
     }
 }

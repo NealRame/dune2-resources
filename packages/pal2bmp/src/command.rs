@@ -8,14 +8,13 @@ pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
         fs::create_dir_all(parent)?;
     }
 
-    let palette = dune2::Palette::from_reader(&mut fs::File::open(&config.input_filepath)?)?;
+    let palette = dune2::Palette::try_from(config.input_filepath)?;
     let palette_watch_size = dune2::Size { width: 32, height: 32 };
-    let palette_size = dune2::Size {
+
+    let mut palette_surface = dune2::Surface::new(dune2::Size {
         width: 32*16,
         height: 32*((palette.len() as f32)/16.).ceil() as u32,
-    };
-
-    let mut palette_surface = dune2::Surface::new(palette_size);
+    });
 
     for (i, color) in palette.iter() {
         let rect = dune2::Rect::from_point_and_size(
