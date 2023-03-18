@@ -28,7 +28,7 @@ impl Palette {
         }
     }
 
-    pub fn load(reader: &mut impl io::Read) -> io::Result<Palette> {
+    pub fn from_reader(reader: &mut impl io::Read) -> io::Result<Palette> {
         let mut palette = Palette::new();
         let mut buf = [0; 3];
 
