@@ -3,5 +3,6 @@
 members = [
     "packages/dune2",
     "packages/pal2bmp",
+    "packages/shp2bmp",
     "packages/unpak",
 ]
