@@ -12,8 +12,8 @@ pub struct Cli {
     pub pal_input_filepath: PathBuf,
 
     /// Output folder path
-    #[arg(short, long, default_value = "palette.bmp")]
-    pub output_filepath: PathBuf,
+    #[arg(short, long)]
+    pub output_dir: Option<PathBuf>,
 
     /// Overwrite existing files
     #[arg(short = 'f', long, default_value = "false", action = clap::ArgAction::SetTrue)]

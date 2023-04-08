@@ -66,6 +66,9 @@ dependencies = [
 [[package]]
 name = "dune2"
 version = "0.1.0"
+dependencies = [
+ "bitvec",
+]
 
 [[package]]
 name = "errno"
@@ -226,7 +229,6 @@ dependencies = [
 name = "shp2bmp"
 version = "0.1.0"
 dependencies = [
- "bitvec",
  "clap",
  "dune2",
 ]
