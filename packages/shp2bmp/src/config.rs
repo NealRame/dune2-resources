@@ -12,7 +12,7 @@ pub struct Cli {
     pub pal_input_filepath: PathBuf,
 
     /// Output folder path
-    #[arg(short, long)]
+    #[arg(short = 'd', long)]
     pub output_dir: Option<PathBuf>,
 
     /// Overwrite existing files
