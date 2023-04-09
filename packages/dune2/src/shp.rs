@@ -6,6 +6,8 @@ use std::path::PathBuf;
 
 use bitvec::prelude::*;
 
+use crate::COLOR_HARKONNEN;
+use crate::Faction;
 use crate::color::*;
 use crate::surface::*;
 
@@ -22,18 +24,30 @@ pub struct SHPFrame {
 }
 
 impl SHPFrame {
-    pub fn surface(&self, palette: &Palette) -> Surface {
+    pub fn surface(
+        &self,
+        palette: &Palette,
+        faction: Faction,
+    ) -> Surface {
         let mut surface = Surface::new(Size {
             width: self.width as u32,
             height: self.height as u32,
         });
+
+        let faction_palette_offset = 16*(faction as usize);
 
         for (i, &color_index) in self.data.iter().enumerate() {
             let x = ((i as u16) % self.width) as i32;
             let y = ((i as u16) / self.width) as i32;
 
             let color = if self.remap_table.len() > 0 {
-                palette.color_at(self.remap_table[color_index as usize] as usize)
+                let mut color_remapped_index = self.remap_table[color_index as usize] as usize;
+
+                if color_remapped_index >= COLOR_HARKONNEN
+                    && color_remapped_index < COLOR_HARKONNEN + 7 {
+                        color_remapped_index += faction_palette_offset;
+                }
+                palette.color_at(color_remapped_index)
             } else {
                 palette.color_at(color_index as usize)
             };

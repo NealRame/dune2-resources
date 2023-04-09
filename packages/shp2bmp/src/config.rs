@@ -15,7 +15,15 @@ pub struct Cli {
     #[arg(short = 'd', long)]
     pub output_dir: Option<PathBuf>,
 
+    /// Faction to export
+    #[arg(short = 'F', long, default_value = "harkonnen")]
+    pub faction: String,
+
     /// Overwrite existing files
     #[arg(short = 'f', long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub overwrite: bool,
+
+    /// Export Remap Table
+    #[arg(short = 'r', long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub export_remap_table: bool,
 }
