@@ -29,9 +29,16 @@ impl SHPFrame {
         });
 
         for (i, &color_index) in self.data.iter().enumerate() {
-            let color = palette.color_at(color_index as usize);
             let x = ((i as u16) % self.width) as i32;
             let y = ((i as u16) / self.width) as i32;
+
+            let color = if self.remap_table.len() > 0 {
+                palette.color_at(self.remap_table[color_index as usize] as usize)
+            } else {
+                palette.color_at(color_index as usize)
+            };
+
+            surface.put_pixel(Point { x, y }, color);
             surface.put_pixel(Point { x, y }, color);
         }
 
@@ -140,16 +147,11 @@ fn copy_block(data: &mut Vec<u8>, count: usize, pos: usize, relative: bool) {
 }
 
 fn inflate_lcw_data(
-    iter: &mut impl Iterator<Item = u8>,
+    lcw_data: &[u8],
     output: &mut Vec<u8>,
 ) -> Result<(), Box<dyn Error>> {
-    let mut iter = iter.peekable();
-    let relative = iter.peek() == Some(&0);
-
-    // Ignore first byte if it is the relative mode flag
-    if relative {
-        iter.next();
-    }
+    let relative = lcw_data[0] == 0;
+    let mut iter = lcw_data.iter().cloned().skip(if relative { 1 } else { 0 });
 
     while let Some(cmd) = iter.next() {
         if cmd == 0x80 {
@@ -158,6 +160,7 @@ fn inflate_lcw_data(
             // command 1: short copy
             // 0b10cccccc
             let count = (cmd & 0x3f) as usize;
+
             output.extend(iter.by_ref().take(count));
         } else if (cmd & 0x80) == 0 {
             // command 2: existing block relative copy
@@ -170,13 +173,6 @@ fn inflate_lcw_data(
             } else {
                 copy_block(output, count, pos, true);
             }
-        } else if (cmd & 0xc0) == 0xc0 {
-            // command 3: existing block medium-length copy
-            // 0b11cccccc p p
-            let count = ((cmd & 0x3f) + 3) as usize;
-            let pos   = read_integer::<u16>(&mut iter)? as usize;
-
-            copy_block(output, count, pos, relative);
         } else if cmd == 0xfe {
             // command 4: repeat value
             // 0b11111110 c c v
@@ -192,7 +188,12 @@ fn inflate_lcw_data(
 
             copy_block(output, count, pos, relative);
         } else {
-            return Err(format!("Unknown LCW command: {:#04x}", cmd).into());
+            // command 3: existing block medium-length copy
+            // 0b11cccccc p p
+            let count = ((cmd & 0x3f) + 3) as usize;
+            let pos   = read_integer::<u16>(&mut iter)? as usize;
+
+            copy_block(output, count, pos, relative);
         }
     }
 
@@ -232,26 +233,32 @@ fn shp_read_frame<T>(
     let width = read_integer::<u16>(&mut iter)? as u16;
     let height = read_integer::<u8>(&mut iter)? as u16;
 
-    let size = read_integer::<u16>(&mut iter)? as usize;
-    let compressed_size = read_integer::<u16>(&mut iter)? as usize;
+    let frame_size = read_integer::<u16>(&mut iter)? as usize;
+    if frame_size != size as usize {
+        return Err(format!("File size mismatch: {} != {}", frame_size, size).into());
+    }
 
+    let rle_data_size = read_integer::<u16>(&mut iter)? as usize;
     let remap_table_size = if flags[HAS_REMAP_TABLE] {
         if flags[CUSTOM_SIZE_REMAP] {
             read_integer::<u8>(&mut iter)?
         } else { 16 }
     } else { 0 } as usize;
+
     let remap_table = iter.by_ref().take(remap_table_size).collect::<Vec<_>>();
 
-    let mut rle_data = Vec::with_capacity(compressed_size);
-    if flags[NO_LCW] {
-        let data_size = buf.len() - 10 - remap_table_size;
-        rle_data.extend(iter.by_ref().take(data_size));
-    } else {
-        inflate_lcw_data(&mut iter, &mut rle_data)?;
-    };
+    let compressed_data_offset = 10 + remap_table_size;
 
-    let mut data = Vec::with_capacity(size);
-    inflate_rle_data(&rle_data, &mut data);
+    let mut data = Vec::new();
+
+    if flags[NO_LCW] {
+        inflate_rle_data(&buf[compressed_data_offset..], &mut data);
+    } else {
+        let mut rle_data = Vec::with_capacity(rle_data_size);
+
+        inflate_lcw_data(&buf[compressed_data_offset..], &mut rle_data)?;
+        inflate_rle_data(&rle_data, &mut data);
+    }
 
     Ok(SHPFrame {
         width,
@@ -271,7 +278,6 @@ impl SHP {
         let shp_offsets = shp_read_frame_offsets(reader, shp_version)?;
     
         for (offset, size) in shp_offsets.iter().copied() {
-            // println!("read SHP frame: @offset={} size={}", offset, size)
             frames.push(shp_read_frame(reader, offset, size as u64)?);
         };
 
