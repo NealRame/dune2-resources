@@ -1,5 +1,6 @@
 use std::error::Error;
 use std::fs;
+use std::fs::read;
 use std::io;
 use std::iter;
 use std::path::PathBuf;
@@ -10,6 +11,7 @@ use crate::COLOR_HARKONNEN;
 use crate::Faction;
 use crate::color::*;
 use crate::surface::*;
+use crate::io::*;
 
 enum SHPVersion {
     V100,
@@ -214,7 +216,10 @@ fn inflate_lcw_data(
     Ok(())
 }
 
-fn inflate_rle_data(rle_data: &[u8], output: &mut Vec<u8>) {
+fn inflate_rle_zero_data(
+    rle_data: &[u8],
+    output: &mut Vec<u8>
+) {
     let mut iter = rle_data.iter().copied();
 
     while let Some(value) = iter.next() {
@@ -230,49 +235,65 @@ fn shp_read_frame<T>(
     offset: u64,
     size: u64,
 ) -> Result<SHPFrame, Box<dyn Error>> where T: io::Read + io::Seek {
+
     const HAS_REMAP_TABLE: usize = 0;
     const NO_LCW: usize = 1;
     const CUSTOM_SIZE_REMAP: usize = 2;
 
     reader.seek(io::SeekFrom::Start(offset))?;
 
-    let mut buf = vec![0; size as usize];
+    let mut flags: BitArr!(for 16, in u8, Lsb0) = BitArray::<_, _>::ZERO;
 
-    reader.read_exact(&mut buf)?;
+    reader.read_exact(&mut flags.as_raw_mut_slice())?;
+    
+    let slices = u8::from_le_reader(reader)? as u16;
+    let width = u16::from_le_reader(reader)? as u16;
+    let height = u8::from_le_reader(reader)? as u16;
 
-    let flags = BitSlice::<_, Lsb0>::from_slice(&buf[0..2]);
-
-    let mut iter = buf.iter().copied().skip(3);
-
-    let width = read_integer::<u16>(&mut iter)? as u16;
-    let height = read_integer::<u8>(&mut iter)? as u16;
-
-    let frame_size = read_integer::<u16>(&mut iter)? as usize;
-    if frame_size != size as usize {
-        return Err(format!("File size mismatch: {} != {}", frame_size, size).into());
+    if slices != height {
+        return Err(format!(
+            "slices({}) != height({})",
+            slices,
+            height
+        ).into());
     }
 
-    let rle_data_size = read_integer::<u16>(&mut iter)? as usize;
+    let frame_size = u16::from_le_reader(reader)? as usize;
+
+    if size != frame_size as u64 {
+        return Err(format!(
+            "frame_size({}) != size({})",
+            frame_size,
+            size
+        ).into());
+    }
+
+    let rle_data_size = u16::from_le_reader(reader)? as usize;
+
     let remap_table_size = if flags[HAS_REMAP_TABLE] {
         if flags[CUSTOM_SIZE_REMAP] {
-            read_integer::<u8>(&mut iter)?
+            u8::from_le_reader(reader)?
         } else { 16 }
     } else { 0 } as usize;
 
-    let remap_table = iter.by_ref().take(remap_table_size).collect::<Vec<_>>();
+    let mut remap_table = vec![0; remap_table_size];
+    reader.read_exact(&mut remap_table)?;
 
-    let compressed_data_offset = 10 + remap_table_size;
-
-    let mut data = Vec::new();
+    let mut rle_data = Vec::with_capacity(rle_data_size);
 
     if flags[NO_LCW] {
-        inflate_rle_data(&buf[compressed_data_offset..], &mut data);
+        rle_data.resize(rle_data_size, 0);
+        reader.read_exact(&mut rle_data)?;
     } else {
-        let mut rle_data = Vec::with_capacity(rle_data_size);
+        let lcw_data_size = frame_size - 10 - remap_table_size;
+        let mut lcw_data = vec![0; lcw_data_size as usize];
 
-        inflate_lcw_data(&buf[compressed_data_offset..], &mut rle_data)?;
-        inflate_rle_data(&rle_data, &mut data);
+        reader.read_exact(&mut lcw_data)?;
+        inflate_lcw_data(&lcw_data, &mut rle_data)?
     }
+
+    let mut data = Vec::new();
+    inflate_rle_zero_data(&rle_data, &mut data);
 
     Ok(SHPFrame {
         width,
