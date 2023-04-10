@@ -53,7 +53,6 @@ impl SHPFrame {
             };
 
             surface.put_pixel(Point { x, y }, color);
-            surface.put_pixel(Point { x, y }, color);
         }
 
         surface
