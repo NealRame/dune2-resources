@@ -21,7 +21,7 @@ fn export_frame_to_bmp(
 }
 
 fn export_frame_remap_tanble_to_bmp(
-    remap_table: &Vec<u8>,
+    remap_table: &Vec<usize>,
     palette: &dune2::Palette,
     output_filepath: &PathBuf,
 ) -> Result<(), Box<dyn Error>> {
@@ -41,7 +41,7 @@ fn export_frame_remap_tanble_to_bmp(
             },
             palette_watch_size,
         );
-        palette_surface.fill_rect(&rect, palette.color_at(*color_index as usize));
+        palette_surface.fill_rect(&rect, palette.color_at(*color_index));
     }
 
     let mut output = fs::File::create(&output_filepath)?;

@@ -1,24 +1,72 @@
 use std::io::{Error, Read};
 
-pub trait FromLEReader: Sized {
-    fn from_le_reader<T>(reader: &mut T) -> Result<Self, Error> where T: Read;
-}
+use paste::paste;
 
-macro_rules! impl_read_integer {
-    ($($t:ty)*) => ($(
-        impl FromLEReader for $t {
-            fn from_le_reader<T>(
-                reader: &mut T,
-            ) -> Result<Self, Error> where T: Read {
-                let mut buf: [u8; std::mem::size_of::<$t>()] = [0; std::mem::size_of::<$t>()];
-                reader.read_exact(&mut buf)?;
-                Ok(<$t>::from_le_bytes(buf))
+macro_rules! generate_integer_reader {
+    ($($t:ty),*) => {
+        pub trait IntegerReader {
+            paste! {
+                $(
+                    fn [<try_read_ $t>](
+                        reader: &mut impl Read,
+                    ) -> Result<$t, Error>;
+                )*
             }
         }
-    )*)
+
+        pub struct LSB ();
+        pub struct MSB ();
+
+        paste! {
+            impl IntegerReader for LSB {
+                $(
+                    fn [<try_read_ $t>](
+                        reader: &mut impl Read,
+                    ) -> Result<$t, Error> {
+                        let mut buf = [0; std::mem::size_of::<$t>()];
+                        reader.read(&mut buf)?;
+                        Ok($t::from_le_bytes(buf))
+                    }
+                )*
+            }
+
+            impl IntegerReader for MSB {
+                $(
+                    fn [<try_read_ $t>](
+                        reader: &mut impl Read,
+                    ) -> Result<$t, Error> {
+                        let mut buf = [0; std::mem::size_of::<$t>()];
+                        reader.read(&mut buf)?;
+                        Ok($t::from_be_bytes(buf))
+                    }
+                )*
+            }
+        }
+
+        pub trait TryReadFrom: Sized {
+            fn try_read_from<Ord: IntegerReader>(
+                reader: &mut impl Read
+            ) -> Result<Self, Error>;
+        }
+
+        paste! {
+            $(
+                impl TryReadFrom for $t {
+                    fn try_read_from<Reader: IntegerReader>(
+                        reader: &mut impl Read
+                    ) -> Result<Self, Error> {
+                        Reader::[<try_read_ $t>](reader)
+                    }
+                }
+            )*
+        }
+    };
 }
 
-impl_read_integer! {
-    i8 i16 i32 i64 i128
-    u8 u16 u32 u64 u128
-}
+generate_integer_reader!(
+    i8, u8,
+    i16, u16,
+    i32, u32,
+    i64, u64,
+    i128, u128
+);

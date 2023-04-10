@@ -1,17 +1,15 @@
 use std::error::Error;
 use std::fs;
-use std::fs::read;
 use std::io;
 use std::iter;
 use std::path::PathBuf;
 
 use bitvec::prelude::*;
 
-use crate::COLOR_HARKONNEN;
-use crate::Faction;
 use crate::color::*;
-use crate::surface::*;
+use crate::constants::*;
 use crate::io::*;
+use crate::surface::*;
 
 enum SHPVersion {
     V100,
@@ -22,7 +20,7 @@ pub struct SHPFrame {
     pub width: u16,
     pub height: u16,
     pub data: Vec<u8>,
-    pub remap_table: Vec<u8>,
+    pub remap_table: Vec<usize>,
 }
 
 impl SHPFrame {
@@ -39,15 +37,15 @@ impl SHPFrame {
         let faction_palette_offset = 16*(faction as usize);
 
         for (i, &color_index) in self.data.iter().enumerate() {
-            let x = ((i as u16) % self.width) as i32;
-            let y = ((i as u16) / self.width) as i32;
+            let x = ((i as u16)%self.width) as i32;
+            let y = ((i as u16)/self.width) as i32;
 
             let color = if self.remap_table.len() > 0 {
-                let mut color_remapped_index = self.remap_table[color_index as usize] as usize;
+                let mut color_remapped_index = self.remap_table[color_index as usize];
 
                 if color_remapped_index >= COLOR_HARKONNEN
                     && color_remapped_index < COLOR_HARKONNEN + 7 {
-                        color_remapped_index += faction_palette_offset;
+                    color_remapped_index += faction_palette_offset;
                 }
                 palette.color_at(color_remapped_index)
             } else {
@@ -132,29 +130,6 @@ fn shp_read_frame_offsets<T>(
     )
 }
 
-fn read_integer<T>(iter: &mut impl Iterator<Item = u8>) -> Result<T, Box<dyn Error>>
-where
-    T: Default
-        + std::ops::BitOr<Output = T>
-        + std::ops::Shl<usize, Output = T>
-        + From<u8>,
-{
-    let mut num = T::default();
-
-    for i in 0..std::mem::size_of::<T>() {
-        let byte = iter.next().ok_or_else(|| {
-            format!(
-                "{} bytes are not enough to read {} of size {}",
-                i,
-                std::any::type_name::<T>(),
-                std::mem::size_of::<T>(),
-            )
-        })?;
-        num = num | (T::from(byte) << (i*8));
-    }
-    Ok(num)
-}
-
 fn copy_block(data: &mut Vec<u8>, count: usize, pos: usize, relative: bool) {
     let offset = if relative { data.len() - pos } else { pos };
     for i in 0..count {
@@ -162,56 +137,64 @@ fn copy_block(data: &mut Vec<u8>, count: usize, pos: usize, relative: bool) {
     }
 }
 
-fn inflate_lcw_data(
-    lcw_data: &[u8],
+fn inflate_lcw_data<T: io::Read + io::Seek>(
+    reader: &mut T,
     output: &mut Vec<u8>,
 ) -> Result<(), Box<dyn Error>> {
-    let relative = lcw_data[0] == 0;
-    let mut iter = lcw_data.iter().cloned().skip(if relative { 1 } else { 0 });
+    let relative = u8::try_read_from::<LSB>(reader)? == 0;
 
-    while let Some(cmd) = iter.next() {
-        if cmd == 0x80 {
-            break;
-        } else if (cmd & 0xc0) == 0x80 {
+    if !relative {
+        reader.seek(io::SeekFrom::Current(-1))?;
+    }
+
+    loop { match u8::try_read_from::<LSB>(reader)? {
+        0x80 => break,
+        cmd if (cmd & 0xc0) == 0x80 => {
             // command 1: short copy
             // 0b10cccccc
             let count = (cmd & 0x3f) as usize;
+            let pos = output.len();
 
-            output.extend(iter.by_ref().take(count));
-        } else if (cmd & 0x80) == 0 {
+            output.resize(output.len() + count, 0);
+            reader.read_exact(&mut output[pos..])?;
+        },
+        cmd if (cmd & 0x80) == 0 => {
             // command 2: existing block relative copy
             // 0b0cccpppp p
             let count = (((cmd & 0x70) as usize) >> 4) + 3;
-            let pos   = (((cmd & 0x0f) as usize) << 8) | read_integer::<u8>(&mut iter)? as usize;
+            let pos   = (((cmd & 0x0f) as usize) << 8) | u8::try_read_from::<LSB>(reader)? as usize;
 
             if pos == 1 {
                 output.extend(iter::repeat(*output.last().unwrap()).take(count));
             } else {
                 copy_block(output, count, pos, true);
             }
-        } else if cmd == 0xfe {
+        },
+        0xfe => {
             // command 4: repeat value
             // 0b11111110 c c v
-            let count = read_integer::<u16>(&mut iter)? as usize;
-            let value = read_integer::<u8>(&mut iter)?;
+            let count = u16::try_read_from::<LSB>(reader)? as usize;
+            let value = u8::try_read_from::<LSB>(reader)?;
 
             output.extend(iter::repeat(value).take(count));
-        } else if cmd == 0xff {
+        },
+        0xff => {
             // command 5: existing block long copy
             // 0b11111111 c c p p
-            let count = read_integer::<u16>(&mut iter)? as usize;
-            let pos   = read_integer::<u16>(&mut iter)? as usize;
+            let count = u16::try_read_from::<LSB>(reader)? as usize;
+            let pos   = u16::try_read_from::<LSB>(reader)? as usize;
 
             copy_block(output, count, pos, relative);
-        } else {
+        },
+        cmd => {
             // command 3: existing block medium-length copy
             // 0b11cccccc p p
             let count = ((cmd & 0x3f) + 3) as usize;
-            let pos   = read_integer::<u16>(&mut iter)? as usize;
+            let pos   = u16::try_read_from::<LSB>(reader)? as usize;
 
             copy_block(output, count, pos, relative);
-        }
-    }
+        },
+    }}
 
     Ok(())
 }
@@ -246,9 +229,9 @@ fn shp_read_frame<T>(
 
     reader.read_exact(&mut flags.as_raw_mut_slice())?;
     
-    let slices = u8::from_le_reader(reader)? as u16;
-    let width = u16::from_le_reader(reader)? as u16;
-    let height = u8::from_le_reader(reader)? as u16;
+    let slices = u8::try_read_from::<LSB>(reader)? as u16;
+    let width = u16::try_read_from::<LSB>(reader)? as u16;
+    let height = u8::try_read_from::<LSB>(reader)? as u16;
 
     if slices != height {
         return Err(format!(
@@ -258,7 +241,7 @@ fn shp_read_frame<T>(
         ).into());
     }
 
-    let frame_size = u16::from_le_reader(reader)? as usize;
+    let frame_size = u16::try_read_from::<LSB>(reader)? as usize;
 
     if size != frame_size as u64 {
         return Err(format!(
@@ -268,16 +251,17 @@ fn shp_read_frame<T>(
         ).into());
     }
 
-    let rle_data_size = u16::from_le_reader(reader)? as usize;
+    let rle_data_size = u16::try_read_from::<LSB>(reader)? as usize;
 
     let remap_table_size = if flags[HAS_REMAP_TABLE] {
         if flags[CUSTOM_SIZE_REMAP] {
-            u8::from_le_reader(reader)?
+            u8::try_read_from::<LSB>(reader)?
         } else { 16 }
     } else { 0 } as usize;
 
-    let mut remap_table = vec![0; remap_table_size];
-    reader.read_exact(&mut remap_table)?;
+    let remap_table = (0..remap_table_size)
+        .map(|_| u8::try_read_from::<LSB>(reader).map(usize::from))
+        .collect::<Result<Vec<_>, _>>()?;
 
     let mut rle_data = Vec::with_capacity(rle_data_size);
 
@@ -285,11 +269,7 @@ fn shp_read_frame<T>(
         rle_data.resize(rle_data_size, 0);
         reader.read_exact(&mut rle_data)?;
     } else {
-        let lcw_data_size = frame_size - 10 - remap_table_size;
-        let mut lcw_data = vec![0; lcw_data_size as usize];
-
-        reader.read_exact(&mut lcw_data)?;
-        inflate_lcw_data(&lcw_data, &mut rle_data)?
+        inflate_lcw_data(reader, &mut rle_data)?
     }
 
     let mut data = Vec::new();
