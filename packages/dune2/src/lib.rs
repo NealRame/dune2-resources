@@ -1,6 +1,7 @@
 mod bmp_writers;
 mod color;
 mod constants;
+mod icn;
 mod io;
 mod point;
 mod rect;
@@ -11,6 +12,7 @@ mod shp;
 pub use bmp_writers::*;
 pub use color::*;
 pub use constants::*;
+pub use icn::*;
 pub use io::*;
 pub use point::*;
 pub use rect::*;
