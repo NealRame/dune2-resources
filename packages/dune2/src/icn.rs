@@ -1,15 +1,16 @@
-use std::error::Error;
 use std::fs;
-use std::io;
 use std::iter;
-use std::path::PathBuf;
+use std::path;
+
+use std::error::{Error};
+use std::io::{Read, Seek, SeekFrom};
 
 use crate::color::*;
-use crate::surface::*;
 use crate::io::*;
+use crate::surface::*;
 
 fn check_chunk_id(
-    reader: &mut impl io::Read,
+    reader: &mut impl Read,
     value: &[u8],
 ) -> Result<(), Box<dyn Error>> {
     let mut buf = vec![0; value.len()];
@@ -28,7 +29,7 @@ struct ICNInfo {
 
 impl ICNInfo {
     fn try_read_from(
-        reader: &mut impl io::Read,
+        reader: &mut impl Read,
     ) -> Result<ICNInfo, Box<dyn Error>> {
         check_chunk_id(reader, b"SINF")?;
     
@@ -65,7 +66,7 @@ impl ICNInfo {
 pub struct ICNSSet;
 
 impl ICNSSet {
-    fn from_reader<T: io::Read + io::Seek>(
+    fn from_reader<T: Read + Seek>(
         reader: &mut T,
         info: &ICNInfo,
     ) -> Result<Vec<Vec<u8>>, Box<dyn Error>> {
@@ -75,7 +76,7 @@ impl ICNSSet {
         let tile_size = info.get_tile_size();
         let tile_count = (sset_chunk_size - 4)/tile_size;
 
-        reader.seek(io::SeekFrom::Current(8))?;
+        reader.seek(SeekFrom::Current(8))?;
 
         (0..tile_count).map(|_| {
             let mut tile = vec![0; tile_size];
@@ -90,7 +91,7 @@ pub struct ICNRPal;
 
 impl ICNRPal {
     fn from_reader(
-        reader: &mut impl io::Read,
+        reader: &mut impl Read,
         info: &ICNInfo,
     ) -> Result<Vec<Vec<u8>>, Box<dyn Error>> {
         check_chunk_id(reader, b"RPAL")?;
@@ -112,7 +113,7 @@ pub struct ICNRTbl;
 
 impl ICNRTbl {
     fn from_reader(
-        reader: &mut impl io::Read,
+        reader: &mut impl Read,
     ) -> Result<Vec<u8>, Box<dyn Error>> {
         check_chunk_id(reader, b"RTBL")?;
 
@@ -160,10 +161,10 @@ pub struct ICN {
 impl ICN {
     pub fn from_reader<T>(
         reader: &mut T,
-    ) -> Result<ICN, Box<dyn Error>> where T: io::Read + io::Seek {
+    ) -> Result<ICN, Box<dyn Error>> where T: Read + Seek {
         check_chunk_id(reader, b"FORM")?;
 
-        reader.seek(io::SeekFrom::Current(4))?; // Skip chunk size
+        reader.seek(SeekFrom::Current(4))?; // Skip chunk size
 
         check_chunk_id(reader, b"ICON")?;
 
@@ -199,10 +200,10 @@ impl ICN {
     }
 }
 
-impl std::convert::TryFrom<PathBuf> for ICN {
+impl std::convert::TryFrom<path::PathBuf> for ICN {
     type Error = Box<dyn Error>;
 
-    fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
+    fn try_from(path: path::PathBuf) -> Result<Self, Self::Error> {
         let mut reader = fs::File::open(path)?;
         return ICN::from_reader(&mut reader);
     }
