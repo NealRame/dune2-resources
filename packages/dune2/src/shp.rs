@@ -1,8 +1,9 @@
-use std::error::Error;
+use std::error::{Error};
+use std::io::{Read, Seek, SeekFrom};
+use std::path::{PathBuf};
+
 use std::fs;
-use std::io;
 use std::iter;
-use std::path::PathBuf;
 
 use bitvec::prelude::*;
 
@@ -65,9 +66,9 @@ pub struct SHP {
 
 fn shp_read_version<T>(reader: &mut T)
     -> Result<SHPVersion, Box<dyn Error>>
-    where T: io::Read + io::Seek
+    where T: Read + Seek
 {
-    reader.seek(io::SeekFrom::Start(4))?;
+    reader.seek(SeekFrom::Start(4))?;
 
     let mut buf = [0; 2];
     reader.read_exact(&mut buf)?;
@@ -77,14 +78,14 @@ fn shp_read_version<T>(reader: &mut T)
         _ => SHPVersion::V100,
     };
 
-    reader.seek(io::SeekFrom::Start(0))?;
+    reader.seek(SeekFrom::Start(0))?;
 
     Ok(version)
 }
 
 fn shp_read_frame_count<T>(reader: &mut T)
     -> Result<usize, Box<dyn Error>>
-    where T: io::Read + io::Seek
+    where T: Read + Seek
 {
     let mut buf = [0; 2];
     reader.read_exact(&mut buf)?;
@@ -94,7 +95,7 @@ fn shp_read_frame_count<T>(reader: &mut T)
 
 fn shp_read_frame_offset_v100<T>(
     reader: &mut T,
-) -> Result<u64, Box<dyn Error>> where T: io::Read + io::Seek {
+) -> Result<u64, Box<dyn Error>> where T: Read + Seek {
     let mut buf = [0; 2];
     reader.read_exact(&mut buf)?;
     Ok(u16::from_le_bytes(buf) as u64)
@@ -102,7 +103,7 @@ fn shp_read_frame_offset_v100<T>(
 
 fn shp_read_frame_offset_v107<T>(
     reader: &mut T,
-) -> Result<u64, Box<dyn Error>> where T: io::Read + io::Seek {
+) -> Result<u64, Box<dyn Error>> where T: Read + Seek {
     let mut buf = [0; 4];
     reader.read_exact(&mut buf)?;
     Ok((u32::from_le_bytes(buf) + 2) as u64)
@@ -111,7 +112,7 @@ fn shp_read_frame_offset_v107<T>(
 fn shp_read_frame_offsets<T>(
     reader: &mut T,
     version: SHPVersion,
-) -> Result<Vec<(u64, usize)>, Box<dyn Error>> where T: io::Read + io::Seek {
+) -> Result<Vec<(u64, usize)>, Box<dyn Error>> where T: Read + Seek {
     let frame_count = shp_read_frame_count(reader)?;
     let mut offsets = Vec::with_capacity(frame_count);
 
@@ -136,14 +137,14 @@ fn copy_block(data: &mut Vec<u8>, count: usize, pos: usize, relative: bool) {
     }
 }
 
-fn inflate_lcw_data<T: io::Read + io::Seek>(
+fn inflate_lcw_data<T: Read + Seek>(
     reader: &mut T,
     output: &mut Vec<u8>,
 ) -> Result<(), Box<dyn Error>> {
     let relative = u8::try_read_from::<LSB>(reader)? == 0;
 
     if !relative {
-        reader.seek(io::SeekFrom::Current(-1))?;
+        reader.seek(SeekFrom::Current(-1))?;
     }
 
     loop { match u8::try_read_from::<LSB>(reader)? {
@@ -216,13 +217,13 @@ fn shp_read_frame<T>(
     reader: &mut T,
     offset: u64,
     size: u64,
-) -> Result<SHPFrame, Box<dyn Error>> where T: io::Read + io::Seek {
+) -> Result<SHPFrame, Box<dyn Error>> where T: Read + Seek {
 
     const HAS_REMAP_TABLE: usize = 0;
     const NO_LCW: usize = 1;
     const CUSTOM_SIZE_REMAP: usize = 2;
 
-    reader.seek(io::SeekFrom::Start(offset))?;
+    reader.seek(SeekFrom::Start(offset))?;
 
     let mut flags: BitArr!(for 16, in u8, Lsb0) = BitArray::<_, _>::ZERO;
 
@@ -285,7 +286,7 @@ fn shp_read_frame<T>(
 impl SHP {
     pub fn from_reader<T>(
         reader: &mut T,
-    ) -> Result<SHP, Box<dyn Error>> where T: io::Read + io::Seek {
+    ) -> Result<SHP, Box<dyn Error>> where T: Read + Seek {
         let mut frames = Vec::new();
 
         let shp_version = shp_read_version(reader)?;
