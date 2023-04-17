@@ -126,13 +126,13 @@ impl ICNRTbl {
     }
 }
 
-pub struct ICNTile {
+pub struct Tile {
     pub width: u16,
     pub height: u16,
     pub data: Vec<u8>,
 }
 
-impl ICNTile {
+impl Tile {
     pub fn surface(
         &self,
         palette: &Palette,
@@ -154,14 +154,14 @@ impl ICNTile {
     }
 }
 
-pub struct ICN {
-    pub tiles: Vec<ICNTile>,
+pub struct Tileset {
+    pub tiles: Vec<Tile>,
 }
 
-impl ICN {
+impl Tileset {
     pub fn from_reader<T>(
         reader: &mut T,
-    ) -> Result<ICN, Box<dyn Error>> where T: Read + Seek {
+    ) -> Result<Tileset, Box<dyn Error>> where T: Read + Seek {
         check_chunk_id(reader, b"FORM")?;
 
         reader.seek(SeekFrom::Current(4))?; // Skip chunk size
@@ -189,22 +189,22 @@ impl ICN {
                     }
                 }
 
-                ICNTile {
+                Tile {
                     width: info.width,
                     height: info.height,
                     data,
                 }
             }).collect::<Vec<_>>();
 
-        Ok(ICN { tiles })
+        Ok(Tileset { tiles })
     }
 }
 
-impl std::convert::TryFrom<path::PathBuf> for ICN {
+impl std::convert::TryFrom<path::PathBuf> for Tileset {
     type Error = Box<dyn Error>;
 
     fn try_from(path: path::PathBuf) -> Result<Self, Self::Error> {
         let mut reader = fs::File::open(path)?;
-        return ICN::from_reader(&mut reader);
+        return Tileset::from_reader(&mut reader);
     }
 }

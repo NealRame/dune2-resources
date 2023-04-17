@@ -1,7 +1,7 @@
 mod bmp_writers;
 mod color;
 mod constants;
-mod icn;
+mod tileset;
 mod io;
 mod map;
 mod point;
@@ -13,7 +13,7 @@ mod shp;
 pub use bmp_writers::*;
 pub use color::*;
 pub use constants::*;
-pub use icn::*;
+pub use tileset::*;
 pub use io::*;
 pub use map::*;
 pub use point::*;

@@ -5,11 +5,11 @@ use clap::Parser;
 #[derive(Parser)]
 #[command(author, about, version)]
 pub struct Cli {
-    /// SHP Input file path
+    /// PAL Input file path
     pub pal_input_filepath: PathBuf,
 
-    /// SHP Input file path
-    pub shp_input_filepath: PathBuf,
+    /// ICN Input file path
+    pub icn_input_filepath: PathBuf,
 
     /// MAP Input file path
     pub map_input_filepath: Option<PathBuf>,
