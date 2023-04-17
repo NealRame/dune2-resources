@@ -25,13 +25,19 @@ pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
     let palette = dune2::Palette::try_from(config.pal_input_filepath)?;
     let icn = dune2::ICN::try_from(config.shp_input_filepath)?;
 
-    for (i, frame) in icn.tiles.iter().enumerate() {
-        let output_filepath = output_dirpath.join(format!("{:02}.bmp", i));
-        export_tile_to_bmp(
-            frame,
-            &palette,
-            &output_filepath
-        )?;
+    if let Some(map_input_filepath) = config.map_input_filepath {
+        let map = dune2::Map::try_from(map_input_filepath)?;
+
+        return Ok(());
+    } else {
+        for (i, frame) in icn.tiles.iter().enumerate() {
+            let output_filepath = output_dirpath.join(format!("{:02}.bmp", i));
+            export_tile_to_bmp(
+                frame,
+                &palette,
+                &output_filepath
+            )?;
+        }
     }
 
     return Ok(());

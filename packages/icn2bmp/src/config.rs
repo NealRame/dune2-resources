@@ -6,10 +6,13 @@ use clap::Parser;
 #[command(author, about, version)]
 pub struct Cli {
     /// SHP Input file path
-    pub shp_input_filepath: PathBuf,
+    pub pal_input_filepath: PathBuf,
 
     /// SHP Input file path
-    pub pal_input_filepath: PathBuf,
+    pub shp_input_filepath: PathBuf,
+
+    /// MAP Input file path
+    pub map_input_filepath: Option<PathBuf>,
 
     /// Output folder path
     #[arg(short = 'd', long)]
