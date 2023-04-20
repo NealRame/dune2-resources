@@ -10,7 +10,8 @@ pub struct Rect {
 
 pub struct RectIterator {
     rect: Rect,
-    current: Point,
+    current: u32,
+    last: u32,
 }
 
 impl Rect {
@@ -129,7 +130,8 @@ impl RectIterator {
     pub fn new(rect: Rect) -> Self {
         Self {
             rect,
-            current: rect.top_left(),
+            current: 0,
+            last: rect.size.width*rect.size.height,
         }
     }
 }
@@ -138,18 +140,12 @@ impl Iterator for RectIterator {
     type Item = Point;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.current.y < self.rect.bottom() - 1 {
-            let point = self.current;
-            self.current = match self.current.x < self.rect.right() - 1 {
-                true => Point {
-                    x: self.current.x + 1,
-                    y: self.current.y,
-                },
-                false => Point {
-                    x: self.rect.left(),
-                    y: self.current.y + 1,
-                },
+        if self.current < self.last {
+            let point = Point {
+                x: self.rect.left() + (self.current % self.rect.width()) as i32,
+                y: self.rect.top() + (self.current / self.rect.width()) as i32,
             };
+            self.current += 1;
             Some(point)
         } else { None }
     }
