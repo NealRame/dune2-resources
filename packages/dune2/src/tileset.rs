@@ -155,6 +155,7 @@ impl Tile {
 }
 
 pub struct Tileset {
+    pub tile_size: Size,
     pub tiles: Vec<Tile>,
 }
 
@@ -196,7 +197,13 @@ impl Tileset {
                 }
             }).collect::<Vec<_>>();
 
-        Ok(Tileset { tiles })
+        Ok(Tileset {
+            tiles,
+            tile_size: Size {
+                width: info.width as u32,
+                height: info.height as u32,
+            },
+        })
     }
 }
 

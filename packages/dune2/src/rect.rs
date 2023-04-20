@@ -142,8 +142,8 @@ impl Iterator for RectIterator {
     fn next(&mut self) -> Option<Self::Item> {
         if self.current < self.last {
             let point = Point {
-                x: self.rect.left() + (self.current % self.rect.width()) as i32,
-                y: self.rect.top() + (self.current / self.rect.width()) as i32,
+                x: self.rect.left() + (self.current%self.rect.width()) as i32,
+                y: self.rect.top() + (self.current/self.rect.width()) as i32,
             };
             self.current += 1;
             Some(point)

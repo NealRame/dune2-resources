@@ -4,10 +4,12 @@ use std::path::{ PathBuf };
 
 use std::fs;
 
+use crate::*;
+
 #[derive(Clone, Copy, Debug)]
 pub struct Shape {
-    rows: usize,
-    columns: usize,
+    pub rows: usize,
+    pub columns: usize,
 }
 
 impl Shape {
@@ -20,7 +22,7 @@ impl Shape {
                 Shape { rows: 2, columns: 2 }
             },
             12|13 => {
-                Shape { rows: 3, columns: 2 }
+                Shape { rows: 2, columns: 3 }
             },
             14..=18|24 => {
                 Shape { rows: 2, columns: 2 }
@@ -29,7 +31,7 @@ impl Shape {
                 Shape { rows: 3, columns: 3 }
             },
             20|21 => {
-                Shape { rows: 3, columns: 2 }
+                Shape { rows: 2, columns: 3 }
             },
             _ => {
                 Shape { rows: 1, columns: 1 }
@@ -38,19 +40,53 @@ impl Shape {
     }
 }
 
-pub struct Icon {
+pub struct Tilemap {
     pub shape: Shape,
     pub tiles: Vec<usize>,
 }
 
-pub struct Map {
-    pub icons: Vec<Icon>,
+impl Tilemap {
+    pub fn surface(
+        &self,
+        palette: &Palette,
+        tileset: &Tileset,
+    ) -> Surface {
+        let tiles = self.tiles.iter()
+            .map(|&tile_index| tileset.tiles[tile_index].surface(palette))
+            .collect::<Vec<_>>();
+
+        let width = tileset.tile_size.width*self.shape.columns as u32;
+        let height = tileset.tile_size.height*self.shape.rows as u32;
+
+        let mut surface = Surface::new(Size {
+            width,
+            height,
+        });
+
+        for (i, tile) in tiles.iter().enumerate() {
+            let row = (i/self.shape.columns) as u32;
+            let column = (i%self.shape.columns) as u32;
+
+            let dst_rect = Rect::from_point_and_size(Point {
+                x: (column*tileset.tile_size.width) as i32,
+                y: (row*tileset.tile_size.height) as i32,
+            }, tile.size());
+
+            surface.blit(tile, tile.rect(), dst_rect);
+        }
+
+        surface
+    }
 }
 
-impl Map {
+pub struct Maps {
+    pub tilemaps: Vec<Tilemap>,
+}
+
+impl Maps {
     pub fn from_reader<T>(
         reader: &mut T,
-    ) -> Result<Map, Box<dyn Error>> where T: Read + Seek {
+    ) -> Result<Maps, Box<dyn Error>> where T: Read + Seek {
         let mut buf = [0u8; 2];
         let mut indexes = Vec::new();
         loop {
@@ -90,7 +126,7 @@ impl Map {
                     let start = start + i*shape_size;
                     let end = start + shape_size;
                     let tiles = indexes[start..end].to_vec();
-                    icons.push(Icon {
+                    icons.push(Tilemap {
                         shape,
                         tiles,
                     })
@@ -100,15 +136,15 @@ impl Map {
             })
             .collect::<Vec<_>>();
 
-        Ok(Map { icons })
+        Ok(Maps { tilemaps: icons })
     }
 }
 
-impl std::convert::TryFrom<PathBuf> for Map {
+impl std::convert::TryFrom<PathBuf> for Maps {
     type Error = Box<dyn Error>;
 
     fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
         let mut reader = fs::File::open(path)?;
-        return Map::from_reader(&mut reader);
+        return Maps::from_reader(&mut reader);
     }
 }
