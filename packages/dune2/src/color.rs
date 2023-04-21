@@ -2,8 +2,9 @@ use std::collections::HashMap;
 
 use std::fs;
 use std::io;
-use std::path::PathBuf;
+use std::path;
 
+use std::error::{Error};
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
 pub struct Color {
@@ -31,16 +32,24 @@ impl Palette {
         }
     }
 
-    pub fn from_reader(reader: &mut impl io::Read) -> io::Result<Palette> {
+    pub fn from_pal_file(
+        path: &path::PathBuf,
+    ) -> Result<Self, Box<dyn Error>> {
+        let mut reader = fs::File::open(path)?;
+        Self::from_pal_reader(&mut reader)
+    }
+
+    pub fn from_pal_reader(
+        reader: &mut impl io::Read,
+    ) -> Result<Palette, Box<dyn Error>> {
         let mut palette = Palette::new();
         let mut buf = [0; 3];
 
         loop {
-            let color = match reader.read(&mut buf) {
-                Ok(0) => break,
-                Ok(3) => Color::new(4*buf[0], 4*buf[1], 4*buf[2]),
-                Ok(_) => return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid palette file")),
-                Err(err) => return Err(err),
+            let color = match reader.read(&mut buf)? {
+                0 => break,
+                3 => Color::new(4*buf[0], 4*buf[1], 4*buf[2]),
+                _ => return Err(format!("Invalid palette file").into()),
             };
             palette.push(&color);
         }
@@ -69,14 +78,5 @@ impl Palette {
 
     pub fn len(&self) -> usize {
         self.colors.len()
-    }
-}
-
-impl std::convert::TryFrom<PathBuf> for Palette {
-    type Error = io::Error;
-
-    fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
-        let mut reader = fs::File::open(path)?;
-        return Palette::from_reader(&mut reader);
     }
 }

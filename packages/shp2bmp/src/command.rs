@@ -9,7 +9,7 @@ use dune2::Faction;
 use crate::config::Cli;
 
 fn export_frame_to_bmp(
-    frame: &dune2::SHPFrame,
+    frame: &dune2::SpriteFrame,
     palette: &dune2::Palette,
     faction: Faction,
     output_filepath: &PathBuf,
@@ -58,10 +58,10 @@ pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(&output_dirpath)?;
 
     let faction = Faction::from_str(&config.faction)?;
-    let palette = dune2::Palette::try_from(config.pal_input_filepath)?;
-    let shp = dune2::SHP::try_from(config.shp_input_filepath)?;
+    let palette = dune2::Palette::from_pal_file(&config.pal_input_filepath)?;
+    let frames = dune2::SpriteFrame::from_shp_file(&config.shp_input_filepath)?;
 
-    for (i, frame) in shp.frames.iter().enumerate() {
+    for (i, frame) in frames.iter().enumerate() {
         let output_filepath = output_dirpath.join(format!("{:02}.bmp", i));
         export_frame_to_bmp(
             frame,

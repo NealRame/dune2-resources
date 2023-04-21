@@ -23,23 +23,21 @@ pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
 
     fs::create_dir_all(&output_dirpath)?;
 
-    let palette = dune2::Palette::try_from(config.pal_input_filepath)?;
-    let tileset = dune2::Tileset::try_from(config.icn_input_filepath)?;
+    let palette = dune2::Palette::from_pal_file(&config.pal_input_filepath)?;
+    let tileset = dune2::Tileset::from_icn_file(&config.icn_input_filepath)?;
 
-    let map = if let Some(map_input_filepath) = config.map_input_filepath {
-        dune2::Maps::try_from(map_input_filepath)?
+    let tilemaps = if let Some(map_input_filepath) = config.map_input_filepath {
+        dune2::Tilemap::from_map_file(&map_input_filepath)?
     } else {
-        dune2::Maps {
-            tilemaps: Vec::from_iter((0..tileset.tiles.len()).map(|i| {
-                dune2::Tilemap {
-                    shape: dune2::Shape { rows: 1, columns: 1, },
-                    tiles: vec![i],
-                }
-            }))
-        }
+        Vec::from_iter((0..tileset.tiles.len()).map(|i| {
+            dune2::Tilemap {
+                shape: dune2::Shape { rows: 1, columns: 1, },
+                tiles: vec![i],
+            }
+        }))
     };
 
-    for (i, tilemap) in map.tilemaps.iter().enumerate() {
+    for (i, tilemap) in tilemaps.iter().enumerate() {
         let output_filepath = output_dirpath.join(format!("{:02}.bmp", i));
         export_tilemap_to_bmp(
             &tilemap,

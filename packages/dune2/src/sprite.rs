@@ -1,6 +1,6 @@
 use std::error::{Error};
 use std::io::{Read, Seek, SeekFrom};
-use std::path::{PathBuf};
+use std::path;
 
 use std::fs;
 use std::iter;
@@ -17,51 +17,11 @@ enum SHPVersion {
     V107,
 }
 
-pub struct SHPFrame {
+pub struct SpriteFrame {
     pub width: u16,
     pub height: u16,
     pub data: Vec<u8>,
     pub remap_table: Vec<usize>,
-}
-
-impl SHPFrame {
-    pub fn surface(
-        &self,
-        palette: &Palette,
-        faction: Faction,
-    ) -> Surface {
-        let mut surface = Surface::new(Size {
-            width: self.width as u32,
-            height: self.height as u32,
-        });
-
-        let faction_palette_offset = 16*(faction as usize);
-
-        for (i, &color_index) in self.data.iter().enumerate() {
-            let x = ((i as u16)%self.width) as i32;
-            let y = ((i as u16)/self.width) as i32;
-
-            let color = if self.remap_table.len() > 0 {
-                let mut color_remapped_index = self.remap_table[color_index as usize];
-
-                if color_remapped_index >= COLOR_HARKONNEN
-                    && color_remapped_index < COLOR_HARKONNEN + 7 {
-                    color_remapped_index += faction_palette_offset;
-                }
-                palette.color_at(color_remapped_index)
-            } else {
-                palette.color_at(color_index as usize)
-            };
-
-            surface.put_pixel(Point { x, y }, color);
-        }
-
-        surface
-    }
-}
-
-pub struct SHP {
-    pub frames: Vec<SHPFrame>,
 }
 
 fn shp_read_version<T>(reader: &mut T)
@@ -217,7 +177,7 @@ fn shp_read_frame<T>(
     reader: &mut T,
     offset: u64,
     size: u64,
-) -> Result<SHPFrame, Box<dyn Error>> where T: Read + Seek {
+) -> Result<SpriteFrame, Box<dyn Error>> where T: Read + Seek {
 
     const HAS_REMAP_TABLE: usize = 0;
     const NO_LCW: usize = 1;
@@ -275,7 +235,7 @@ fn shp_read_frame<T>(
     let mut data = Vec::new();
     inflate_rle_zero_data(&rle_data, &mut data);
 
-    Ok(SHPFrame {
+    Ok(SpriteFrame {
         width,
         height,
         remap_table,
@@ -283,10 +243,46 @@ fn shp_read_frame<T>(
     })
 }
 
-impl SHP {
-    pub fn from_reader<T>(
+impl SpriteFrame {
+    pub fn surface(
+        &self,
+        palette: &Palette,
+        faction: Faction,
+    ) -> Surface {
+        let mut surface = Surface::new(Size {
+            width: self.width as u32,
+            height: self.height as u32,
+        });
+
+        let faction_palette_offset = 16*(faction as usize);
+
+        for (i, &color_index) in self.data.iter().enumerate() {
+            let x = ((i as u16)%self.width) as i32;
+            let y = ((i as u16)/self.width) as i32;
+
+            let color = if self.remap_table.len() > 0 {
+                let mut color_remapped_index = self.remap_table[color_index as usize];
+
+                if color_remapped_index >= COLOR_HARKONNEN
+                    && color_remapped_index < COLOR_HARKONNEN + 7 {
+                    color_remapped_index += faction_palette_offset;
+                }
+                palette.color_at(color_remapped_index)
+            } else {
+                palette.color_at(color_index as usize)
+            };
+
+            surface.put_pixel(Point { x, y }, color);
+        }
+
+        surface
+    }
+}
+
+impl SpriteFrame {
+    pub fn from_shp_reader<T>(
         reader: &mut T,
-    ) -> Result<SHP, Box<dyn Error>> where T: Read + Seek {
+    ) -> Result<Vec<SpriteFrame>, Box<dyn Error>> where T: Read + Seek {
         let mut frames = Vec::new();
 
         let shp_version = shp_read_version(reader)?;
@@ -296,15 +292,13 @@ impl SHP {
             frames.push(shp_read_frame(reader, offset, size as u64)?);
         };
 
-        Ok(SHP { frames })
+        Ok(frames)
     }
-}
 
-impl std::convert::TryFrom<PathBuf> for SHP {
-    type Error = Box<dyn Error>;
-
-    fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
+    pub fn from_shp_file<P>(
+        path: P,
+    ) -> Result<Vec<SpriteFrame>, Box<dyn Error>> where P: AsRef<path::Path> {
         let mut reader = fs::File::open(path)?;
-        return SHP::from_reader(&mut reader);
+        Self::from_shp_reader(&mut reader)
     }
 }

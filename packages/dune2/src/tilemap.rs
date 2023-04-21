@@ -1,8 +1,8 @@
+use std::fs;
+use std::path;
+
 use std::error::{ Error };
 use std::io::{Read, Seek };
-use std::path::{ PathBuf };
-
-use std::fs;
 
 use crate::*;
 
@@ -79,14 +79,10 @@ impl Tilemap {
     }
 }
 
-pub struct Maps {
-    pub tilemaps: Vec<Tilemap>,
-}
-
-impl Maps {
-    pub fn from_reader<T>(
+impl Tilemap {
+    pub fn from_map_reader<T>(
         reader: &mut T,
-    ) -> Result<Maps, Box<dyn Error>> where T: Read + Seek {
+    ) -> Result<Vec<Tilemap>, Box<dyn Error>> where T: Read + Seek {
         let mut buf = [0u8; 2];
         let mut indexes = Vec::new();
         loop {
@@ -98,7 +94,7 @@ impl Maps {
         }
 
         let count = *(indexes.first().unwrap());
-        let icons =
+        let tilemaps =
             std::iter::zip(
                 indexes.iter().skip(1).take(count - 1),
                 indexes.iter().skip(2).take(count - 1),
@@ -136,15 +132,13 @@ impl Maps {
             })
             .collect::<Vec<_>>();
 
-        Ok(Maps { tilemaps: icons })
+        Ok(tilemaps)
     }
-}
 
-impl std::convert::TryFrom<PathBuf> for Maps {
-    type Error = Box<dyn Error>;
-
-    fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
+    pub fn from_map_file<P>(
+        path: P,
+    ) -> Result<Vec<Tilemap>, Box<dyn Error>> where P: AsRef<path::Path> {
         let mut reader = fs::File::open(path)?;
-        return Maps::from_reader(&mut reader);
+        Self::from_map_reader(&mut reader)
     }
 }

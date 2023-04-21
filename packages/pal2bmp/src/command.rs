@@ -8,7 +8,7 @@ pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
         fs::create_dir_all(parent)?;
     }
 
-    let palette = dune2::Palette::try_from(config.input_filepath)?;
+    let palette = dune2::Palette::from_pal_file(&config.input_filepath)?;
     let palette_watch_size = dune2::Size { width: 32, height: 32 };
 
     let mut palette_surface = dune2::Surface::new(dune2::Size {

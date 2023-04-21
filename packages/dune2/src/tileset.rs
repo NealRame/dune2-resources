@@ -28,7 +28,7 @@ struct ICNInfo {
 }
 
 impl ICNInfo {
-    fn try_read_from(
+    fn read_from(
         reader: &mut impl Read,
     ) -> Result<ICNInfo, Box<dyn Error>> {
         check_chunk_id(reader, b"SINF")?;
@@ -66,7 +66,7 @@ impl ICNInfo {
 pub struct ICNSSet;
 
 impl ICNSSet {
-    fn from_reader<T: Read + Seek>(
+    fn read_from<T: Read + Seek>(
         reader: &mut T,
         info: &ICNInfo,
     ) -> Result<Vec<Vec<u8>>, Box<dyn Error>> {
@@ -90,7 +90,7 @@ impl ICNSSet {
 pub struct ICNRPal;
 
 impl ICNRPal {
-    fn from_reader(
+    fn read_from(
         reader: &mut impl Read,
         info: &ICNInfo,
     ) -> Result<Vec<Vec<u8>>, Box<dyn Error>> {
@@ -112,7 +112,7 @@ impl ICNRPal {
 pub struct ICNRTbl;
 
 impl ICNRTbl {
-    fn from_reader(
+    fn read_from(
         reader: &mut impl Read,
     ) -> Result<Vec<u8>, Box<dyn Error>> {
         check_chunk_id(reader, b"RTBL")?;
@@ -160,7 +160,7 @@ pub struct Tileset {
 }
 
 impl Tileset {
-    pub fn from_reader<T>(
+    pub fn from_icn_reader<T>(
         reader: &mut T,
     ) -> Result<Tileset, Box<dyn Error>> where T: Read + Seek {
         check_chunk_id(reader, b"FORM")?;
@@ -169,10 +169,10 @@ impl Tileset {
 
         check_chunk_id(reader, b"ICON")?;
 
-        let info = ICNInfo::try_read_from(reader)?;
-        let sset = ICNSSet::from_reader(reader, &info)?;
-        let rpal = ICNRPal::from_reader(reader, &info)?;
-        let rtbl = ICNRTbl::from_reader(reader)?;
+        let info = ICNInfo::read_from(reader)?;
+        let sset = ICNSSet::read_from(reader, &info)?;
+        let rpal = ICNRPal::read_from(reader, &info)?;
+        let rtbl = ICNRTbl::read_from(reader)?;
 
         if sset.len() != rtbl.len() {
             return Err("SSET and RTBL size mismatch".into());
@@ -205,13 +205,11 @@ impl Tileset {
             },
         })
     }
-}
 
-impl std::convert::TryFrom<path::PathBuf> for Tileset {
-    type Error = Box<dyn Error>;
-
-    fn try_from(path: path::PathBuf) -> Result<Self, Self::Error> {
+    pub fn from_icn_file<P>(
+        path: P,
+    ) -> Result<Tileset, Box<dyn Error>> where P: AsRef<path::Path> {
         let mut reader = fs::File::open(path)?;
-        return Tileset::from_reader(&mut reader);
+        Self::from_icn_reader(&mut reader)
     }
 }
