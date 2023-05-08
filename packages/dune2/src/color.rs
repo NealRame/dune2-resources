@@ -4,7 +4,8 @@ use std::fs;
 use std::io;
 use std::path;
 
-use std::error::{Error};
+use std::error::Error;
+use std::ops::Mul;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
 pub struct Color {
@@ -16,6 +17,44 @@ pub struct Color {
 impl Color {
     pub fn new(red: u8, green: u8, blue: u8) -> Self {
         Self { red, green, blue }
+    }
+}
+
+impl<T> Mul<T> for Color where T: Mul<u8, Output = u8> + Copy {
+    type Output = Self;
+    fn mul(self, rhs: T) -> Self {
+        Self {
+            red: rhs*self.red,
+            green: rhs*self.green,
+            blue: rhs*self.blue,
+        }
+    }
+}
+
+impl Mul<Color> for u8 {
+    type Output = Color;
+    fn mul(self, rhs: Color) -> Color {
+        return rhs*self;
+    }
+}
+
+impl From<&[u8; 3]> for Color {
+    fn from(rgb: &[u8; 3]) -> Self {
+        Self {
+            red: rgb[0],
+            green: rgb[1],
+            blue: rgb[2],
+        }
+    }
+}
+
+impl From<(u8, u8, u8)> for Color {
+    fn from((red, green, blue): (u8, u8, u8)) -> Self {
+        Self {
+            red,
+            green,
+            blue,
+        }
     }
 }
 
@@ -48,10 +87,12 @@ impl Palette {
         loop {
             let color = match reader.read(&mut buf)? {
                 0 => break,
-                3 => Color::new(4*buf[0], 4*buf[1], 4*buf[2]),
+                3 => Color::from(&buf),
                 _ => return Err(format!("Invalid palette file").into()),
             };
-            palette.push(&color);
+            // We have to multiply each channel by 4 because the palette is 6
+            // bits per channel
+            palette.push(&(4*color));
         }
 
         Ok(palette)
