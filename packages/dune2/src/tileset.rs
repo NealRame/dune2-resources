@@ -5,7 +5,6 @@ use std::path;
 use std::error::{Error};
 use std::io::{Read, Seek, SeekFrom};
 
-use crate::color::*;
 use crate::io::*;
 use crate::surface::*;
 

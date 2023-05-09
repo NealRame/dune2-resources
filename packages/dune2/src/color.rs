@@ -7,7 +7,9 @@ use std::path;
 use std::error::Error;
 use std::ops::Mul;
 
-#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Color {
     pub red: u8,
     pub green: u8,
@@ -58,6 +60,7 @@ impl From<(u8, u8, u8)> for Color {
     }
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Palette {
     colors_index: HashMap<Color, usize>,
     colors: Vec<Color>,
