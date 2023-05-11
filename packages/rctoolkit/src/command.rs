@@ -74,9 +74,7 @@ pub fn run(cli: Cli) -> Result<(), Box<dyn Error>> {
         fs::File::create(&cli.output_file)?,
         Compression::Best
     );
-    let mut serializer = Serializer::new(&mut output);
 
-    rc.serialize(&mut serializer)?;
-
+    rc.serialize(&mut Serializer::new(&mut output))?;
     Ok(())
 }
