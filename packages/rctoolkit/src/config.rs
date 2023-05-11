@@ -5,7 +5,9 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub palette: PathBuf
+    pub palette: PathBuf,
+    pub tileset: PathBuf,
+    pub sprites: Vec<PathBuf>,
 }
 
 #[derive(Parser)]
