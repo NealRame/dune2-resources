@@ -52,7 +52,7 @@ impl Tilemap {
         tileset: &Tileset,
     ) -> Surface {
         let tiles = self.tiles.iter()
-            .map(|&tile_index| tileset.tiles[tile_index].surface(palette))
+            .map(|&tile_index| tileset.surface(tile_index, palette))
             .collect::<Vec<_>>();
 
         let width = tileset.tile_size.width*self.shape.columns as u32;
