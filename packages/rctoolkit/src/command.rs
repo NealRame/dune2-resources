@@ -1,12 +1,16 @@
+use std::fs;
+
 use std::error::Error;
 use std::path::PathBuf;
 
-use std::fs;
+use toml;
+
+use deflate::Compression;
+use deflate::write::ZlibEncoder;
+use rmp_serde::Serializer;
+use serde::Serialize;
 
 use dune2::Dune2RC;
-use rmp_serde::{Serializer};
-use serde::{Serialize};
-use toml;
 
 use crate::config::{Cli, Config};
 
@@ -49,11 +53,12 @@ pub fn run(cli: Cli) -> Result<(), Box<dyn Error>> {
 
     let palette = dune2::Palette::from_pal_file(&config.palette)?;
     let tileset = dune2::Tileset::from_icn_file(&config.tileset)?;
+    let mut sprites = Vec::new();
 
-    let sprites =
-        config.sprites.iter().flat_map(|sprite| {
-            dune2::SpriteFrame::from_shp_file(sprite).unwrap()
-        }).collect::<Vec<_>>();
+    for sprite in &config.sprites {
+        let sprite_frames = dune2::SpriteFrame::from_shp_file(sprite)?;
+        sprites.extend(sprite_frames);
+    }
 
     let rc = Dune2RC {
         palette,
@@ -65,7 +70,10 @@ pub fn run(cli: Cli) -> Result<(), Box<dyn Error>> {
         return Err("Output file already exists. Use --force to overwrite.".into());
     }
 
-    let mut output = fs::File::create(&cli.output_file)?;
+    let mut output = ZlibEncoder::new(
+        fs::File::create(&cli.output_file)?,
+        Compression::Best
+    );
     let mut serializer = Serializer::new(&mut output);
 
     rc.serialize(&mut serializer)?;

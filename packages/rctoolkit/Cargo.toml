@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.2.7", features = ["derive", "env"] }
+deflate = "1.0.0"
 dune2 = { path = "../dune2" }
 rmp-serde = "1.1.1"
 serde = "1.0.162"
