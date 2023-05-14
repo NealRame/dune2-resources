@@ -4,9 +4,11 @@ use std::path;
 use std::error::{ Error };
 use std::io::{Read, Seek };
 
+use serde::{Deserialize, Serialize};
+
 use crate::*;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
 pub struct Shape {
     pub rows: usize,
     pub columns: usize,
@@ -40,6 +42,7 @@ impl Shape {
     }
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Tilemap {
     pub shape: Shape,
     pub tiles: Vec<usize>,

@@ -1,26 +1,38 @@
 use std::fs;
-
 use std::error::Error;
 use std::path::PathBuf;
 
-use flate2::write::DeflateEncoder;
+use clap::Args;
+
 use flate2::Compression;
+use flate2::write::DeflateEncoder;
 
 use rmp_serde::Serializer;
 
-use serde::Serialize;
 use serde::Deserialize;
+use serde::Serialize;
 
 use toml;
 
-use dune2::Dune2RC;
+#[derive(Args)]
+pub struct Cli {
+    /// Input file path
+    pub config_filepath: PathBuf,
 
-use crate::cli;
+    /// Overwrite existing files
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub force_overwrite: bool,
+
+    /// Output folder path
+    #[arg(long, short, default_value = "dune2.rc")]
+    pub output_file: PathBuf,
+}
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub palette: PathBuf,
     pub tileset: PathBuf,
+    pub tilemaps: PathBuf,
     pub sprites: Vec<PathBuf>,
 }
 
@@ -44,7 +56,13 @@ impl Config {
         if !config.tileset.is_absolute() {
             config.tileset = config_dir.join(&config.tileset);
         }
-    
+
+        // if tilemaps path is relative, make it absolute by joining it with the
+        // config file's directory
+        if !config.tilemaps.is_absolute() {
+            config.tilemaps = config_dir.join(&config.tilemaps);
+        }
+
         // if sprite paths are relative, make them absolute by joining them with
         // the config file's directory
         config.sprites =
@@ -60,11 +78,12 @@ impl Config {
     }
 }
 
-pub fn run(args: &cli::CreateArgs) -> Result<(), Box<dyn Error>> {
+pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     let config = Config::try_read_from_file(&args.config_filepath)?;
 
     let palette = dune2::Palette::from_pal_file(&config.palette)?;
     let tileset = dune2::Tileset::from_icn_file(&config.tileset)?;
+    let tilemaps = dune2::Tilemap::from_map_file(&config.tilemaps)?;
     let mut sprites = Vec::new();
 
     for sprite in &config.sprites {
@@ -72,9 +91,10 @@ pub fn run(args: &cli::CreateArgs) -> Result<(), Box<dyn Error>> {
         sprites.extend(sprite_frames);
     }
 
-    let rc = Dune2RC {
+    let rc = dune2::RC {
         palette,
         tileset,
+        tilemaps,
         sprites,
     };
 
