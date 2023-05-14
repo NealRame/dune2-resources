@@ -221,14 +221,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fed44880c466736ef9a5c5b5facefb5ed0785676d0c02d612db14e54f0d84286"
 
 [[package]]
-name = "icn2bmp"
-version = "0.1.0"
-dependencies = [
- "clap",
- "dune2",
-]
-
-[[package]]
 name = "indexmap"
 version = "1.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -301,14 +293,6 @@ name = "once_cell"
 version = "1.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b7e5500299e16ebb147ae15a00a942af264cf3688f47923b8fc2cd5858f23ad3"
-
-[[package]]
-name = "pal2bmp"
-version = "0.1.0"
-dependencies = [
- "clap",
- "dune2",
-]
 
 [[package]]
 name = "paste"
@@ -415,14 +399,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0efd8caf556a6cebd3b285caf480045fcc1ac04f6bd786b09a6f11af30c4fcf4"
 dependencies = [
  "serde",
-]
-
-[[package]]
-name = "shp2bmp"
-version = "0.1.0"
-dependencies = [
- "clap",
- "dune2",
 ]
 
 [[package]]

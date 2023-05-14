@@ -5,8 +5,5 @@ members = [
     "packages/dune2",
     # dune2 data command line tools
     "packages/rctoolkit",
-    "packages/icn2bmp",
-    "packages/pal2bmp",
-    "packages/shp2bmp",
     "packages/unpak",
 ]
