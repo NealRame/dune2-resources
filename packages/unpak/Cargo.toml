@@ -1,5 +1,5 @@
 [package]
-name = "unpak"
+name = "dune2-unpak"
 version = "0.1.0"
 edition = "2021"
 authors = ["NealRame <https://github.com/NealRame>"]

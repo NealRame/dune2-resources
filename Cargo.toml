@@ -1,9 +1,9 @@
 [workspace]
 
 members = [
+    # dune2 data lib
     "packages/dune2",
-    "packages/icn2bmp",
-    "packages/pal2bmp",
-    "packages/shp2bmp",
+    # dune2 data command line tools
+    "packages/rctoolkit",
     "packages/unpak",
 ]

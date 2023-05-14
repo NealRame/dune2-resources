@@ -7,6 +7,8 @@ use std::iter;
 
 use bitvec::prelude::*;
 
+use serde::{Deserialize, Serialize};
+
 use crate::color::*;
 use crate::constants::*;
 use crate::io::*;
@@ -17,6 +19,7 @@ enum SHPVersion {
     V107,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct SpriteFrame {
     pub width: u16,
     pub height: u16,

@@ -5,7 +5,9 @@ use std::path;
 use std::error::{Error};
 use std::io::{Read, Seek, SeekFrom};
 
-use crate::color::*;
+use serde::{Deserialize, Serialize};
+
+use crate::constants::*;
 use crate::io::*;
 use crate::surface::*;
 
@@ -126,26 +128,31 @@ impl ICNRTbl {
     }
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Tile {
-    pub width: u16,
-    pub height: u16,
-    pub data: Vec<u8>,
+    data: Vec<u8>,
 }
 
 impl Tile {
-    pub fn surface(
+    fn surface(
         &self,
+        size: Size,
         palette: &Palette,
+        faction: Faction,
     ) -> Surface {
-        let mut surface = Surface::new(Size {
-            width: self.width as u32,
-            height: self.height as u32,
-        });
+        let mut surface = Surface::new(size);
+        let faction_palette_offset = 16*(faction as usize);
 
         for (i, &color_index) in self.data.iter().enumerate() {
-            let x = ((i as u16)%self.width) as i32;
-            let y = ((i as u16)/self.width) as i32;
-            let color = palette.color_at(color_index as usize);
+            let mut color_index = color_index as usize;
+            let x = ((i as u32)%size.width) as i32;
+            let y = ((i as u32)/size.width) as i32;
+
+            if color_index >= COLOR_HARKONNEN && color_index < COLOR_HARKONNEN + 7 {
+                color_index += faction_palette_offset;
+            }
+
+            let color = palette.color_at(color_index);
 
             surface.put_pixel(Point { x, y }, color);
         }
@@ -154,9 +161,21 @@ impl Tile {
     }
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Tileset {
     pub tile_size: Size,
     pub tiles: Vec<Tile>,
+}
+
+impl Tileset {
+    pub fn surface(
+        &self,
+        tile_index: usize,
+        palette: &Palette,
+        faction: Faction,
+    ) -> Surface {
+        self.tiles[tile_index].surface(self.tile_size, palette, faction)
+    }
 }
 
 impl Tileset {
@@ -190,11 +209,7 @@ impl Tileset {
                     }
                 }
 
-                Tile {
-                    width: info.width,
-                    height: info.height,
-                    data,
-                }
+                Tile { data }
             }).collect::<Vec<_>>();
 
         Ok(Tileset {
