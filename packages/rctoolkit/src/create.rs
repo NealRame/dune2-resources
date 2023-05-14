@@ -60,7 +60,6 @@ impl Config {
     }
 }
 
-
 pub fn run(args: &cli::CreateArgs) -> Result<(), Box<dyn Error>> {
     let config = Config::try_read_from_file(&args.config_filepath)?;
 
