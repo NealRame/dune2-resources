@@ -53,9 +53,10 @@ impl Tilemap {
         &self,
         palette: &Palette,
         tileset: &Tileset,
+        faction: Faction,
     ) -> Surface {
         let tiles = self.tiles.iter()
-            .map(|&tile_index| tileset.surface(tile_index, palette))
+            .map(|&tile_index| tileset.surface(tile_index, palette, faction))
             .collect::<Vec<_>>();
 
         let width = tileset.tile_size.width*self.shape.columns as u32;

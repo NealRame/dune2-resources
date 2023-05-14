@@ -7,6 +7,7 @@ use std::io::{Read, Seek, SeekFrom};
 
 use serde::{Deserialize, Serialize};
 
+use crate::constants::*;
 use crate::io::*;
 use crate::surface::*;
 
@@ -137,13 +138,21 @@ impl Tile {
         &self,
         size: Size,
         palette: &Palette,
+        faction: Faction,
     ) -> Surface {
         let mut surface = Surface::new(size);
+        let faction_palette_offset = 16*(faction as usize);
 
         for (i, &color_index) in self.data.iter().enumerate() {
+            let mut color_index = color_index as usize;
             let x = ((i as u32)%size.width) as i32;
             let y = ((i as u32)/size.width) as i32;
-            let color = palette.color_at(color_index as usize);
+
+            if color_index >= COLOR_HARKONNEN && color_index < COLOR_HARKONNEN + 7 {
+                color_index += faction_palette_offset;
+            }
+
+            let color = palette.color_at(color_index);
 
             surface.put_pixel(Point { x, y }, color);
         }
@@ -159,8 +168,13 @@ pub struct Tileset {
 }
 
 impl Tileset {
-    pub fn surface(&self, tile_index: usize, palette: &Palette) -> Surface {
-        self.tiles[tile_index].surface(self.tile_size, palette)
+    pub fn surface(
+        &self,
+        tile_index: usize,
+        palette: &Palette,
+        faction: Faction,
+    ) -> Surface {
+        self.tiles[tile_index].surface(self.tile_size, palette, faction)
     }
 }
 

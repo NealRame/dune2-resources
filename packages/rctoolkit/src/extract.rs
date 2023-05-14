@@ -41,6 +41,10 @@ pub struct Tileset {
     #[arg(short = 'd', long, default_value = "tileset")]
     pub output_dir: PathBuf,
 
+    /// Faction to export
+    #[arg(short = 'F', long, default_value = "harkonnen")]
+    pub faction: String,
+
     /// Overwrite existing files
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub force_overwrite: bool,
@@ -51,6 +55,10 @@ pub struct Tilemaps {
     /// Output folder path
     #[arg(short = 'd', long, default_value = "tilemaps")]
     pub output_dir: PathBuf,
+
+    /// Faction to export
+    #[arg(short = 'F', long, default_value = "harkonnen")]
+    pub faction: String,
 
     /// Overwrite existing files
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
@@ -155,9 +163,10 @@ fn export_tilemap_to_bmp(
     tilemap: &dune2::Tilemap,
     tileset: &dune2::Tileset,
     palette: &dune2::Palette,
+    faction: dune2::Faction,
     output_filepath: &PathBuf,
 ) -> Result<(), Box<dyn Error>> {
-    let surface = tilemap.surface(&palette, &tileset);
+    let surface = tilemap.surface(&palette, &tileset, faction);
     let mut output = fs::File::create(output_filepath)?;
     dune2::write_bmp_with_palette(&surface, &palette, &mut output)?;
     return Ok(());
@@ -167,6 +176,8 @@ fn extract_tileset(
     rc: &dune2::RC,
     args: &Tileset,
 ) -> Result<(), Box<dyn Error>> {
+    let faction = dune2::Faction::from_str(&args.faction)?;
+
     fs::create_dir_all(&args.output_dir)?;
 
     let tilemaps = Vec::from_iter((0..rc.tileset.tiles.len()).map(|i| {
@@ -182,6 +193,7 @@ fn extract_tileset(
             &tilemap,
             &rc.tileset,
             &rc.palette,
+            faction,
             &output_filepath
         )?;
     }
@@ -193,6 +205,8 @@ fn extract_tilemaps(
     rc: &dune2::RC,
     args: &Tilemaps,
 ) -> Result<(), Box<dyn Error>> {
+    let faction = dune2::Faction::from_str(&args.faction)?;
+
     fs::create_dir_all(&args.output_dir)?;
 
     for (i, tilemap) in rc.tilemaps.iter().enumerate() {
@@ -201,6 +215,7 @@ fn extract_tilemaps(
             &tilemap,
             &rc.tileset,
             &rc.palette,
+            faction,
             &output_filepath
         )?;
     }
