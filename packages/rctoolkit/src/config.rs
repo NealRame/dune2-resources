@@ -16,11 +16,11 @@ pub struct Cli {
     /// Input file path
     pub config_filepath: PathBuf,
 
-    /// Output folder path
-    #[arg(short, long, default_value = "dune2.rc")]
-    pub output_file: PathBuf,
-
     /// Overwrite existing files
-    #[arg(short = 'f', long, default_value = "false", action = clap::ArgAction::SetTrue)]
-    pub overwrite: bool,
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub force_overwrite: bool,
+
+    /// Output folder path
+    #[arg(long, short, default_value = "dune2.rc")]
+    pub output_file: PathBuf,
 }

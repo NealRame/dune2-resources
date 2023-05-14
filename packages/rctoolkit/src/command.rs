@@ -66,7 +66,7 @@ pub fn run(cli: Cli) -> Result<(), Box<dyn Error>> {
         sprites,
     };
 
-    if cli.output_file.exists() && !cli.overwrite {
+    if cli.output_file.exists() && !cli.force_overwrite {
         return Err("Output file already exists. Use --force to overwrite.".into());
     }
 
