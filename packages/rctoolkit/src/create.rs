@@ -3,8 +3,8 @@ use std::fs;
 use std::error::Error;
 use std::path::PathBuf;
 
-use deflate::Compression;
-use deflate::write::ZlibEncoder;
+use flate2::write::DeflateEncoder;
+use flate2::Compression;
 
 use rmp_serde::Serializer;
 
@@ -83,9 +83,9 @@ pub fn run(args: &cli::CreateArgs) -> Result<(), Box<dyn Error>> {
             "Output file already exists. Use --force-overwrite to overwrite.".into());
     }
 
-    let mut output = ZlibEncoder::new(
+    let mut output = DeflateEncoder::new(
         fs::File::create(&args.output_file)?,
-        Compression::Best
+        Compression::best(),
     );
 
     rc.serialize(&mut Serializer::new(&mut output))?;
