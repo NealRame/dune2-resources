@@ -1,14 +1,19 @@
-mod config;
-mod command;
+mod cli;
+mod create;
 
 use clap::Parser;
-use config::Cli;
+
+use cli::*;
 
 fn main() {
-    let config = Cli::parse();
+    let cli = Cli::parse();
 
-    command::run(config).unwrap_or_else(|err| {
+    let res = match &cli.command {
+        Commands::Create(args) => create::run(args),
+    };
+
+    if let Err(err) = res {
         println!("Error: {}", err);
         std::process::exit(1);
-    });
+    }
 }
