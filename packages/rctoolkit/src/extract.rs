@@ -104,8 +104,8 @@ fn extract_palette(
     for (i, color) in rc.palette.iter() {
         let rect = dune2::Rect::from_point_and_size(
             32*dune2::Point {
-                x: (i as i32)%16,
-                y: (i as i32)/16,
+                x: (i as u32)%16,
+                y: (i as u32)/16,
             },
             palette_watch_size,
         );

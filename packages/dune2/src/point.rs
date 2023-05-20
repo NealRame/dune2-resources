@@ -2,8 +2,8 @@ use std::ops::{Add, Sub, Mul};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Point {
-    pub x: i32,
-    pub y: i32,
+    pub x: u32,
+    pub y: u32,
 }
 
 impl Point {
@@ -32,7 +32,7 @@ impl Sub for Point {
     }
 }
 
-impl<T> Mul<T> for Point where T: Mul<i32, Output = i32> + Copy {
+impl<T> Mul<T> for Point where T: Mul<u32, Output = u32> + Copy {
     type Output = Self;
     fn mul(self, rhs: T) -> Self {
         Self {
@@ -42,7 +42,7 @@ impl<T> Mul<T> for Point where T: Mul<i32, Output = i32> + Copy {
     }
 }
 
-impl Mul<Point> for i32 {
+impl Mul<Point> for u32 {
     type Output = Point;
     fn mul(self, rhs: Point) -> Point {
         return rhs*self;

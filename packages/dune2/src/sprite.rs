@@ -259,8 +259,8 @@ impl SpriteFrame {
         let faction_palette_offset = 16*(faction as usize);
 
         for (i, &color_index) in self.data.iter().enumerate() {
-            let x = ((i as u16)%self.width) as i32;
-            let y = ((i as u16)/self.width) as i32;
+            let x = ((i as u16)%self.width) as u32;
+            let y = ((i as u16)/self.width) as u32;
 
             let color = if self.remap_table.len() > 0 {
                 let mut color_remapped_index = self.remap_table[color_index as usize];

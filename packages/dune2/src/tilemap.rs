@@ -10,8 +10,8 @@ use crate::*;
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize)]
 pub struct Shape {
-    pub rows: usize,
-    pub columns: usize,
+    pub rows: u32,
+    pub columns: u32,
 }
 
 impl Shape {
@@ -68,12 +68,12 @@ impl Tilemap {
         });
 
         for (i, tile) in tiles.iter().enumerate() {
-            let row = (i/self.shape.columns) as u32;
-            let column = (i%self.shape.columns) as u32;
+            let row = (i as u32)/self.shape.columns;
+            let column = (i as u32)%self.shape.columns;
 
             let dst_rect = Rect::from_point_and_size(Point {
-                x: (column*tileset.tile_size.width) as i32,
-                y: (row*tileset.tile_size.height) as i32,
+                x: column*tileset.tile_size.width,
+                y: row*tileset.tile_size.height,
             }, tile.size());
 
             surface.blit(tile, &tile.rect(), &dst_rect);
@@ -104,8 +104,8 @@ impl Tilemap {
                 indexes.iter().skip(2).take(count - 1),
             )
             .map(|(start, end)| {
-                let start = *start as usize;
-                let end = *end as usize;
+                let start = *start;
+                let end = *end;
                 (start, if end == 0 { indexes.len() } else { end })
             })
             .enumerate()
@@ -115,10 +115,10 @@ impl Tilemap {
                 let mut shape = Shape::from_index(icon_index);
 
                 if shape.rows*shape.columns == 1 {
-                    shape.columns = count;
+                    shape.columns = count as u32;
                 }
 
-                let shape_size = shape.rows*shape.columns;
+                let shape_size = (shape.rows*shape.columns) as usize;
                 let shape_count = count/shape_size;
 
                 let mut icons = Vec::with_capacity(shape_count);

@@ -64,8 +64,8 @@ pub fn write_bmp_with_palette<T>(
     let row_size = ((bits_per_pixel as u32)*size.width + 31)/32*4;
     let pad_size = row_size - ((bits_per_pixel/8) as u32)*size.width;
 
-    for y in (0..size.height as i32).rev() {
-        for x in 0..size.width as i32 {
+    for y in (0..size.height).rev() {
+        for x in 0..size.width {
             let color = bitmap.get_pixel(Point { x, y });
             if bits_per_pixel == 8 {
                 writer.write_all(&[palette.color_index(&color).unwrap() as u8]).unwrap();

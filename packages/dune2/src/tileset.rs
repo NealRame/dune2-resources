@@ -145,8 +145,8 @@ impl Tile {
 
         for (i, &color_index) in self.data.iter().enumerate() {
             let mut color_index = color_index as usize;
-            let x = ((i as u32)%size.width) as i32;
-            let y = ((i as u32)/size.width) as i32;
+            let x = (i as u32)%size.width;
+            let y = (i as u32)/size.width;
 
             if color_index >= COLOR_HARKONNEN && color_index < COLOR_HARKONNEN + 7 {
                 color_index += faction_palette_offset;
