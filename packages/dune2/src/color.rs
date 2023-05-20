@@ -9,7 +9,7 @@ use std::ops::Mul;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct Color {
     pub red: u8,
     pub green: u8,

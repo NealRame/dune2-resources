@@ -12,13 +12,13 @@ fn ppi2ppm(ppi: u32) -> u32 {
 }
 
 pub fn write_bmp_with_palette<T>(
-    surface: &Surface,
+    bitmap: &Surface,
     palette: &Palette,
     writer: &mut T,
 ) -> Result<(), Box<dyn Error>> where T: io::Write + io::Seek {
     // see https://en.wikipedia.org/wiki/BMP_file_format
 
-    let size = surface.size();
+    let size = bitmap.size();
 
     let palette_size = palette.len() as u32;
     let bits_per_pixel = if palette_size <= 256 { 8 } else { 24 } as u16;
@@ -66,7 +66,7 @@ pub fn write_bmp_with_palette<T>(
 
     for y in (0..size.height as i32).rev() {
         for x in 0..size.width as i32 {
-            let color = surface.pixel(Point { x, y });
+            let color = bitmap.get_pixel(Point { x, y });
             if bits_per_pixel == 8 {
                 writer.write_all(&[palette.color_index(&color).unwrap() as u8]).unwrap();
             } else {

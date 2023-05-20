@@ -9,7 +9,6 @@ use bitvec::prelude::*;
 
 use serde::{Deserialize, Serialize};
 
-use crate::color::*;
 use crate::constants::*;
 use crate::io::*;
 use crate::surface::*;

@@ -1,3 +1,5 @@
+mod bitmap;
+
 mod bmp_writers;
 mod color;
 mod constants;

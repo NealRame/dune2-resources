@@ -76,7 +76,7 @@ impl Tilemap {
                 y: (row*tileset.tile_size.height) as i32,
             }, tile.size());
 
-            surface.blit(tile, tile.rect(), dst_rect);
+            surface.blit(tile, &tile.rect(), &dst_rect);
         }
 
         surface

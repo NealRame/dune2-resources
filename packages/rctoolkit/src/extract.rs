@@ -9,6 +9,8 @@ use flate2::read::DeflateDecoder;
 
 use rmp_serde;
 
+use dune2::Bitmap;
+
 #[derive(Args)]
 pub struct PaletteArgs {
     /// Output folder path
