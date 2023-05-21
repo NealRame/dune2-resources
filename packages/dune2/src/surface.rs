@@ -32,12 +32,16 @@ impl Bitmap for Surface {
     fn height(&self) -> u32 {
         self.size.height
     }
+}
 
+impl BitmapGetPixel for Surface {
     fn get_pixel(&self, p: Point) -> Color {
         let index = index(p, self.size.width);
         self.pixels[index]
     }
+}
 
+impl BitmapPutPixel for Surface {
     fn put_pixel(&mut self, p: Point, color: Color) -> &mut Self {
         let index = index(p, self.size.width);
         self.pixels[index] = color;

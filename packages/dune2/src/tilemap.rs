@@ -76,7 +76,12 @@ impl Tilemap {
                 y: row*tileset.tile_size.height,
             }, tile.size());
 
-            surface.blit(tile, &tile.rect(), &dst_rect);
+            bitmap::blit(
+                tile,
+                &tile.rect(),
+                &mut surface,
+                &dst_rect
+            );
         }
 
         surface

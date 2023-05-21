@@ -1,19 +1,19 @@
-mod bitmap;
-
-mod bmp_writers;
-mod color;
-mod constants;
-mod io;
-mod point;
-mod rc;
-mod rect;
-mod size;
-mod sprite;
-mod surface;
-mod tilemap;
-mod tileset;
+pub mod bitmap;
+pub mod bmp_writers;
+pub mod color;
+pub mod constants;
+pub mod io;
+pub mod point;
+pub mod rc;
+pub mod rect;
+pub mod size;
+pub mod sprite;
+pub mod surface;
+pub mod tilemap;
+pub mod tileset;
 
 pub use bmp_writers::*;
+pub use bitmap::*;
 pub use color::*;
 pub use constants::*;
 pub use io::*;

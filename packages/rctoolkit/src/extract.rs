@@ -9,8 +9,6 @@ use flate2::read::DeflateDecoder;
 
 use rmp_serde;
 
-use dune2::Bitmap;
-
 #[derive(Args)]
 pub struct PaletteArgs {
     /// Output folder path
@@ -109,7 +107,8 @@ fn extract_palette(
             },
             palette_watch_size,
         );
-        palette_surface.fill_rect(&rect, color);
+
+        dune2::bitmap::fill_rect(&mut palette_surface, &rect, color);
     }
 
     if args.output_filepath.exists() && !args.force_overwrite {
