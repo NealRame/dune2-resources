@@ -245,39 +245,63 @@ fn shp_read_frame<T>(
     })
 }
 
-impl SpriteFrame {
-    pub fn surface(
-        &self,
-        palette: &Palette,
+pub struct SpriteFrameBitmap<'a, 'b> {
+    frame: &'a SpriteFrame,
+    palette: &'b Palette,
+    faction_palette_offset: usize,
+}
+
+impl<'a, 'b> SpriteFrameBitmap<'a, 'b> {
+    fn new(
+        frame: &'a SpriteFrame,
+        palette: &'b Palette,
         faction: Faction,
-    ) -> Surface {
-        let mut surface = Surface::new(Size {
-            width: self.width as u32,
-            height: self.height as u32,
-        });
-
-        let faction_palette_offset = 16*(faction as usize);
-
-        for (i, &color_index) in self.data.iter().enumerate() {
-            let x = ((i as u16)%self.width) as u32;
-            let y = ((i as u16)/self.width) as u32;
-
-            let color = if self.remap_table.len() > 0 {
-                let mut color_remapped_index = self.remap_table[color_index as usize];
-
-                if color_remapped_index >= COLOR_HARKONNEN
-                    && color_remapped_index < COLOR_HARKONNEN + 7 {
-                    color_remapped_index += faction_palette_offset;
-                }
-                palette.color_at(color_remapped_index)
-            } else {
-                palette.color_at(color_index as usize)
-            };
-
-            surface.put_pixel(Point { x, y }, color);
+    ) -> Self {
+        Self {
+            frame,
+            palette,
+            faction_palette_offset: 16*(faction as usize),
         }
+    }
+}
 
-        surface
+impl Bitmap for SpriteFrameBitmap<'_, '_> {
+    fn width(&self) -> u32 {
+        self.frame.width as u32
+    }
+
+    fn height(&self) -> u32 {
+        self.frame.height as u32
+    }
+}
+
+impl BitmapGetPixel for SpriteFrameBitmap<'_, '_> {
+    fn get_pixel(&self, point: Point) -> Color {
+        let index = (point.y*self.width() + point.x) as usize;
+
+        let color_index = if self.frame.remap_table.len() > 0 {
+            let mut color_remapped_index = self.frame.remap_table[self.frame.data[index] as usize];
+
+            if color_remapped_index >= COLOR_HARKONNEN && color_remapped_index < COLOR_HARKONNEN + 7 {
+                color_remapped_index += self.faction_palette_offset;
+            }
+
+            color_remapped_index
+        } else {
+            self.frame.data[index] as usize
+        };
+
+        self.palette.color_at(color_index as usize)
+    }
+}
+
+impl SpriteFrame {
+    pub fn bitmap<'a, 'b>(
+        &'a self,
+        palette: &'b Palette,
+        faction: Faction,
+    ) -> SpriteFrameBitmap<'a, 'b> {
+        SpriteFrameBitmap::new(self, palette, faction)
     }
 }
 

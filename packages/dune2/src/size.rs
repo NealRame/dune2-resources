@@ -7,6 +7,15 @@ pub struct Size {
 }
 
 impl Size {
+    pub fn scaled(&self, scale: u32) -> Self {
+        Self {
+            width: self.width*scale,
+            height: self.height*scale,
+        }
+    }
+}
+
+impl Size {
     pub fn zero() -> Self {
         Self { width: 0, height: 0 }
     }
