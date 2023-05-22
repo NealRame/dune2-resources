@@ -22,6 +22,20 @@ impl Surface {
             pixels: vec![Color::default(); (size.width*size.height) as usize],
         }
     }
+
+    pub fn from_bitmap_scaled<T: Bitmap + BitmapGetPixel>(
+        bitmap: &T,
+        scale: u32,
+    ) -> Self {
+        let mut surface = Surface::new(bitmap.size().scaled(scale));
+
+        let src_rect = bitmap.rect();
+        let dst_rect = surface.rect();
+
+        blit(bitmap, &src_rect, &mut surface, &dst_rect);
+
+        surface
+    }
 }
 
 impl Bitmap for Surface {

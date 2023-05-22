@@ -128,53 +128,67 @@ impl ICNRTbl {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Tile {
-    data: Vec<u8>,
+pub struct TileBitmap<'a, 'b> {
+    tile_index: usize,
+    tileset: &'a Tileset,
+    palette: &'b Palette,
+    faction_palette_offset: usize,
 }
 
-impl Tile {
-    fn surface(
-        &self,
-        size: Size,
-        palette: &Palette,
+impl<'a, 'b> TileBitmap<'a, 'b> {
+    pub fn new(
+        tile_index: usize,
+        tileset: &'a Tileset,
+        palette: &'b Palette,
         faction: Faction,
-    ) -> Surface {
-        let mut surface = Surface::new(size);
-        let faction_palette_offset = 16*(faction as usize);
+    ) -> Self {
+        Self {
+            tile_index,
+            palette,
+            tileset,
+            faction_palette_offset: 16*(faction as usize),
+        }
+    }
+}
 
-        for (i, &color_index) in self.data.iter().enumerate() {
-            let mut color_index = color_index as usize;
-            let x = (i as u32)%size.width;
-            let y = (i as u32)/size.width;
+impl Bitmap for TileBitmap<'_, '_> {
+    fn width(&self) -> u32 {
+        self.tileset.tile_size.width
+    }
 
-            if color_index >= COLOR_HARKONNEN && color_index < COLOR_HARKONNEN + 7 {
-                color_index += faction_palette_offset;
-            }
+    fn height(&self) -> u32 {
+        self.tileset.tile_size.height
+    }
+}
 
-            let color = palette.color_at(color_index);
+impl BitmapGetPixel for TileBitmap<'_, '_> {
+    fn get_pixel(&self, point: Point) -> Color {
+        let index = (point.y*self.width() + point.x) as usize;
+        let mut color_index = self.tileset.tiles[self.tile_index][index] as usize;
 
-            surface.put_pixel(Point { x, y }, color);
+        if color_index >= COLOR_HARKONNEN
+            && color_index < COLOR_HARKONNEN + 7 {
+            color_index = color_index + self.faction_palette_offset
         }
 
-        surface
+        self.palette.color_at(color_index)
     }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Tileset {
     pub tile_size: Size,
-    pub tiles: Vec<Tile>,
+    pub tiles: Vec<Vec<u8>>,
 }
 
 impl Tileset {
-    pub fn surface(
-        &self,
-        tile_index: usize,
-        palette: &Palette,
+    pub fn bitmap<'a, 'b>(
+        &'a self,
+        index: usize,
+        palette: &'b Palette,
         faction: Faction,
-    ) -> Surface {
-        self.tiles[tile_index].surface(self.tile_size, palette, faction)
+    ) -> TileBitmap<'a, 'b> {
+        TileBitmap::new(index, self, palette, faction)
     }
 }
 
@@ -209,7 +223,7 @@ impl Tileset {
                     }
                 }
 
-                Tile { data }
+                data
             }).collect::<Vec<_>>();
 
         Ok(Tileset {

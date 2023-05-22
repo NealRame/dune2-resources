@@ -6,8 +6,6 @@ use std::io::{Read, Seek };
 
 use serde::{Deserialize, Serialize};
 
-use crate::*;
-
 #[derive(Clone, Copy, Debug, Deserialize, Serialize)]
 pub struct Shape {
     pub rows: u32,
@@ -46,46 +44,6 @@ impl Shape {
 pub struct Tilemap {
     pub shape: Shape,
     pub tiles: Vec<usize>,
-}
-
-impl Tilemap {
-    pub fn surface(
-        &self,
-        palette: &Palette,
-        tileset: &Tileset,
-        faction: Faction,
-    ) -> Surface {
-        let tiles = self.tiles.iter()
-            .map(|&tile_index| tileset.surface(tile_index, palette, faction))
-            .collect::<Vec<_>>();
-
-        let width = tileset.tile_size.width*self.shape.columns as u32;
-        let height = tileset.tile_size.height*self.shape.rows as u32;
-
-        let mut surface = Surface::new(Size {
-            width,
-            height,
-        });
-
-        for (i, tile) in tiles.iter().enumerate() {
-            let row = (i as u32)/self.shape.columns;
-            let column = (i as u32)%self.shape.columns;
-
-            let dst_rect = Rect::from_point_and_size(Point {
-                x: column*tileset.tile_size.width,
-                y: row*tileset.tile_size.height,
-            }, tile.size());
-
-            bitmap::blit(
-                tile,
-                &tile.rect(),
-                &mut surface,
-                &dst_rect
-            );
-        }
-
-        surface
-    }
 }
 
 impl Tilemap {
