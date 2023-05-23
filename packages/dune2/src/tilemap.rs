@@ -6,11 +6,7 @@ use std::io::{Read, Seek };
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, Deserialize, Serialize)]
-pub struct Shape {
-    pub rows: u32,
-    pub columns: u32,
-}
+use crate::shape::*;
 
 impl Shape {
     pub fn from_index(index: usize) -> Shape {
