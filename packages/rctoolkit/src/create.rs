@@ -1,6 +1,9 @@
 use std::fs;
+
+use std::collections::HashMap;
 use std::error::Error;
 use std::path::PathBuf;
+use std::str;
 
 use clap::Args;
 
@@ -29,11 +32,32 @@ pub struct Cli {
 }
 
 #[derive(Debug, Deserialize)]
+pub struct PaletteConfig {
+    pub source: PathBuf,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct TilesetConfig {
+    pub source: PathBuf,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct TilemapsConfig {
+    pub source: PathBuf,
+    pub shapes: HashMap<String, dune2::Shape>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SpriteConfig {
+    pub source: PathBuf,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct Config {
-    pub palette: PathBuf,
-    pub tileset: PathBuf,
-    pub tilemaps: PathBuf,
-    pub sprites: Vec<PathBuf>,
+    pub palette: PaletteConfig,
+    pub tileset: TilesetConfig,
+    pub tilemaps: TilemapsConfig,
+    pub sprites: Vec<SpriteConfig>,
 }
 
 impl Config {
@@ -47,32 +71,29 @@ impl Config {
         
         // if palette path is relative, make it absolute by joining it with the
         // config file's directory
-        if !config.palette.is_absolute() {
-            config.palette = config_dir.join(&config.palette);
+        if !config.palette.source.is_absolute() {
+            config.palette.source = config_dir.join(&config.palette.source);
         }
     
         // if tileset path is relative, make it absolute by joining it with the
         // config file's directory
-        if !config.tileset.is_absolute() {
-            config.tileset = config_dir.join(&config.tileset);
+        if !config.tileset.source.is_absolute() {
+            config.tileset.source = config_dir.join(&config.tileset.source);
         }
 
-        // if tilemaps path is relative, make it absolute by joining it with the
-        // config file's directory
-        if !config.tilemaps.is_absolute() {
-            config.tilemaps = config_dir.join(&config.tilemaps);
-        }
-
-        // if sprite paths are relative, make them absolute by joining them with
+        // if tilemaps path is relative, make it absolute by joining it with
         // the config file's directory
-        config.sprites =
-            config.sprites.iter().map(|sprite| {
-                if !sprite.is_absolute() {
-                    config_dir.join(sprite)
-                } else {
-                    sprite.clone()
-                }
-            }).collect::<_>();
+        if !config.tilemaps.source.is_absolute() {
+            config.tilemaps.source = config_dir.join(&config.tilemaps.source);
+        }
+
+        // if sprite paths are relative, make them absolute by joining them
+        // with the config file's directory
+        config.sprites.iter_mut().for_each(|sprite| {
+            if !sprite.source.is_absolute() {
+                sprite.source = config_dir.join(&sprite.source);
+            }
+        });
     
         Ok(config)
     }
@@ -81,13 +102,16 @@ impl Config {
 pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     let config = Config::try_read_from_file(&args.config_filepath)?;
 
-    let palette = dune2::Palette::from_pal_file(&config.palette)?;
-    let tileset = dune2::Tileset::from_icn_file(&config.tileset)?;
-    let tilemaps = dune2::Tilemap::from_map_file(&config.tilemaps)?;
+    let palette = dune2::Palette::from_pal_file(&config.palette.source)?;
+    let tileset = dune2::Tileset::from_icn_file(&config.tileset.source)?;
+    let tilemaps = dune2::Tilemap::from_map_file(
+            &config.tilemaps.source,
+            &config.tilemaps.shapes,
+    )?;
     let mut sprites = Vec::new();
 
     for sprite in &config.sprites {
-        let sprite_frames = dune2::SpriteFrame::from_shp_file(sprite)?;
+        let sprite_frames = dune2::SpriteFrame::from_shp_file(&sprite.source)?;
         sprites.extend(sprite_frames);
     }
 

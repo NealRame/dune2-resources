@@ -1,40 +1,13 @@
 use std::fs;
 use std::path;
 
+use std::collections::HashMap;
 use std::error::{ Error };
 use std::io::{Read, Seek };
 
 use serde::{Deserialize, Serialize};
 
 use crate::shape::*;
-
-impl Shape {
-    pub fn from_index(index: usize) -> Shape {
-        match index {
-            10 => {
-                Shape { rows: 3, columns: 3 }
-            },
-            11|25 => {
-                Shape { rows: 2, columns: 2 }
-            },
-            12|13 => {
-                Shape { rows: 2, columns: 3 }
-            },
-            14..=18|24 => {
-                Shape { rows: 2, columns: 2 }
-            },
-            19 => {
-                Shape { rows: 3, columns: 3 }
-            },
-            20|21 => {
-                Shape { rows: 2, columns: 3 }
-            },
-            _ => {
-                Shape { rows: 1, columns: 1 }
-            },
-        }
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Tilemap {
@@ -45,6 +18,7 @@ pub struct Tilemap {
 impl Tilemap {
     pub fn from_map_reader<T>(
         reader: &mut T,
+        shapes: &HashMap<String, Shape>,
     ) -> Result<Vec<Tilemap>, Box<dyn Error>> where T: Read + Seek {
         let mut buf = [0u8; 2];
         let mut indexes = Vec::new();
@@ -71,11 +45,11 @@ impl Tilemap {
             .flat_map(|(icon_index, (start, end))| {
                 let count = end - start;
 
-                let mut shape = Shape::from_index(icon_index);
-
-                if shape.rows*shape.columns == 1 {
-                    shape.columns = count as u32;
-                }
+                let shape_key = format!("{}", icon_index);
+                let shape_fallback = Shape { rows: 1, columns: count as u32 };
+                let shape = shapes
+                    .get(&shape_key)
+                    .unwrap_or(&shape_fallback);
 
                 let shape_size = (shape.rows*shape.columns) as usize;
                 let shape_count = count/shape_size;
@@ -86,7 +60,7 @@ impl Tilemap {
                     let end = start + shape_size;
                     let tiles = indexes[start..end].to_vec();
                     icons.push(Tilemap {
-                        shape,
+                        shape: *shape,
                         tiles,
                     })
                 }
@@ -100,8 +74,9 @@ impl Tilemap {
 
     pub fn from_map_file<P>(
         path: P,
+        shapes: &HashMap<String, Shape>,
     ) -> Result<Vec<Tilemap>, Box<dyn Error>> where P: AsRef<path::Path> {
         let mut reader = fs::File::open(path)?;
-        Self::from_map_reader(&mut reader)
+        Self::from_map_reader(&mut reader, shapes)
     }
 }
