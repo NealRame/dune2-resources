@@ -146,10 +146,9 @@ fn export_tilemap_to_bmp(
     scale: u32,
     output_filepath: &PathBuf,
 ) -> Result<(), Box<dyn Error>> {
-    let mut surface = dune2::Surface::new(dune2::Size {
-        width: scale*tilemap.shape.columns*tileset.tile_size.width,
-        height: scale*tilemap.shape.rows*tileset.tile_size.height,
-    });
+    let mut surface = dune2::Surface::new(
+        scale*tilemap.shape*tileset.tile_size
+    );
 
     tilemap.tiles
         .iter()
@@ -160,10 +159,13 @@ fn export_tilemap_to_bmp(
             let col = (i as u32)%tilemap.shape.columns;
 
             let src_rect = dune2::Bitmap::rect(&tile);
-            let dst_rect = dune2::Rect::from_point_and_size(dune2::Point {
-                x: scale*col*tileset.tile_size.width,
-                y: scale*row*tileset.tile_size.height,
-            }, dune2::Bitmap::size(&tile).scaled(scale));
+            let dst_rect = dune2::Rect::from_point_and_size(
+                scale*dune2::Point {
+                    x: col*tileset.tile_size.width,
+                    y: row*tileset.tile_size.height,
+                },
+                scale*dune2::Bitmap::size(&tile)
+            );
 
             dune2::bitmap::blit(
                 &tile,

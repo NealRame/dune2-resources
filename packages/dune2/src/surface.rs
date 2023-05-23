@@ -27,7 +27,7 @@ impl Surface {
         bitmap: &T,
         scale: u32,
     ) -> Self {
-        let mut surface = Surface::new(bitmap.size().scaled(scale));
+        let mut surface = Surface::new(scale*bitmap.size());
 
         let src_rect = bitmap.rect();
         let dst_rect = surface.rect();

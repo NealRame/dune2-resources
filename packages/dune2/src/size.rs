@@ -1,4 +1,8 @@
+use std::ops::{Mul};
+
 use serde::{Deserialize, Serialize};
+
+use crate::shape::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Size {
@@ -7,16 +11,66 @@ pub struct Size {
 }
 
 impl Size {
-    pub fn scaled(&self, scale: u32) -> Self {
+    pub fn zero() -> Self {
         Self {
-            width: self.width*scale,
-            height: self.height*scale,
+            width: 0,
+            height: 0,
         }
     }
 }
 
-impl Size {
-    pub fn zero() -> Self {
-        Self { width: 0, height: 0 }
+impl Mul<u32> for Size {
+    type Output = Self;
+    fn mul(self, rhs: u32) -> Self {
+        Self {
+            width: rhs*self.width,
+            height: rhs*self.height,
+        }
+    }
+}
+
+impl Mul<Size> for u32 {
+    type Output = Size;
+    fn mul(self, rhs: Size) -> Size {
+        return rhs*self;
+    }
+}
+
+macro_rules! generate_uint_mul_impl {
+    ($($t:ty),*) => {
+        $(
+            impl Mul<$t> for Size {
+                type Output = Self;
+                fn mul(self, rhs: $t) -> Self {
+                    return self*(rhs as u32);
+                }
+            }
+
+            impl Mul<Size> for $t {
+                type Output = Size;
+                fn mul(self, rhs: Size) -> Size {
+                    return rhs*self;
+                }
+            }
+        )*
+    };
+}
+
+generate_uint_mul_impl!(u8, u16);
+
+impl Mul<Shape> for Size {
+    type Output = Self;
+    fn mul(self, rhs: Shape) -> Self {
+        return Self {
+            width: self.width*rhs.columns,
+            height: self.height*rhs.rows,
+        };
+    }
+}
+
+impl Mul<Size> for Shape {
+    type Output = Size;
+    fn mul(self, rhs: Size) -> Size {
+        return rhs*self;
     }
 }
