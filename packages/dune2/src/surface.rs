@@ -3,10 +3,13 @@ pub use crate::color::*;
 pub use crate::point::*;
 pub use crate::rect::*;
 pub use crate::size::*;
+pub use crate::transformations::*;
 
 pub struct Surface {
     size: Size,
     pixels: Vec<Color>,
+    transform_stack: Vec<TransformMatrix>,
+    transform: TransformMatrix,
 }
 
 impl Surface {
@@ -14,7 +17,40 @@ impl Surface {
         Self {
             size,
             pixels: vec![Color::default(); (size.width*size.height) as usize],
+            transform_stack: Vec::new(),
+            transform: TransformMatrix::identity(),
         }
+    }
+
+    pub fn reset(&mut self) -> &mut Self {
+        self.transform = TransformMatrix::identity();
+        self.transform_stack.clear();
+        self
+    }
+
+    pub fn restore(&mut self) -> &mut Self {
+        if let Some(transform) = self.transform_stack.pop() {
+            self.transform = transform;
+        }
+        self
+    }
+
+    pub fn save(&mut self) -> &mut Self {
+        self.transform_stack.push(self.transform.clone());
+        self
+    }
+
+    pub fn translate(&mut self, p: Point) -> &mut Self {
+        self.transform = self.transform*TransformMatrix::translate(
+            p.x as f32,
+            p.y as f32,
+        );
+        self
+    }
+
+    pub fn rotate(&mut self, angle: f32) -> &mut Self {
+        self.transform = self.transform*TransformMatrix::rotate(angle);
+        self
     }
 
     pub fn from_bitmap_scaled<T: Bitmap + BitmapGetPixel>(
@@ -44,12 +80,14 @@ impl Bitmap for Surface {
 
 impl BitmapGetPixel for Surface {
     fn get_pixel(&self, p: Point) -> Option<Color> {
+        let p = self.transform*p;
         point_to_index(p, self.size).map(|index| self.pixels[index])
     }
 }
 
 impl BitmapPutPixel for Surface {
     fn put_pixel(&mut self, p: Point, color: Color) -> &mut Self {
+        let p = self.transform*p;
         if let Some(index) = point_to_index(p, self.size) {
             self.pixels[index] = color;
         }

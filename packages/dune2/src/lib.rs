@@ -12,6 +12,7 @@ pub mod sprite;
 pub mod surface;
 pub mod tilemap;
 pub mod tileset;
+pub mod transformations;
 
 pub use bmp_writers::*;
 pub use bitmap::*;
@@ -27,3 +28,4 @@ pub use sprite::*;
 pub use surface::*;
 pub use tilemap::*;
 pub use tileset::*;
+pub use transformations::*;
