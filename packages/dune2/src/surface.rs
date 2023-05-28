@@ -9,12 +9,6 @@ pub struct Surface {
     pixels: Vec<Color>,
 }
 
-fn index(p: Point, width: u32) -> usize {
-    let x = p.x as u32;
-    let y = p.y as u32;
-    (y*width + x) as usize
-}
-
 impl Surface {
     pub fn new(size: Size) -> Self {
         Self {
@@ -49,16 +43,16 @@ impl Bitmap for Surface {
 }
 
 impl BitmapGetPixel for Surface {
-    fn get_pixel(&self, p: Point) -> Color {
-        let index = index(p, self.size.width);
-        self.pixels[index]
+    fn get_pixel(&self, p: Point) -> Option<Color> {
+        point_to_index(p, self.size).map(|index| self.pixels[index])
     }
 }
 
 impl BitmapPutPixel for Surface {
     fn put_pixel(&mut self, p: Point, color: Color) -> &mut Self {
-        let index = index(p, self.size.width);
-        self.pixels[index] = color;
+        if let Some(index) = point_to_index(p, self.size) {
+            self.pixels[index] = color;
+        }
         self
     }
 }

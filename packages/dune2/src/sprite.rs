@@ -276,22 +276,24 @@ impl Bitmap for SpriteFrameBitmap<'_, '_> {
 }
 
 impl BitmapGetPixel for SpriteFrameBitmap<'_, '_> {
-    fn get_pixel(&self, point: Point) -> Color {
-        let index = (point.y*self.width() + point.x) as usize;
+    fn get_pixel(&self, point: Point) -> Option<Color> {
+        point_to_index(point, self.size()).map(|index| {
+            let color_index = if self.frame.remap_table.len() > 0 {
+                let mut color_remapped_index =
+                    self.frame.remap_table[self.frame.data[index] as usize];
 
-        let color_index = if self.frame.remap_table.len() > 0 {
-            let mut color_remapped_index = self.frame.remap_table[self.frame.data[index] as usize];
+                if color_remapped_index >= COLOR_HARKONNEN
+                && color_remapped_index < COLOR_HARKONNEN + 7 {
+                    color_remapped_index += self.faction_palette_offset;
+                }
 
-            if color_remapped_index >= COLOR_HARKONNEN && color_remapped_index < COLOR_HARKONNEN + 7 {
-                color_remapped_index += self.faction_palette_offset;
-            }
+                color_remapped_index
+            } else {
+                self.frame.data[index] as usize
+            };
 
-            color_remapped_index
-        } else {
-            self.frame.data[index] as usize
-        };
-
-        self.palette.color_at(color_index as usize)
+            self.palette.color_at(color_index as usize)
+        })
     }
 }
 

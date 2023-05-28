@@ -66,7 +66,7 @@ pub fn write_bmp_with_palette<T>(
 
     for y in (0..size.height).rev() {
         for x in 0..size.width {
-            let color = bitmap.get_pixel(Point { x, y });
+            let color = bitmap.get_pixel(Point { x, y }).unwrap();
             if bits_per_pixel == 8 {
                 writer.write_all(&[palette.color_index(&color).unwrap() as u8]).unwrap();
             } else {

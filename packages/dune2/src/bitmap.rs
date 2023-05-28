@@ -20,7 +20,7 @@ pub trait Bitmap {
 }
 
 pub trait BitmapGetPixel {
-    fn get_pixel(&self, p: Point) -> Color;
+    fn get_pixel(&self, p: Point) -> Option<Color>;
 }
 
 
@@ -108,7 +108,15 @@ pub fn blit<T, U>(
                 x: x_map(x) as u32,
                 y: y_map(y) as u32,
             };
-            dst_bitmap.put_pixel(dst, src_bitmap.get_pixel(src));
+            dst_bitmap.put_pixel(dst, src_bitmap.get_pixel(src).unwrap());
         }
     }
+}
+
+/// 
+pub fn point_to_index(p: Point, size: Size) -> Option<usize> {
+    if p.x >= size.width || p.y >= size.height {
+        return None;
+    }
+    Some((p.y*size.width + p.x) as usize)
 }

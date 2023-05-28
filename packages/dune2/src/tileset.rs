@@ -162,16 +162,18 @@ impl Bitmap for TileBitmap<'_, '_> {
 }
 
 impl BitmapGetPixel for TileBitmap<'_, '_> {
-    fn get_pixel(&self, point: Point) -> Color {
-        let index = (point.y*self.width() + point.x) as usize;
-        let mut color_index = self.tileset.tiles[self.tile_index][index] as usize;
+    fn get_pixel(&self, point: Point) -> Option<Color> {
+        point_to_index(point, self.size()).map(|index| {
+            let mut color_index =
+                self.tileset.tiles[self.tile_index][index] as usize;
 
-        if color_index >= COLOR_HARKONNEN
-            && color_index < COLOR_HARKONNEN + 7 {
-            color_index = color_index + self.faction_palette_offset
-        }
-
-        self.palette.color_at(color_index)
+            if color_index >= COLOR_HARKONNEN
+                && color_index < COLOR_HARKONNEN + 7 {
+                color_index = color_index + self.faction_palette_offset
+            }
+    
+            self.palette.color_at(color_index)
+        })
     }
 }
 
