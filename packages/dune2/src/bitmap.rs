@@ -23,7 +23,6 @@ pub trait BitmapGetPixel {
     fn get_pixel(&self, p: Point) -> Option<Color>;
 }
 
-
 pub trait BitmapPutPixel {
     fn put_pixel(&mut self, p: Point, color: Color) -> &mut Self;
 }
