@@ -1,6 +1,5 @@
 use std::fs;
 
-use std::collections::HashMap;
 use std::error::Error;
 use std::path::PathBuf;
 use std::str;
@@ -39,12 +38,7 @@ pub struct PaletteConfig {
 #[derive(Debug, Deserialize)]
 pub struct TilesetConfig {
     pub source: PathBuf,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct TilemapsConfig {
-    pub source: PathBuf,
-    pub shapes: HashMap<String, dune2::Shape>,
+    pub maps: Vec<dune2::Tilemap>
 }
 
 #[derive(Debug, Deserialize)]
@@ -56,7 +50,6 @@ pub struct SpriteConfig {
 pub struct Config {
     pub palette: PaletteConfig,
     pub tileset: TilesetConfig,
-    pub tilemaps: TilemapsConfig,
     pub sprites: Vec<SpriteConfig>,
 }
 
@@ -81,12 +74,6 @@ impl Config {
             config.tileset.source = config_dir.join(&config.tileset.source);
         }
 
-        // if tilemaps path is relative, make it absolute by joining it with
-        // the config file's directory
-        if !config.tilemaps.source.is_absolute() {
-            config.tilemaps.source = config_dir.join(&config.tilemaps.source);
-        }
-
         // if sprite paths are relative, make them absolute by joining them
         // with the config file's directory
         config.sprites.iter_mut().for_each(|sprite| {
@@ -104,10 +91,6 @@ pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
 
     let palette = dune2::Palette::from_pal_file(&config.palette.source)?;
     let tileset = dune2::Tileset::from_icn_file(&config.tileset.source)?;
-    let tilemaps = dune2::Tilemap::from_map_file(
-            &config.tilemaps.source,
-            &config.tilemaps.shapes,
-    )?;
     let mut sprites = Vec::new();
 
     for sprite in &config.sprites {
@@ -118,7 +101,7 @@ pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     let rc = dune2::RC {
         palette,
         tileset,
-        tilemaps,
+        tilemaps: config.tileset.maps,
         sprites,
     };
 
