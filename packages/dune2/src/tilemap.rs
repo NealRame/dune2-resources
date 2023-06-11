@@ -2,8 +2,8 @@ use std::fs;
 use std::path;
 
 use std::collections::HashMap;
-use std::error::{ Error };
-use std::io::{Read, Seek };
+use std::error::{Error};
+use std::io::{Read, Seek};
 
 use serde::{Deserialize, Serialize};
 
