@@ -184,6 +184,18 @@ pub struct Tileset {
 }
 
 impl Tileset {
+    pub fn new(
+        tile_size: Size,
+    ) -> Self {
+        let tiles = Vec::new();
+        Self {
+            tile_size,
+            tiles,
+        }
+    }
+}
+
+impl Tileset {
     pub fn bitmap<'a, 'b>(
         &'a self,
         index: usize,

@@ -9,21 +9,13 @@ use bitvec::prelude::*;
 
 use serde::{Deserialize, Serialize};
 
-use crate::constants::*;
+use crate::{constants::*, Tileset};
 use crate::io::*;
 use crate::surface::*;
 
 enum SHPVersion {
     V100,
     V107,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct SpriteFrame {
-    pub width: u16,
-    pub height: u16,
-    pub data: Vec<u8>,
-    pub remap_table: Vec<usize>,
 }
 
 fn shp_read_version<T>(reader: &mut T)
@@ -175,11 +167,17 @@ fn inflate_rle_zero_data(
     }
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SHPFrame {
+    pub size: Size,
+    pub data: Vec<u8>,
+}
+
 fn shp_read_frame<T>(
     reader: &mut T,
     offset: u64,
     size: u64,
-) -> Result<SpriteFrame, Box<dyn Error>> where T: Read + Seek {
+) -> Result<SHPFrame, Box<dyn Error>> where T: Read + Seek {
 
     const HAS_REMAP_TABLE: usize = 0;
     const NO_LCW: usize = 1;
@@ -191,9 +189,9 @@ fn shp_read_frame<T>(
 
     reader.read_exact(&mut flags.as_raw_mut_slice())?;
     
-    let slices = u8::try_read_from::<LSB>(reader)? as u16;
-    let width = u16::try_read_from::<LSB>(reader)? as u16;
-    let height = u8::try_read_from::<LSB>(reader)? as u16;
+    let slices = u8::try_read_from::<LSB>(reader)? as u32;
+    let width = u16::try_read_from::<LSB>(reader)? as u32;
+    let height = u8::try_read_from::<LSB>(reader)? as u32;
 
     if slices != height {
         return Err(format!(
@@ -222,7 +220,7 @@ fn shp_read_frame<T>(
     } else { 0 } as usize;
 
     let remap_table = (0..remap_table_size)
-        .map(|_| u8::try_read_from::<LSB>(reader).map(usize::from))
+        .map(|_| u8::try_read_from::<LSB>(reader))
         .collect::<Result<Vec<_>, _>>()?;
 
     let mut rle_data = Vec::with_capacity(rle_data_size);
@@ -237,23 +235,30 @@ fn shp_read_frame<T>(
     let mut data = Vec::new();
     inflate_rle_zero_data(&rle_data, &mut data);
 
-    Ok(SpriteFrame {
-        width,
-        height,
-        remap_table,
+    if remap_table.len() > 0 {
+        for i in 0..data.len() {
+            data[i] = remap_table[data[i] as usize];
+        }
+    }
+
+    Ok(SHPFrame {
+        size: Size {
+            width,
+            height,
+        },
         data,
     })
 }
 
 pub struct SpriteFrameBitmap<'a, 'b> {
-    frame: &'a SpriteFrame,
+    frame: &'a SHPFrame,
     palette: &'b Palette,
     faction_palette_offset: usize,
 }
 
 impl<'a, 'b> SpriteFrameBitmap<'a, 'b> {
     fn new(
-        frame: &'a SpriteFrame,
+        frame: &'a SHPFrame,
         palette: &'b Palette,
         faction: Faction,
     ) -> Self {
@@ -267,37 +272,29 @@ impl<'a, 'b> SpriteFrameBitmap<'a, 'b> {
 
 impl Bitmap for SpriteFrameBitmap<'_, '_> {
     fn width(&self) -> u32 {
-        self.frame.width as u32
+        self.frame.size.width
     }
 
     fn height(&self) -> u32 {
-        self.frame.height as u32
+        self.frame.size.height
     }
 }
 
 impl BitmapGetPixel for SpriteFrameBitmap<'_, '_> {
     fn get_pixel(&self, point: Point) -> Option<Color> {
         point_to_index(point, self.size()).map(|index| {
-            let color_index = if self.frame.remap_table.len() > 0 {
-                let mut color_remapped_index =
-                    self.frame.remap_table[self.frame.data[index] as usize];
+            let mut color_index = self.frame.data[index] as usize;
 
-                if color_remapped_index >= COLOR_HARKONNEN
-                && color_remapped_index < COLOR_HARKONNEN + 7 {
-                    color_remapped_index += self.faction_palette_offset;
-                }
-
-                color_remapped_index
-            } else {
-                self.frame.data[index] as usize
-            };
+            if color_index >= COLOR_HARKONNEN && color_index < COLOR_HARKONNEN + 7 {
+                color_index += self.faction_palette_offset;
+            }
 
             self.palette.color_at(color_index as usize)
         })
     }
 }
 
-impl SpriteFrame {
+impl SHPFrame {
     pub fn bitmap<'a, 'b>(
         &'a self,
         palette: &'b Palette,
@@ -307,25 +304,36 @@ impl SpriteFrame {
     }
 }
 
-impl SpriteFrame {
+impl SHPFrame {
     pub fn from_shp_reader<T>(
         reader: &mut T,
-    ) -> Result<Vec<SpriteFrame>, Box<dyn Error>> where T: Read + Seek {
-        let mut frames = Vec::new();
-
+    ) -> Result<Vec<Tileset>, Box<dyn Error>> where T: Read + Seek {
         let shp_version = shp_read_version(reader)?;
         let shp_offsets = shp_read_frame_offsets(reader, shp_version)?;
-    
-        for (offset, size) in shp_offsets.iter().copied() {
-            frames.push(shp_read_frame(reader, offset, size as u64)?);
-        };
 
-        Ok(frames)
+        let mut tilesets = Vec::<Tileset>::new();
+
+        for (offset, size) in shp_offsets.iter().copied() {
+            let shp_frame = shp_read_frame(reader, offset, size as u64)?;
+
+            if let Some(tileset) = tilesets.iter_mut().find(|tileset| {
+                tileset.tile_size == shp_frame.size
+            }) {
+                tileset.tiles.push(shp_frame.data);
+            } else {
+                tilesets.push(Tileset {
+                    tile_size: shp_frame.size,
+                    tiles: vec![shp_frame.data],
+                });
+            }
+        }
+
+        Ok(tilesets)
     }
 
     pub fn from_shp_file<P>(
         path: P,
-    ) -> Result<Vec<SpriteFrame>, Box<dyn Error>> where P: AsRef<path::Path> {
+    ) -> Result<Vec<Tileset>, Box<dyn Error>> where P: AsRef<path::Path> {
         let mut reader = fs::File::open(path)?;
         Self::from_shp_reader(&mut reader)
     }

@@ -42,9 +42,9 @@ pub struct Dune2GFXAssetsArgs {
 #[derive(Subcommand)]
 pub enum Commands {
     Palette(Dune2PaletteArgs),
-    Sprites(Dune2GFXAssetsArgs),
+    // Sprites(Dune2GFXAssetsArgs),
     Tileset(Dune2GFXAssetsArgs),
-    Tilemaps(Dune2GFXAssetsArgs),
+    // Tilemaps(Dune2GFXAssetsArgs),
 }
 
 #[derive(Args)]
@@ -98,42 +98,42 @@ fn extract_palette(
 /******************************************************************************
  * Extract Sprites
  *****************************************************************************/
-fn export_frame_to_bmp(
-    frame: &dune2::SpriteFrame,
-    palette: &dune2::Palette,
-    faction: dune2::Faction,
-    scale: u32,
-    output_filepath: &PathBuf,
-) -> Result<(), Box<dyn Error>> {
-    let surface = dune2::Surface::from_bitmap_scaled(&frame.bitmap(palette, faction), scale);
-    let mut output = fs::File::create(output_filepath)?;
-    dune2::write_bmp_with_palette(&surface, &palette, &mut output)?;
+// fn export_frame_to_bmp(
+//     frame: &dune2::SHPFrame,
+//     palette: &dune2::Palette,
+//     faction: dune2::Faction,
+//     scale: u32,
+//     output_filepath: &PathBuf,
+// ) -> Result<(), Box<dyn Error>> {
+//     let surface = dune2::Surface::from_bitmap_scaled(&frame.bitmap(palette, faction), scale);
+//     let mut output = fs::File::create(output_filepath)?;
+//     dune2::write_bmp_with_palette(&surface, &palette, &mut output)?;
 
-    return Ok(());
-}
+//     return Ok(());
+// }
 
-fn extract_sprites(
-    rc: &dune2::RC,
-    args: &Dune2GFXAssetsArgs,
-) -> Result<(), Box<dyn Error>> {
-    let faction = dune2::Faction::from_str(&args.faction)?;
-    let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?);
+// fn extract_sprites(
+//     rc: &dune2::RC,
+//     args: &Dune2GFXAssetsArgs,
+// ) -> Result<(), Box<dyn Error>> {
+//     let faction = dune2::Faction::from_str(&args.faction)?;
+//     let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?);
 
-    fs::create_dir_all(&output_dir)?;
+//     fs::create_dir_all(&output_dir)?;
 
-    for (i, frame) in rc.sprites.iter().enumerate() {
-        let output_filepath = output_dir.join(format!("{:02}.bmp", i));
-        export_frame_to_bmp(
-            frame,
-            &rc.palette,
-            faction,
-            args.scale,
-            &output_filepath
-        )?;
-    }
+//     for (i, frame) in rc.sprites.iter().enumerate() {
+//         let output_filepath = output_dir.join(format!("{:02}.bmp", i));
+//         export_frame_to_bmp(
+//             frame,
+//             &rc.palette,
+//             faction,
+//             args.scale,
+//             &output_filepath
+//         )?;
+//     }
 
-    return Ok(());
-}
+//     return Ok(());
+// }
 
 /******************************************************************************
  * Extract Tileset
@@ -186,55 +186,59 @@ fn extract_tileset(
     args: &Dune2GFXAssetsArgs,
 ) -> Result<(), Box<dyn Error>> {
     let faction = dune2::Faction::from_str(&args.faction)?;
-    let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?);
 
-    fs::create_dir_all(&output_dir)?;
+    for (name, tileset) in rc.tilesets.iter() {
+        let tilemaps = Vec::from_iter((0..tileset.tiles.len()).map(|i| {
+            dune2::Tilemap {
+                shape: dune2::Shape { rows: 1, columns: 1, },
+                tiles: vec![i],
+            }
+        }));
 
-    let tilemaps = Vec::from_iter((0..rc.tileset.tiles.len()).map(|i| {
-        dune2::Tilemap {
-            shape: dune2::Shape { rows: 1, columns: 1, },
-            tiles: vec![i],
+        let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?).join(name);
+
+        fs::create_dir_all(&output_dir)?;
+
+        for (i, tilemap) in tilemaps.iter().enumerate() {
+            let output_filepath = output_dir.join(format!("{:02}.bmp", i));
+            
+            export_tilemap_to_bmp(
+                &tilemap,
+                &tileset,
+                &rc.palette,
+                faction,
+                args.scale,
+                &output_filepath
+            )?;
         }
-    }));
-
-    for (i, tilemap) in tilemaps.iter().enumerate() {
-        let output_filepath = output_dir.join(format!("{:02}.bmp", i));
-        export_tilemap_to_bmp(
-            &tilemap,
-            &rc.tileset,
-            &rc.palette,
-            faction,
-            args.scale,
-            &output_filepath
-        )?;
     }
 
     return Ok(());
 }
 
-fn extract_tilemaps(
-    rc: &dune2::RC,
-    args: &Dune2GFXAssetsArgs,
-) -> Result<(), Box<dyn Error>> {
-    let faction = dune2::Faction::from_str(&args.faction)?;
-    let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?);
+// fn extract_tilemaps(
+//     rc: &dune2::RC,
+//     args: &Dune2GFXAssetsArgs,
+// ) -> Result<(), Box<dyn Error>> {
+//     let faction = dune2::Faction::from_str(&args.faction)?;
+//     let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?);
 
-    fs::create_dir_all(&output_dir)?;
+//     fs::create_dir_all(&output_dir)?;
 
-    for (i, tilemap) in rc.tilemaps.iter().enumerate() {
-        let output_filepath = output_dir.join(format!("{:02}.bmp", i));
-        export_tilemap_to_bmp(
-            &tilemap,
-            &rc.tileset,
-            &rc.palette,
-            faction,
-            args.scale,
-            &output_filepath
-        )?;
-    }
+//     for (i, tilemap) in rc.tilemaps.iter().enumerate() {
+//         let output_filepath = output_dir.join(format!("{:02}.bmp", i));
+//         export_tilemap_to_bmp(
+//             &tilemap,
+//             &rc.tileset,
+//             &rc.palette,
+//             faction,
+//             args.scale,
+//             &output_filepath
+//         )?;
+//     }
 
-    return Ok(());
-}
+//     return Ok(());
+// }
 
 /******************************************************************************
  * RUN
@@ -245,8 +249,8 @@ pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
 
     match &args.command {
         Commands::Palette(args) => extract_palette(&rc, args),
-        Commands::Sprites(args) => extract_sprites(&rc, args),
+        // Commands::Sprites(args) => extract_sprites(&rc, args),
         Commands::Tileset(args) => extract_tileset(&rc, args),
-        Commands::Tilemaps(args) => extract_tilemaps(&rc, args),
+        // Commands::Tilemaps(args) => extract_tilemaps(&rc, args),
     }
 }
