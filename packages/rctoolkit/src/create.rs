@@ -1,6 +1,8 @@
+use std::collections::HashSet;
 use std::fs;
 
 use std::error::Error;
+use std::collections::HashMap;
 use std::path::PathBuf;
 use std::str;
 
@@ -38,7 +40,7 @@ pub struct PaletteConfig {
 #[derive(Debug, Deserialize)]
 pub struct TilesetConfig {
     pub source: PathBuf,
-    pub maps: Vec<dune2::Tilemap>
+    pub includes: Option<HashSet<usize>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -49,8 +51,7 @@ pub struct SpriteConfig {
 #[derive(Debug, Deserialize)]
 pub struct Config {
     pub palette: PaletteConfig,
-    pub tileset: TilesetConfig,
-    pub sprites: Vec<SpriteConfig>,
+    pub tilesets: HashMap<String, TilesetConfig>,
 }
 
 impl Config {
@@ -62,52 +63,73 @@ impl Config {
     
         let config_dir = config_filepath.parent().unwrap();
         
-        // if palette path is relative, make it absolute by joining it with the
-        // config file's directory
+        // if palette source path is relative, make it absolute by joining it
+        // with the config file's directory
         if !config.palette.source.is_absolute() {
             config.palette.source = config_dir.join(&config.palette.source);
         }
     
-        // if tileset path is relative, make it absolute by joining it with the
-        // config file's directory
-        if !config.tileset.source.is_absolute() {
-            config.tileset.source = config_dir.join(&config.tileset.source);
+        // if tilesets source paths are relative, make themabsolute by joining
+        // them with the config file's directory
+        for (_, tileset) in config.tilesets.iter_mut() {
+            if !tileset.source.is_absolute() {
+                tileset.source = config_dir.join(&tileset.source);
+            }
         }
 
-        // if sprite paths are relative, make them absolute by joining them
-        // with the config file's directory
-        config.sprites.iter_mut().for_each(|sprite| {
-            if !sprite.source.is_absolute() {
-                sprite.source = config_dir.join(&sprite.source);
-            }
-        });
-    
         Ok(config)
     }
+}
+
+pub fn create_tilesets(
+    tilesets_config: &HashMap<String, TilesetConfig>,
+) -> Result<HashMap<String, dune2::Tileset>, Box<dyn Error>> {
+    let mut sources = HashMap::new();
+    for (_, tileset_config) in tilesets_config.iter() {
+        let source = String::from(tileset_config.source.to_str().unwrap());
+        if !sources.contains_key(&source) {
+            let tileset = dune2::Tileset::from_icn_file(&tileset_config.source)?;
+            sources.insert(source, tileset);
+        }
+    }
+
+    let mut tilesets = HashMap::new();
+    for (name, tileset_config) in tilesets_config.iter() {
+        let source = String::from(tileset_config.source.to_str().unwrap());
+        let tileset_source = sources.get(&source).unwrap();
+        let mut tileset_dest = dune2::Tileset::new(tileset_source.tile_size);
+
+        if let Some(includes) = &tileset_config.includes {
+            for index in includes.iter() {
+                tileset_dest.tiles.push(tileset_source.tiles[*index].clone());
+            }
+        } else {
+            tileset_dest.tiles = tileset_source.tiles.clone();
+        }
+
+        tilesets.insert(name.clone(), tileset_dest);
+    }
+
+    Ok(tilesets)
 }
 
 pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     let config = Config::try_read_from_file(&args.config_filepath)?;
 
-    let palette = dune2::Palette::from_pal_file(&config.palette.source)?;
-    let tileset = dune2::Tileset::from_icn_file(&config.tileset.source)?;
-    let mut sprites = Vec::new();
+    println!("{:#?}", config);
 
-    for sprite in &config.sprites {
-        let sprite_frames = dune2::SpriteFrame::from_shp_file(&sprite.source)?;
-        sprites.extend(sprite_frames);
-    }
+    let palette = dune2::Palette::from_pal_file(&config.palette.source)?;
+    let tilesets = create_tilesets(&config.tilesets)?;
 
     let rc = dune2::RC {
         palette,
-        tileset,
-        tilemaps: config.tileset.maps,
-        sprites,
+        tilesets,
     };
 
     if args.output_file.exists() && !args.force_overwrite {
         return Err(
-            "Output file already exists. Use --force-overwrite to overwrite.".into());
+            "Output file already exists. Use --force-overwrite to overwrite.".into()
+        );
     }
 
     let mut output = DeflateEncoder::new(
@@ -116,5 +138,6 @@ pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     );
 
     rc.serialize(&mut Serializer::new(&mut output))?;
+
     Ok(())
 }

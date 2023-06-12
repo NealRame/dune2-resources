@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::shape::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Size {
     pub width: u32,
     pub height: u32,
