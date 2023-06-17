@@ -7,10 +7,11 @@ use std::io::{Read, Seek};
 
 use serde::{Deserialize, Serialize};
 
-use crate::shape::*;
+use crate::*;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Tilemap {
+    pub remapable: bool,
     pub shape: Shape,
     pub tiles: Vec<usize>,
     pub tileset: String,
@@ -65,6 +66,7 @@ impl Tilemap {
                         shape: *shape,
                         tiles,
                         tileset: tileset.clone(),
+                        remapable: false,
                     })
                 }
 
@@ -82,5 +84,71 @@ impl Tilemap {
     ) -> Result<Vec<Tilemap>, Box<dyn Error>> where P: AsRef<path::Path> {
         let mut reader = fs::File::open(path)?;
         Self::from_map_reader(&mut reader, shapes, tileset)
+    }
+}
+
+pub struct TilemapBitmap<'a, 'b, 'c> {
+    tilemap: &'a Tilemap,
+    tileset: &'b Tileset,
+    palette: &'c Palette,
+    faction: Option<Faction>,
+}
+
+impl<'a, 'b, 'c> TilemapBitmap<'a, 'b, 'c> {
+    pub fn new(
+        tilemap: &'a Tilemap,
+        tileset: &'b Tileset,
+        palette: &'c Palette,
+        faction: Option<Faction>,
+    ) -> Self {
+        Self {
+            tilemap,
+            tileset,
+            palette,
+            faction,
+        }
+    }
+}
+
+impl Bitmap for TilemapBitmap<'_, '_, '_> {
+    fn width(&self) -> u32 {
+        self.tilemap.shape.columns*self.tileset.tile_size.width
+    }
+
+    fn height(&self) -> u32 {
+        self.tilemap.shape.rows*self.tileset.tile_size.height
+    }
+}
+
+impl BitmapGetPixel for TilemapBitmap<'_, '_, '_> {
+    fn get_pixel(&self, point: Point) -> Option<Color> {
+        let col = (point.x/self.tileset.tile_size.width) as usize;
+        let row = (point.y/self.tileset.tile_size.height) as usize;
+        let index = row*self.tilemap.shape.columns as usize + col;
+
+        let bitmap = self.tileset.bitmap(
+            self.tilemap.tiles[index],
+            self.palette,
+            self.faction,
+        );
+
+        let bitmap_x = point.x%self.tileset.tile_size.width;
+        let bitmap_y = point.y%self.tileset.tile_size.height;
+
+        bitmap.get_pixel(Point {
+            x: bitmap_x,
+            y: bitmap_y,
+        })
+    }
+}
+
+impl Tilemap {
+    pub fn bitmap<'a, 'b, 'c>(
+        &'a self,
+        tileset: &'b Tileset,
+        palette: &'c Palette,
+        faction: Option<Faction>,
+    ) -> TilemapBitmap<'a, 'b, 'c> {
+        TilemapBitmap::new(self, tileset, palette, faction)
     }
 }
