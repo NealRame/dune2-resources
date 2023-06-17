@@ -13,12 +13,14 @@ use crate::shape::*;
 pub struct Tilemap {
     pub shape: Shape,
     pub tiles: Vec<usize>,
+    pub tileset: String,
 }
 
 impl Tilemap {
     pub fn from_map_reader<T>(
         reader: &mut T,
         shapes: &HashMap<String, Shape>,
+        tileset: &String,
     ) -> Result<Vec<Tilemap>, Box<dyn Error>> where T: Read + Seek {
         let mut buf = [0u8; 2];
         let mut indexes = Vec::new();
@@ -62,6 +64,7 @@ impl Tilemap {
                     icons.push(Tilemap {
                         shape: *shape,
                         tiles,
+                        tileset: tileset.clone(),
                     })
                 }
 
@@ -75,8 +78,9 @@ impl Tilemap {
     pub fn from_map_file<P>(
         path: P,
         shapes: &HashMap<String, Shape>,
+        tileset: &String,
     ) -> Result<Vec<Tilemap>, Box<dyn Error>> where P: AsRef<path::Path> {
         let mut reader = fs::File::open(path)?;
-        Self::from_map_reader(&mut reader, shapes)
+        Self::from_map_reader(&mut reader, shapes, tileset)
     }
 }
