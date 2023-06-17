@@ -9,9 +9,8 @@ use bitvec::prelude::*;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{constants::*, Tileset};
 use crate::io::*;
-use crate::surface::*;
+use crate::{Size, Tileset};
 
 enum SHPVersion {
     V100,
@@ -250,61 +249,7 @@ fn shp_read_frame<T>(
     })
 }
 
-pub struct SpriteFrameBitmap<'a, 'b> {
-    frame: &'a SHPFrame,
-    palette: &'b Palette,
-    faction_palette_offset: usize,
-}
-
-impl<'a, 'b> SpriteFrameBitmap<'a, 'b> {
-    fn new(
-        frame: &'a SHPFrame,
-        palette: &'b Palette,
-        faction: Faction,
-    ) -> Self {
-        Self {
-            frame,
-            palette,
-            faction_palette_offset: 16*(faction as usize),
-        }
-    }
-}
-
-impl Bitmap for SpriteFrameBitmap<'_, '_> {
-    fn width(&self) -> u32 {
-        self.frame.size.width
-    }
-
-    fn height(&self) -> u32 {
-        self.frame.size.height
-    }
-}
-
-impl BitmapGetPixel for SpriteFrameBitmap<'_, '_> {
-    fn get_pixel(&self, point: Point) -> Option<Color> {
-        point_to_index(point, self.size()).map(|index| {
-            let mut color_index = self.frame.data[index] as usize;
-
-            if color_index >= COLOR_HARKONNEN && color_index < COLOR_HARKONNEN + 7 {
-                color_index += self.faction_palette_offset;
-            }
-
-            self.palette.color_at(color_index as usize)
-        })
-    }
-}
-
-impl SHPFrame {
-    pub fn bitmap<'a, 'b>(
-        &'a self,
-        palette: &'b Palette,
-        faction: Faction,
-    ) -> SpriteFrameBitmap<'a, 'b> {
-        SpriteFrameBitmap::new(self, palette, faction)
-    }
-}
-
-impl SHPFrame {
+impl Tileset {
     pub fn from_shp_reader<T>(
         reader: &mut T,
     ) -> Result<Vec<Tileset>, Box<dyn Error>> where T: Read + Seek {
