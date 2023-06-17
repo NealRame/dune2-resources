@@ -18,6 +18,8 @@ use serde::Serialize;
 
 use toml;
 
+use dune2::Tileset;
+
 #[derive(Args)]
 pub struct Cli {
     /// Input file path
@@ -34,7 +36,7 @@ pub struct Cli {
 
 #[derive(Debug, Deserialize)]
 pub struct PaletteConfig {
-    pub source: PathBuf,
+    pub path: PathBuf,
 }
 
 #[derive(Debug, Deserialize)]
@@ -49,31 +51,43 @@ pub struct SpriteConfig {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
+enum SourceType {
+    SHP,
+    ICN,
+}
+
+#[derive(Debug, Deserialize)]
+struct SourceConfig {
+    path: PathBuf,
+    kind: SourceType,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct Config {
-    pub palette: PaletteConfig,
-    pub tilesets: HashMap<String, TilesetConfig>,
+    palette: PaletteConfig,
+    sources: Vec<SourceConfig>,
 }
 
 impl Config {
     fn try_read_from_file(
         config_filepath: &PathBuf,
     ) -> Result<Self, Box<dyn Error>> {
+        let config_dir = config_filepath.parent().unwrap();
         let config_str = fs::read_to_string(config_filepath)?;
         let mut config = toml::from_str::<Config>(&config_str)?;
-    
-        let config_dir = config_filepath.parent().unwrap();
-        
+
         // if palette source path is relative, make it absolute by joining it
         // with the config file's directory
-        if !config.palette.source.is_absolute() {
-            config.palette.source = config_dir.join(&config.palette.source);
+        if !config.palette.path.is_absolute() {
+            config.palette.path = config_dir.join(&config.palette.path);
         }
-    
-        // if tilesets source paths are relative, make themabsolute by joining
-        // them with the config file's directory
-        for (_, tileset) in config.tilesets.iter_mut() {
-            if !tileset.source.is_absolute() {
-                tileset.source = config_dir.join(&tileset.source);
+
+        // if source paths are relative, make them absolute by joining them
+        // with the config file's directory
+        for source in config.sources.iter_mut() {
+            if !source.path.is_absolute() {
+                source.path = config_dir.join(&source.path);
             }
         }
 
@@ -81,45 +95,43 @@ impl Config {
     }
 }
 
-pub fn create_tilesets(
-    tilesets_config: &HashMap<String, TilesetConfig>,
-) -> Result<HashMap<String, dune2::Tileset>, Box<dyn Error>> {
-    let mut sources = HashMap::new();
-    for (_, tileset_config) in tilesets_config.iter() {
-        let source = String::from(tileset_config.source.to_str().unwrap());
-        if !sources.contains_key(&source) {
-            let tileset = dune2::Tileset::from_icn_file(&tileset_config.source)?;
-            sources.insert(source, tileset);
-        }
-    }
+fn load_sources(
+    sources_config: &Vec<SourceConfig>,
+) -> Result<HashMap<String, Tileset>, Box<dyn Error>> {
+    let mut sources = HashMap::<String, Tileset>::new();
 
-    let mut tilesets = HashMap::new();
-    for (name, tileset_config) in tilesets_config.iter() {
-        let source = String::from(tileset_config.source.to_str().unwrap());
-        let tileset_source = sources.get(&source).unwrap();
-        let mut tileset_dest = dune2::Tileset::new(tileset_source.tile_size);
+    for source_config in sources_config.iter() {
+        let mut tilesets = match source_config.kind {
+            SourceType::SHP => {
+                dune2::Tileset::from_shp_file(&source_config.path)?
+            },
+            SourceType::ICN => {
+                vec![dune2::Tileset::from_icn_file(&source_config.path)?]
+            },
+        };
 
-        if let Some(includes) = &tileset_config.includes {
-            for index in includes.iter() {
-                tileset_dest.tiles.push(tileset_source.tiles[*index].clone());
+        while let Some(mut tileset) = tilesets.pop() {
+            let name = format!("tiles_{}", tileset.tile_size);
+
+            if let Some(existing_tileset) = sources.get_mut(&name) {
+                existing_tileset.append(&mut tileset)?;
+            } else {
+                sources.insert(name.clone(), tileset);
             }
-        } else {
-            tileset_dest.tiles = tileset_source.tiles.clone();
         }
-
-        tilesets.insert(name.clone(), tileset_dest);
     }
 
-    Ok(tilesets)
+    Ok(sources)
 }
 
 pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     let config = Config::try_read_from_file(&args.config_filepath)?;
 
-    println!("{:#?}", config);
+    // println!("{:#?}", config);
 
-    let palette = dune2::Palette::from_pal_file(&config.palette.source)?;
-    let tilesets = create_tilesets(&config.tilesets)?;
+    let palette = dune2::Palette::from_pal_file(&config.palette.path)?;
+    let tilesets = load_sources(&config.sources)?;
+    // let tilesets = create_tilesets(&config.tilesets)?;
 
     let rc = dune2::RC {
         palette,

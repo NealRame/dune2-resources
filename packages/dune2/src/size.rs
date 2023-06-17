@@ -1,4 +1,5 @@
-use std::ops::{Mul};
+use std::ops::Mul;
+use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
@@ -72,5 +73,11 @@ impl Mul<Size> for Shape {
     type Output = Size;
     fn mul(self, rhs: Size) -> Size {
         return rhs*self;
+    }
+}
+
+impl fmt::Display for Size {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}x{}", self.width, self.height)
     }
 }
