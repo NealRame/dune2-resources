@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::fs;
 
 use std::error::Error;
@@ -18,7 +17,7 @@ use serde::Serialize;
 
 use toml;
 
-use dune2::Tileset;
+use dune2::{Tilemap, Tileset};
 
 #[derive(Args)]
 pub struct Cli {
@@ -35,19 +34,8 @@ pub struct Cli {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct PaletteConfig {
+pub struct ConfigPalette {
     pub path: PathBuf,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct TilesetConfig {
-    pub source: PathBuf,
-    pub includes: Option<HashSet<usize>>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct SpriteConfig {
-    pub source: PathBuf,
 }
 
 #[derive(Debug, Deserialize)]
@@ -58,15 +46,21 @@ enum SourceType {
 }
 
 #[derive(Debug, Deserialize)]
-struct SourceConfig {
+struct TilesetConfig {
     path: PathBuf,
     kind: SourceType,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Config {
-    palette: PaletteConfig,
-    sources: Vec<SourceConfig>,
+struct ConfigSprite {
+    frames: PathBuf,
+}
+
+#[derive(Debug, Deserialize)]
+struct Config {
+    palette: ConfigPalette,
+    tilesets: Vec<TilesetConfig>,
+    tilemaps: Vec<Tilemap>,
 }
 
 impl Config {
@@ -85,9 +79,9 @@ impl Config {
 
         // if source paths are relative, make them absolute by joining them
         // with the config file's directory
-        for source in config.sources.iter_mut() {
-            if !source.path.is_absolute() {
-                source.path = config_dir.join(&source.path);
+        for tilset in config.tilesets.iter_mut() {
+            if !tilset.path.is_absolute() {
+                tilset.path = config_dir.join(&tilset.path);
             }
         }
 
@@ -96,11 +90,11 @@ impl Config {
 }
 
 fn load_sources(
-    sources_config: &Vec<SourceConfig>,
+    config_tilesets: &Vec<TilesetConfig>,
 ) -> Result<HashMap<String, Tileset>, Box<dyn Error>> {
     let mut sources = HashMap::<String, Tileset>::new();
 
-    for source_config in sources_config.iter() {
+    for source_config in config_tilesets.iter() {
         let mut tilesets = match source_config.kind {
             SourceType::SHP => {
                 dune2::Tileset::from_shp_file(&source_config.path)?
@@ -127,15 +121,13 @@ fn load_sources(
 pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     let config = Config::try_read_from_file(&args.config_filepath)?;
 
-    // println!("{:#?}", config);
-
     let palette = dune2::Palette::from_pal_file(&config.palette.path)?;
-    let tilesets = load_sources(&config.sources)?;
-    // let tilesets = create_tilesets(&config.tilesets)?;
+    let tilesets = load_sources(&config.tilesets)?;
 
     let rc = dune2::RC {
         palette,
         tilesets,
+        tilemaps: config.tilemaps,
     };
 
     if args.output_file.exists() && !args.force_overwrite {
