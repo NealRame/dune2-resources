@@ -9,7 +9,7 @@ pub struct TileBitmap<'a, 'b> {
     tile_index: usize,
     tileset: &'a Tileset,
     palette: &'b Palette,
-    faction_palette_offset: usize,
+    faction: Option<Faction>,
 }
 
 impl<'a, 'b> TileBitmap<'a, 'b> {
@@ -17,13 +17,14 @@ impl<'a, 'b> TileBitmap<'a, 'b> {
         tile_index: usize,
         tileset: &'a Tileset,
         palette: &'b Palette,
-        faction: Faction,
+        faction: Option<Faction>,
     ) -> Self {
+
         Self {
             tile_index,
             palette,
             tileset,
-            faction_palette_offset: 16*(faction as usize),
+            faction,
         }
     }
 }
@@ -44,11 +45,15 @@ impl BitmapGetPixel for TileBitmap<'_, '_> {
             let mut color_index =
                 self.tileset.tiles[self.tile_index][index] as usize;
 
-            if color_index >= COLOR_HARKONNEN
-                && color_index < COLOR_HARKONNEN + 7 {
-                color_index = color_index + self.faction_palette_offset
+            if let Some(faction) = self.faction {
+                let faction_palette_offset = 16*(faction as usize);
+
+                if color_index >= COLOR_HARKONNEN
+                    && color_index < COLOR_HARKONNEN + 7 {
+                    color_index = color_index + faction_palette_offset
+                }
             }
-    
+
             self.palette.color_at(color_index)
         })
     }
@@ -106,7 +111,7 @@ impl Tileset {
         &'a self,
         index: usize,
         palette: &'b Palette,
-        faction: Faction,
+        faction: Option<Faction>,
     ) -> TileBitmap<'a, 'b> {
         TileBitmap::new(index, self, palette, faction)
     }
