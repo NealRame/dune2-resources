@@ -51,10 +51,10 @@ struct TilesetConfig {
     kind: SourceType,
 }
 
-#[derive(Debug, Deserialize)]
-struct ConfigSprite {
-    frames: PathBuf,
-}
+// #[derive(Debug, Deserialize)]
+// struct ConfigSprite {
+//     frames: PathBuf,
+// }
 
 #[derive(Debug, Deserialize)]
 struct Config {

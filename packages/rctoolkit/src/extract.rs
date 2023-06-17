@@ -12,7 +12,7 @@ use rmp_serde;
 use dune2::Bitmap;
 
 #[derive(Args)]
-pub struct Dune2PaletteArgs {
+pub struct Dune2PaletteCommandArgs {
     /// Output folder path
     #[arg(short, long, default_value = "palette.bmp")]
     pub output_filepath: PathBuf,
@@ -23,7 +23,7 @@ pub struct Dune2PaletteArgs {
 }
 
 #[derive(Args)]
-pub struct Dune2TilesetArgs {
+pub struct Dune2TilesCommandArgs {
     /// Output folder path
     #[arg(short = 'd', long)]
     pub output_dir: Option<PathBuf>,
@@ -38,7 +38,7 @@ pub struct Dune2TilesetArgs {
 }
 
 #[derive(Args)]
-pub struct Dune2TilemapArgs {
+pub struct Dune2TilemapCommandArgs {
     /// Output folder path
     #[arg(short = 'd', long)]
     pub output_dir: Option<PathBuf>,
@@ -58,10 +58,9 @@ pub struct Dune2TilemapArgs {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    Palette(Dune2PaletteArgs),
-    // Sprites(Dune2GFXAssetsArgs),
-    Tileset(Dune2TilesetArgs),
-    Tilemaps(Dune2TilemapArgs),
+    Palette(Dune2PaletteCommandArgs),
+    Tiles(Dune2TilesCommandArgs),
+    Tilemaps(Dune2TilemapCommandArgs),
 }
 
 #[derive(Args)]
@@ -78,7 +77,7 @@ pub struct Cli {
  *****************************************************************************/
 fn extract_palette(
     rc: &dune2::RC,
-    args: &Dune2PaletteArgs,
+    args: &Dune2PaletteCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     if let Some(parent) = args.output_filepath.parent() {
         fs::create_dir_all(parent)?;
@@ -113,46 +112,6 @@ fn extract_palette(
 }
 
 /******************************************************************************
- * Extract Sprites
- *****************************************************************************/
-// fn export_frame_to_bmp(
-//     frame: &dune2::SHPFrame,
-//     palette: &dune2::Palette,
-//     faction: dune2::Faction,
-//     scale: u32,
-//     output_filepath: &PathBuf,
-// ) -> Result<(), Box<dyn Error>> {
-//     let surface = dune2::Surface::from_bitmap_scaled(&frame.bitmap(palette, faction), scale);
-//     let mut output = fs::File::create(output_filepath)?;
-//     dune2::write_bmp_with_palette(&surface, &palette, &mut output)?;
-
-//     return Ok(());
-// }
-
-// fn extract_sprites(
-//     rc: &dune2::RC,
-//     args: &Dune2GFXAssetsArgs,
-// ) -> Result<(), Box<dyn Error>> {
-//     let faction = dune2::Faction::from_str(&args.faction)?;
-//     let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?);
-
-//     fs::create_dir_all(&output_dir)?;
-
-//     for (i, frame) in rc.sprites.iter().enumerate() {
-//         let output_filepath = output_dir.join(format!("{:02}.bmp", i));
-//         export_frame_to_bmp(
-//             frame,
-//             &rc.palette,
-//             faction,
-//             args.scale,
-//             &output_filepath
-//         )?;
-//     }
-
-//     return Ok(());
-// }
-
-/******************************************************************************
  * Extract Tileset
  *****************************************************************************/
 fn export_tilemap_to_bmp(
@@ -181,7 +140,7 @@ fn export_tilemap_to_bmp(
 
 fn extract_tileset(
     rc: &dune2::RC,
-    args: &Dune2TilesetArgs,
+    args: &Dune2TilesCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     for (name, tileset) in rc.tilesets.iter() {
         let tilemaps = Vec::from_iter((0..tileset.tiles.len()).map(|i| {
@@ -214,7 +173,7 @@ fn extract_tileset(
 
 fn extract_tilemaps(
     rc: &dune2::RC,
-    args: &Dune2TilemapArgs,
+    args: &Dune2TilemapCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     let faction = dune2::Faction::from_str(&args.faction)?;
     let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?);
@@ -245,8 +204,7 @@ pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
 
     match &args.command {
         Commands::Palette(args) => extract_palette(&rc, args),
-        // Commands::Sprites(args) => extract_sprites(&rc, args),
-        Commands::Tileset(args) => extract_tileset(&rc, args),
+        Commands::Tiles(args) => extract_tileset(&rc, args),
         Commands::Tilemaps(args) => extract_tilemaps(&rc, args),
     }
 }
