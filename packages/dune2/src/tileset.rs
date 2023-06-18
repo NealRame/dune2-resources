@@ -4,45 +4,48 @@ use serde::{Deserialize, Serialize};
 
 use crate::*;
 
-pub struct TileBitmap<'a, 'b> {
+pub struct TileBitmap<'a> {
+    resource: &'a Resources,
+    tileset: String,
     tile_index: usize,
-    tileset: &'a Tileset,
-    palette: &'b Palette,
     faction: Option<Faction>,
 }
 
-impl<'a, 'b> TileBitmap<'a, 'b> {
+impl<'a> TileBitmap<'a> {
     pub fn new(
+        resource: &'a Resources,
+        tileset: String,
         tile_index: usize,
-        tileset: &'a Tileset,
-        palette: &'b Palette,
         faction: Option<Faction>,
     ) -> Self {
-
         Self {
-            tile_index,
-            palette,
+            resource,
             tileset,
+            tile_index,
             faction,
         }
     }
 }
 
-impl Bitmap for TileBitmap<'_, '_> {
+impl Bitmap for TileBitmap<'_> {
     fn width(&self) -> u32 {
-        self.tileset.tile_size.width
+        let tileset = self.resource.tilesets.get(&self.tileset).unwrap();
+        tileset.tile_size.width
     }
 
     fn height(&self) -> u32 {
-        self.tileset.tile_size.height
+        let tileset = self.resource.tilesets.get(&self.tileset).unwrap();
+        tileset.tile_size.height
     }
 }
 
-impl BitmapGetPixel for TileBitmap<'_, '_> {
+impl BitmapGetPixel for TileBitmap<'_> {
     fn get_pixel(&self, point: Point) -> Option<Color> {
+        let palette = &self.resource.palette;
+        let tileset = self.resource.tilesets.get(&self.tileset).unwrap();
         point_to_index(point, self.size()).map(|index| {
             let mut color_index =
-                self.tileset.tiles[self.tile_index][index] as usize;
+                tileset.tiles[self.tile_index][index] as usize;
 
             if let Some(faction) = self.faction {
                 let faction_palette_offset = 16*(faction as usize);
@@ -53,7 +56,7 @@ impl BitmapGetPixel for TileBitmap<'_, '_> {
                 }
             }
 
-            self.palette.color_at(color_index)
+            palette.color_at(color_index)
         })
     }
 }
@@ -102,16 +105,5 @@ impl Tileset {
         }
         self.tiles.append(tilset.tiles.as_mut());
         Ok(())
-    }
-}
-
-impl Tileset {
-    pub fn bitmap<'a, 'b>(
-        &'a self,
-        index: usize,
-        palette: &'b Palette,
-        faction: Option<Faction>,
-    ) -> TileBitmap<'a, 'b> {
-        TileBitmap::new(index, self, palette, faction)
     }
 }
