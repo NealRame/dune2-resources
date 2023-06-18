@@ -2,8 +2,7 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
-use crate::constants::*;
-use crate::surface::*;
+use crate::*;
 
 pub struct TileBitmap<'a, 'b> {
     tile_index: usize,

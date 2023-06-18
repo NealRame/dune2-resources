@@ -1,5 +1,4 @@
 pub mod bitmap;
-pub mod bmp_writers;
 pub mod color;
 pub mod constants;
 pub mod icn;
@@ -11,11 +10,9 @@ pub mod shape;
 pub mod shp;
 pub mod size;
 pub mod sprite;
-pub mod surface;
 pub mod tilemap;
 pub mod tileset;
 
-pub use bmp_writers::*;
 pub use bitmap::*;
 pub use color::*;
 pub use constants::*;
@@ -28,6 +25,5 @@ pub use shape::*;
 pub use shp::*;
 pub use size::*;
 pub use sprite::*;
-pub use surface::*;
 pub use tilemap::*;
 pub use tileset::*;

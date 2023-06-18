@@ -11,6 +11,8 @@ use rmp_serde;
 
 use dune2::Bitmap;
 
+use crate::image::BMPImage;
+
 #[derive(Args)]
 pub struct Dune2PaletteCommandArgs {
     /// Output folder path
@@ -84,7 +86,7 @@ fn extract_palette(
     }
 
     let palette_watch_size = dune2::Size { width: 32, height: 32 };
-    let mut palette_surface = dune2::Surface::new(dune2::Size {
+    let mut palette_image = BMPImage::new(dune2::Size {
         width: 32*16,
         height: 32*((rc.palette.len() as f32)/16.).ceil() as u32,
     });
@@ -98,15 +100,14 @@ fn extract_palette(
             palette_watch_size,
         );
 
-        dune2::bitmap::fill_rect(&mut palette_surface, &rect, color);
+        dune2::bitmap::fill_rect(&mut palette_image, &rect, color);
     }
 
     if args.output_filepath.exists() && !args.force_overwrite {
         return Err("Output file already exists. Use --force to overwrite.".into());
     }
 
-    let mut output = fs::File::create(&args.output_filepath)?;
-    dune2::write_bmp_with_palette(&palette_surface, &rc.palette, &mut output)?;
+    palette_image.save(&args.output_filepath)?;
 
     Ok(())
 }
@@ -125,12 +126,12 @@ fn export_tilemap_to_bmp(
         let bitmap = tilemap.bitmap(tileset, &rc.palette, faction);
         let src_rect = bitmap.rect();
 
-        let mut surface = dune2::Surface::new(scale*bitmap.size());
-        let dst_rect = surface.rect();
-        dune2::bitmap::blit(&bitmap, &src_rect, &mut surface, &dst_rect);
-    
-        let mut output = fs::File::create(output_filepath)?;
-        dune2::write_bmp_with_palette(&surface, &rc.palette, &mut output)?;
+        let mut image = BMPImage::new(scale*bitmap.size());
+        let dst_rect = image.rect();
+
+        dune2::bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
+
+        image.save(output_filepath)?;
 
         return Ok(());
     }
