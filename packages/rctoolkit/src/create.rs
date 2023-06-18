@@ -7,6 +7,7 @@ use std::str;
 
 use clap::Args;
 
+use dune2::Sprite;
 use flate2::Compression;
 use flate2::write::DeflateEncoder;
 
@@ -39,7 +40,6 @@ pub struct ConfigPalette {
 }
 
 #[derive(Debug, Deserialize)]
-#[serde(rename_all = "lowercase")]
 enum SourceType {
     SHP,
     ICN,
@@ -51,16 +51,12 @@ struct TilesetConfig {
     kind: SourceType,
 }
 
-// #[derive(Debug, Deserialize)]
-// struct ConfigSprite {
-//     frames: PathBuf,
-// }
-
 #[derive(Debug, Deserialize)]
 struct Config {
     palette: ConfigPalette,
     tilesets: Vec<TilesetConfig>,
     tilemaps: Vec<Tilemap>,
+    sprites: HashMap<String, Sprite>,
 }
 
 impl Config {
@@ -128,6 +124,7 @@ pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
         palette,
         tilesets,
         tilemaps: config.tilemaps,
+        sprites: config.sprites,
     };
 
     if args.output_file.exists() && !args.force_overwrite {
