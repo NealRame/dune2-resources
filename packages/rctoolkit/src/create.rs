@@ -120,7 +120,7 @@ pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     let palette = dune2::Palette::from_pal_file(&config.palette.path)?;
     let tilesets = load_sources(&config.tilesets)?;
 
-    let rc = dune2::RC {
+    let rc = dune2::Resources {
         palette,
         tilesets,
         tilemaps: config.tilemaps,

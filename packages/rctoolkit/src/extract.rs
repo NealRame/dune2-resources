@@ -76,7 +76,7 @@ pub struct Cli {
  * Extract Palette
  *****************************************************************************/
 fn extract_palette(
-    rc: &dune2::RC,
+    rc: &dune2::Resources,
     args: &Dune2PaletteCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     if let Some(parent) = args.output_filepath.parent() {
@@ -115,7 +115,7 @@ fn extract_palette(
  * Extract Tileset
  *****************************************************************************/
 fn export_tilemap_to_bmp(
-    rc: &dune2::RC,
+    rc: &dune2::Resources,
     tilemap: &dune2::Tilemap,
     faction: Option<dune2::Faction>,
     scale: u32,
@@ -139,7 +139,7 @@ fn export_tilemap_to_bmp(
 }
 
 fn extract_tileset(
-    rc: &dune2::RC,
+    rc: &dune2::Resources,
     args: &Dune2TilesCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     for (name, tileset) in rc.tilesets.iter() {
@@ -172,7 +172,7 @@ fn extract_tileset(
 }
 
 fn extract_tilemaps(
-    rc: &dune2::RC,
+    rc: &dune2::Resources,
     args: &Dune2TilemapCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     let faction = dune2::Faction::from_str(&args.faction)?;
@@ -200,7 +200,7 @@ fn extract_tilemaps(
  *****************************************************************************/
 pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     let mut inflate_reader = DeflateDecoder::new(fs::File::open(&args.input_rc_file)?);
-    let rc: dune2::RC = rmp_serde::from_read(&mut inflate_reader)?;
+    let rc: dune2::Resources = rmp_serde::from_read(&mut inflate_reader)?;
 
     match &args.command {
         Commands::Palette(args) => extract_palette(&rc, args),

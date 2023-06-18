@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{Palette, Sprite, Tilemap, Tileset};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct RC {
+pub struct Resources {
     pub palette: Palette,
     pub tilesets: HashMap<String, Tileset>,
     pub tilemaps: Vec<Tilemap>,
