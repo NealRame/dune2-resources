@@ -9,6 +9,7 @@ edition = "2021"
 clap = { version = "4.2.7", features = ["derive", "env"] }
 dune2 = { path = "../dune2" }
 flate2 = "1.0.26"
+image = "0.24.6"
 rmp-serde = "1.1.1"
 serde = "1.0.162"
 toml = "0.7.3"

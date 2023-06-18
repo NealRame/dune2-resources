@@ -1,3 +1,4 @@
+mod image;
 mod create;
 mod extract;
 
