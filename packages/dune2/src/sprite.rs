@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub enum SpriteTransform {
+pub enum SpriteFrameTransform {
     FlipX,
     FlipY,
     FlipXY,
@@ -10,7 +10,7 @@ pub enum SpriteTransform {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SpriteFrame {
     pub index: usize,
-    pub transform: Option<SpriteTransform>,
+    pub transform: Option<SpriteFrameTransform>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
