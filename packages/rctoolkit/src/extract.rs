@@ -9,7 +9,7 @@ use flate2::read::DeflateDecoder;
 
 use rmp_serde;
 
-use dune2::Bitmap;
+use dune2::{Bitmap};
 
 use crate::image::BMPImage;
 
@@ -115,57 +115,25 @@ fn extract_palette(
 /******************************************************************************
  * Extract Tileset
  *****************************************************************************/
-fn export_tilemap_to_bmp(
-    rc: &dune2::Resources,
-    tilemap: &dune2::Tilemap,
-    faction: Option<dune2::Faction>,
-    scale: u32,
-    output_filepath: &PathBuf,
-) -> Result<(), Box<dyn Error>> {
-    if let Some(tileset) = rc.tilesets.get(&tilemap.tileset) {
-        let bitmap = tilemap.bitmap(tileset, &rc.palette, faction);
-        let src_rect = bitmap.rect();
-
-        let mut image = BMPImage::new(scale*bitmap.size());
-        let dst_rect = image.rect();
-
-        dune2::bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
-
-        image.save(output_filepath)?;
-
-        return Ok(());
-    }
-
-    Err(format!("Tileset '{}' not found.", tilemap.tileset).into())
-}
 
 fn extract_tileset(
     rc: &dune2::Resources,
     args: &Dune2TilesCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
-    for (name, tileset) in rc.tilesets.iter() {
-        let tilemaps = Vec::from_iter((0..tileset.tiles.len()).map(|i| {
-            dune2::Tilemap {
-                remapable: false,
-                shape: dune2::Shape { rows: 1, columns: 1, },
-                tiles: vec![i],
-                tileset: name.clone(),
-            }
-        }));
-
-        let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?).join(name);
+    for tileset in rc.tilesets.keys() {
+        let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tilesets")?).join(tileset);
 
         fs::create_dir_all(&output_dir)?;
 
-        for (i, tilemap) in tilemaps.iter().enumerate() {
-            let output_filepath = output_dir.join(format!("{:02}.bmp", i));
-            export_tilemap_to_bmp(
-                &rc,
-                &tilemap,
-                None,
-                args.scale,
-                &output_filepath
-            )?;
+        for i in 0..rc.tilesets.get(tileset).unwrap().tiles.len() {
+            let bitmap = rc.tile_bitmap(tileset, i, None);
+            let src_rect = bitmap.rect();
+
+            let mut image = BMPImage::new(args.scale*bitmap.size());
+            let dst_rect = image.rect();
+
+            dune2::bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
+            image.save(output_dir.join(format!("{:02}.bmp", i)))?;
         }
     }
 
@@ -177,20 +145,21 @@ fn extract_tilemaps(
     args: &Dune2TilemapCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     let faction = dune2::Faction::from_str(&args.faction)?;
-    let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tileset")?);
+    let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tilemaps")?);
 
     fs::create_dir_all(&output_dir)?;
 
-    for (i, tilemap) in rc.tilemaps.iter().enumerate() {
+    for i in 0..rc.tilemaps.len() {
         let output_filepath = output_dir.join(format!("{:02}.bmp", i));
-        let faction = if tilemap.remapable { Some(faction) } else { None };
-        export_tilemap_to_bmp(
-            &rc,
-            &tilemap,
-            faction,
-            args.scale,
-            &output_filepath
-        )?;
+
+        let bitmap = rc.tilemap_bitmap(i, Some(faction));
+        let src_rect = bitmap.rect();
+
+        let mut image = BMPImage::new(args.scale*bitmap.size());
+        let dst_rect = image.rect();
+
+        dune2::bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
+        image.save(output_filepath)?;
     }
 
     return Ok(());
