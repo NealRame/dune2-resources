@@ -58,11 +58,31 @@ pub struct Dune2TilemapCommandArgs {
     pub force_overwrite: bool,
 }
 
+#[derive(Args)]
+pub struct Dune2SpriteCommandArgs {
+    /// Output folder path
+    #[arg(short = 'd', long)]
+    pub output_dir: Option<PathBuf>,
+
+    /// Faction to export
+    #[arg(short = 'F', long, default_value = "harkonnen")]
+    pub faction: String,
+
+    /// Scale factor
+    #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..=4))]
+    pub scale: u32,
+
+    /// Overwrite existing files
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub force_overwrite: bool,
+}
+
 #[derive(Subcommand)]
 pub enum Commands {
     Palette(Dune2PaletteCommandArgs),
     Tiles(Dune2TilesCommandArgs),
     Tilemaps(Dune2TilemapCommandArgs),
+    Sprites(Dune2SpriteCommandArgs),
 }
 
 #[derive(Args)]
@@ -113,10 +133,9 @@ fn extract_palette(
 }
 
 /******************************************************************************
- * Extract Tileset
+ * Extract Tiles
  *****************************************************************************/
-
-fn extract_tileset(
+fn extract_tiles(
     rc: &dune2::Resources,
     args: &Dune2TilesCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
@@ -140,6 +159,9 @@ fn extract_tileset(
     return Ok(());
 }
 
+/******************************************************************************
+ * Extract Tilemaps
+ *****************************************************************************/
 fn extract_tilemaps(
     rc: &dune2::Resources,
     args: &Dune2TilemapCommandArgs,
@@ -166,6 +188,35 @@ fn extract_tilemaps(
 }
 
 /******************************************************************************
+ * Extract Sprites
+ *****************************************************************************/
+fn extract_sprites(
+    rc: &dune2::Resources,
+    args: &Dune2SpriteCommandArgs,
+) -> Result<(), Box<dyn Error>> {
+    let faction = dune2::Faction::from_str(&args.faction)?;
+
+    for sprite in rc.sprites.keys() {
+        let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tilesets")?).join(sprite);
+
+        fs::create_dir_all(&output_dir)?;
+
+        for i in 0..rc.sprites.get(sprite).unwrap().frames.len() {
+            let bitmap = rc.sprite_frame_bitmap(sprite, i, Some(faction));
+            let src_rect = bitmap.rect();
+
+            let mut image = BMPImage::new(args.scale*bitmap.size());
+            let dst_rect = image.rect();
+
+            dune2::bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
+            image.save(output_dir.join(format!("{:02}.bmp", i)))?;
+        }
+    }
+
+    Ok(())
+}
+
+/******************************************************************************
  * RUN
  *****************************************************************************/
 pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
@@ -174,7 +225,8 @@ pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
 
     match &args.command {
         Commands::Palette(args) => extract_palette(&rc, args),
-        Commands::Tiles(args) => extract_tileset(&rc, args),
+        Commands::Tiles(args) => extract_tiles(&rc, args),
         Commands::Tilemaps(args) => extract_tilemaps(&rc, args),
+        Commands::Sprites(args) => extract_sprites(&rc, args),
     }
 }
