@@ -29,4 +29,13 @@ impl Resources {
     ) -> TilemapBitmap {
         TilemapBitmap::new(self, index, faction)
     }
+
+    pub fn sprite_frame_bitmap(
+        &self,
+        sprite_id: &String,
+        sprite_frame_index: usize,
+        faction: Option<Faction>,
+    ) -> SpriteFrameBitmap {
+        SpriteFrameBitmap::new(self, sprite_id, sprite_frame_index, faction)
+    }
 }

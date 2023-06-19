@@ -2129,14 +2129,14 @@ remapable = false
 
 [sprites.Harvester]
 frames = [
-    { index = 196 },
-    { index = 197 },
-    { index = 198 },
-    { index = 199 },
-    { index = 197, transform = "FlipXY" },
-    { index = 198, transform = "FlipX"  },
-    { index = 199, transform = "FlipXY" },
-    { index = 200 },
+    { tilemap = 196 },
+    { tilemap = 197 },
+    { tilemap = 198 },
+    { tilemap = 199 },
+    { tilemap = 200 },
+    { tilemap = 199, transform = "FlipX" },
+    { tilemap = 198, transform = "FlipX" },
+    { tilemap = 197, transform = "FlipX" },
 ]
 
 # [sprites.HarvesterSand]
