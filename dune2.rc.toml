@@ -2079,53 +2079,175 @@ remapable = false
 ##############################################################################
 # Sprites
 
-# [sprites.Barracks]
-# frames = [38, 39, 40, 41]
+[sprites.Barracks]
+frames = [
+    { tilemap = 38 },
+    { tilemap = 39 },
+    { tilemap = 40 },
+    { tilemap = 41 },
+]
 
-# [sprites.ConstructionYard]
-# frames = [34, 35, 36, 37]
+[sprites.ConstructionYard]
+frames = [
+    { tilemap = 34 },
+    { tilemap = 35 },
+    { tilemap = 36 },
+    { tilemap = 37 },
+]
 
-# [sprites.HeavyFactory]
-# frames = [10, 11, 12, 13, 14, 15, 16, 17]
+[sprites.HeavyFactory]
+frames = [
+    { tilemap = 10 },
+    { tilemap = 11 },
+    { tilemap = 12 },
+    { tilemap = 13 },
+    { tilemap = 14 },
+    { tilemap = 15 },
+    { tilemap = 16 },
+    { tilemap = 17 },
+]
 
-# [sprites.HighTechFactory]
-# frames = [18, 19, 20, 21, 22, 23, 24, 25]
+[sprites.HighTechFactory]
+frames = [
+    { tilemap = 18 },
+    { tilemap = 19 },
+    { tilemap = 20 },
+    { tilemap = 21 },
+    { tilemap = 22 },
+    { tilemap = 23 },
+    { tilemap = 24 },
+    { tilemap = 25 },
+]
 
-# [sprites.LightFactory]
-# frames = [4, 5, 6, 7, 8, 9]
+[sprites.LightFactory]
+frames = [
+    { tilemap = 4 },
+    { tilemap = 5 },
+    { tilemap = 6 },
+    { tilemap = 7 },
+    { tilemap = 8 },
+    { tilemap = 9 },
+]
 
-# [sprites.Outpost]
-# frames = [100, 101, 102, 103, 104, 105]
+[sprites.Outpost]
+frames = [
+    { tilemap = 100 },
+    { tilemap = 101 },
+    { tilemap = 102 },
+    { tilemap = 103 },
+    { tilemap = 104 },
+    { tilemap = 105 },
+]
 
-# [sprites.Palace]
-# frames = [0, 1, 2, 3]
+[sprites.Palace]
+frames = [
+    { tilemap = 0 },
+    { tilemap = 1 },
+    { tilemap = 2 },
+    { tilemap = 3 },
+]
 
-# [sprites.Refinery]
-# frames = [56, 57, 58, 59, 60, 61, 62, 63, 64, 65]
+[sprites.Refinery]
+frames = [
+    { tilemap = 56 },
+    { tilemap = 57 },
+    { tilemap = 58 },
+    { tilemap = 59 },
+    { tilemap = 60 },
+    { tilemap = 61 },
+    { tilemap = 62 },
+    { tilemap = 63 },
+    { tilemap = 64 },
+    { tilemap = 65 },
+]
 
-# [sprites.RepairFacility]
-# frames = [66, 67, 68, 69, 70, 71, 72, 73, 74, 75]
+[sprites.RepairFacility]
+frames = [
+    { tilemap = 66 },
+    { tilemap = 67 },
+    { tilemap = 68 },
+    { tilemap = 69 },
+    { tilemap = 70 },
+    { tilemap = 71 },
+    { tilemap = 72 },
+    { tilemap = 73 },
+    { tilemap = 74 },
+    { tilemap = 75 },
+]
 
-# [sprites.ResearchCenter]
-# frames = [26, 27, 28, 29]
+[sprites.ResearchCenter]
+frames = [
+    { tilemap = 26 },
+    { tilemap = 27 },
+    { tilemap = 28 },
+    { tilemap = 29 },
+]
 
-# [sprites.RocketTurret]
-# frames = [86, 87, 88, 89, 90, 91, 92, 93, 94, 95]
+[sprites.RocketTurret]
+frames = [
+    { tilemap = 86 },
+    { tilemap = 87 },
+    { tilemap = 88 },
+    { tilemap = 89 },
+    { tilemap = 90 },
+    { tilemap = 91 },
+    { tilemap = 92 },
+    { tilemap = 93 },
+    { tilemap = 94 },
+    { tilemap = 95 },
+]
 
-# [sprites.SpiceSilos]
-# frames = [96, 97, 98, 99]
+[sprites.SpiceSilos]
+frames = [
+    { tilemap = 96 },
+    { tilemap = 97 },
+    { tilemap = 98 },
+    { tilemap = 99 },
+]
 
-# [sprites.Starport]
-# frames = [46, 47, 48, 49, 50, 51, 52, 53, 54, 55]
+[sprites.Starport]
+frames = [
+    { tilemap = 46 },
+    { tilemap = 47 },
+    { tilemap = 48 },
+    { tilemap = 49 },
+    { tilemap = 50 },
+    { tilemap = 51 },
+    { tilemap = 52 },
+    { tilemap = 53 },
+    { tilemap = 54 },
+    { tilemap = 55 },
+]
 
-# [sprites.Turret]
-# frames = [76, 77, 78, 79, 80, 81, 82, 83, 84, 85]
+[sprites.Turret]
+frames = [
+    { tilemap = 76 },
+    { tilemap = 77 },
+    { tilemap = 78 },
+    { tilemap = 79 },
+    { tilemap = 80 },
+    { tilemap = 81 },
+    { tilemap = 82 },
+    { tilemap = 83 },
+    { tilemap = 84 },
+    { tilemap = 85 },
+]
 
-# [sprites.WindTrap]
-# frames = [42, 43, 44, 45]
+[sprites.WindTrap]
+frames = [
+    { tilemap = 42 },
+    { tilemap = 43 },
+    { tilemap = 44 },
+    { tilemap = 45 },
+]
 
-# [sprites.WOR]
-# frames = [30, 31, 32, 33]
+[sprites.WOR]
+frames = [
+    { tilemap = 30 },
+    { tilemap = 31 },
+    { tilemap = 32 },
+    { tilemap = 33 },
+]
 
 [sprites.Harvester]
 frames = [
@@ -2139,59 +2261,293 @@ frames = [
     { tilemap = 197, transform = "FlipX" },
 ]
 
-# [sprites.HarvesterSand]
-# frames = [286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300]
+[sprites.HarvesterSand]
+frames = [
+    { tilemap = 286 },
+    { tilemap = 287 },
+    { tilemap = 288 },
+    { tilemap = 289 },
+    { tilemap = 290 },
+    { tilemap = 291 },
+    { tilemap = 292 },
+    { tilemap = 293 },
+    { tilemap = 294 },
+    { tilemap = 295 },
+    { tilemap = 296 },
+    { tilemap = 297 },
+    { tilemap = 298 },
+    { tilemap = 299 },
+    { tilemap = 300 },
+    { tilemap = 295, transform = "FlipX" },
+    { tilemap = 296, transform = "FlipX" },
+    { tilemap = 297, transform = "FlipX" },
+    { tilemap = 292, transform = "FlipX" },
+    { tilemap = 293, transform = "FlipX" },
+    { tilemap = 294, transform = "FlipX" },
+    { tilemap = 289, transform = "FlipX" },
+    { tilemap = 290, transform = "FlipX" },
+    { tilemap = 291, transform = "FlipX" },
+]
 
-# [sprites.MCV]
-# frames = [201, 202, 203, 204, 205]
+[sprites.MCV]
+frames = [
+    { tilemap = 201 },
+    { tilemap = 202 },
+    { tilemap = 203 },
+    { tilemap = 204 },
+    { tilemap = 205 },
+    { tilemap = 204, transform = "FlipX" },
+    { tilemap = 203, transform = "FlipX" },
+    { tilemap = 202, transform = "FlipX" },
+]
 
-# [sprites.Infantry]
-# frames = [135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146]
+[sprites.Infantry]
+frames = [
+    { tilemap = 135 },
+    { tilemap = 136 },
+    { tilemap = 137 },
+    { tilemap = 138 },
+    { tilemap = 139 },
+    { tilemap = 140 },
+    { tilemap = 141 },
+    { tilemap = 142 },
+    { tilemap = 143 },
+    { tilemap = 144 },
+    { tilemap = 145 },
+    { tilemap = 146 },
+    { tilemap = 139, transform = "FlipX" },
+    { tilemap = 140, transform = "FlipX" },
+    { tilemap = 141, transform = "FlipX" },
+    { tilemap = 142, transform = "FlipX" },
+]
 
-# [sprites.Troopers]
-# frames = [147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158]
+[sprites.Troopers]
+frames = [
+    { tilemap = 147 },
+    { tilemap = 148 },
+    { tilemap = 149 },
+    { tilemap = 150 },
+    { tilemap = 151 },
+    { tilemap = 152 },
+    { tilemap = 153 },
+    { tilemap = 154 },
+    { tilemap = 155 },
+    { tilemap = 156 },
+    { tilemap = 157 },
+    { tilemap = 158 },
+    { tilemap = 151, transform = "FlipX" },
+    { tilemap = 152, transform = "FlipX" },
+    { tilemap = 153, transform = "FlipX" },
+    { tilemap = 154, transform = "FlipX" },
+]
 
-# [sprites.Trike]
-# frames = [130, 131, 132, 133, 134]
+[sprites.Trike]
+frames = [
+    { tilemap = 130 },
+    { tilemap = 131 },
+    { tilemap = 132 },
+    { tilemap = 133 },
+    { tilemap = 134 },
+    { tilemap = 133, transform = "FlipX" },
+    { tilemap = 132, transform = "FlipX" },
+    { tilemap = 131, transform = "FlipX" },
+]
 
-# [sprites.Quad]
-# frames = [125, 126, 127, 128, 129]
+[sprites.Quad]
+frames = [
+    { tilemap = 125 },
+    { tilemap = 126 },
+    { tilemap = 127 },
+    { tilemap = 128 },
+    { tilemap = 129 },
+    { tilemap = 128, transform = "FlipX" },
+    { tilemap = 127, transform = "FlipX" },
+    { tilemap = 126, transform = "FlipX" },
+]
 
-# [sprites.Tank]
-# frames = [166, 167, 168, 169, 170]
+[sprites.Tank]
+frames = [
+    { tilemap = 166 },
+    { tilemap = 167 },
+    { tilemap = 168 },
+    { tilemap = 169 },
+    { tilemap = 170 },
+    { tilemap = 169, transform = "FlipX" },
+    { tilemap = 168, transform = "FlipX" },
+    { tilemap = 167, transform = "FlipX" },
+]
 
-# [sprites.TankTurret]
-# frames = [171, 172, 173, 174, 175]
+[sprites.TankTurret]
+frames = [
+    { tilemap = 171 },
+    { tilemap = 172 },
+    { tilemap = 173 },
+    { tilemap = 174 },
+    { tilemap = 175 },
+    { tilemap = 174, transform = "FlipX" },
+    { tilemap = 173, transform = "FlipX" },
+    { tilemap = 172, transform = "FlipX" },
+]
 
-# [sprites.MissileTankTurret]
-# frames = [254, 255, 256, 257, 258]
+[sprites.MissileTankTurret]
+frames = [
+    { tilemap = 254 },
+    { tilemap = 255 },
+    { tilemap = 256 },
+    { tilemap = 257 },
+    { tilemap = 258 },
+    { tilemap = 257, transform = "FlipX" },
+    { tilemap = 256, transform = "FlipX" },
+    { tilemap = 255, transform = "FlipX" },
+]
 
-# [sprites.SonicTankTurret]
-# frames = [249, 250, 251, 252, 253]
+[sprites.SonicTankTurret]
+frames = [
+    { tilemap = 249 },
+    { tilemap = 250 },
+    { tilemap = 251 },
+    { tilemap = 252 },
+    { tilemap = 253 },
+    { tilemap = 252, transform = "FlipX" },
+    { tilemap = 251, transform = "FlipX" },
+    { tilemap = 250, transform = "FlipX" },
+]
 
-# [sprites.SiegeTank]
-# frames = [176, 177, 178, 179, 180]
+[sprites.SiegeTank]
+frames = [
+    { tilemap = 176 },
+    { tilemap = 177 },
+    { tilemap = 178 },
+    { tilemap = 179 },
+    { tilemap = 180 },
+    { tilemap = 179, transform = "FlipX" },
+    { tilemap = 178, transform = "FlipX" },
+    { tilemap = 177, transform = "FlipX" },
+]
 
-# [sprites.SiegeTankTurret]
-# frames = [181, 182, 183, 184, 185]
+[sprites.SiegeTankTurret]
+frames = [
+    { tilemap = 181 },
+    { tilemap = 182 },
+    { tilemap = 183 },
+    { tilemap = 184 },
+    { tilemap = 185 },
+    { tilemap = 184, transform = "FlipX" },
+    { tilemap = 183, transform = "FlipX" },
+    { tilemap = 182, transform = "FlipX" },
+]
 
-# [sprites.Devastator]
-# frames = [186, 187, 188, 189, 190]
+[sprites.Devastator]
+frames = [
+    { tilemap = 186 },
+    { tilemap = 187 },
+    { tilemap = 188 },
+    { tilemap = 189 },
+    { tilemap = 190 },
+    { tilemap = 189, transform = "FlipX" },
+    { tilemap = 188, transform = "FlipX" },
+    { tilemap = 187, transform = "FlipX" },
+]
 
-# [sprites.DevastatorTurret]
-# frames = [191, 192, 193, 194, 195]
+[sprites.DevastatorTurret]
+frames = [
+    { tilemap = 191 },
+    { tilemap = 192 },
+    { tilemap = 193 },
+    { tilemap = 194 },
+    { tilemap = 195 },
+    { tilemap = 194, transform = "FlipX" },
+    { tilemap = 193, transform = "FlipX" },
+    { tilemap = 192, transform = "FlipX" },
+]
 
-# [sprites.Carryall]
-# frames = [211, 212, 213, 214, 215, 216]
+[sprites.Carryall]
+frames = [
+    { tilemap = 211 },
+    { tilemap = 212 },
+    { tilemap = 213 },
+    { tilemap = 212, transform = "FlipY" },
+    { tilemap = 211, transform = "FlipY" },
+    { tilemap = 212, transform = "FlipXY" },
+    { tilemap = 213, transform = "FlipX" },
+    { tilemap = 212, transform = "FlipX" },
+]
 
-# [sprites.Ornithopter]
-# frames = [217, 218, 219, 220, 221, 222, 223, 224, 225]
+[sprites.LoadedCarryall]
+frames = [
+    { tilemap = 214 },
+    { tilemap = 215 },
+    { tilemap = 216 },
+    { tilemap = 215, transform = "FlipY" },
+    { tilemap = 214, transform = "FlipY" },
+    { tilemap = 215, transform = "FlipXY" },
+    { tilemap = 216, transform = "FlipX" },
+    { tilemap = 215, transform = "FlipX" },
+]
 
-# [sprites.SandWorm]
-# frames = [334, 335, 336, 337, 338]
+[sprites.LandedOrnithopter]
+frames = [
+    { tilemap = 159 },
+    { tilemap = 159, transform = "FlipX" },
+    { tilemap = 159, transform = "FlipY" },
+    { tilemap = 159, transform = "FlipXY" },
+]
 
-# [sprites.Frigate]
-# frames = [339, 340, 341]
+[sprites.Ornithopter]
+frames = [
+    { tilemap = 217 },
+    { tilemap = 218 },
+    { tilemap = 219 },
+
+    { tilemap = 220 },
+    { tilemap = 221 },
+    { tilemap = 222 },
+
+    { tilemap = 223 },
+    { tilemap = 224 },
+    { tilemap = 225 },
+
+    { tilemap = 220, transform = "FlipY" },
+    { tilemap = 221, transform = "FlipY" },
+    { tilemap = 222, transform = "FlipY" },
+
+    { tilemap = 217, transform = "FlipY" },
+    { tilemap = 218, transform = "FlipY" },
+    { tilemap = 219, transform = "FlipY" },
+
+    { tilemap = 220, transform = "FlipXY" },
+    { tilemap = 221, transform = "FlipXY" },
+    { tilemap = 222, transform = "FlipXY" },
+
+    { tilemap = 223, transform = "FlipX" },
+    { tilemap = 224, transform = "FlipX" },
+    { tilemap = 225, transform = "FlipX" },
+
+    { tilemap = 220, transform = "FlipX" },
+    { tilemap = 221, transform = "FlipX" },
+    { tilemap = 222, transform = "FlipX" },
+]
+
+[sprites.SandWorm]
+frames = [
+    { tilemap = 334 },
+    { tilemap = 335 },
+    { tilemap = 336 },
+    { tilemap = 337 },
+    { tilemap = 338 },
+]
+
+[sprites.Frigate]
+frames = [
+    { tilemap = 339 },
+    { tilemap = 340 },
+    { tilemap = 341 },
+    { tilemap = 340, transform = "FlipY" },
+    { tilemap = 339, transform = "FlipY" },
+    { tilemap = 340, transform = "FlipXY" },
+    { tilemap = 341, transform = "FlipX" },
+    { tilemap = 340, transform = "FlipX" },
+]
 
 # [sprites.Fremen]
 # frames = []
@@ -2202,8 +2558,30 @@ frames = [
 # [sprites.Saboteur]
 # frames = []
 
-# [sprites.DeathHand]
-# frames = []
+[sprites.DeathHand]
+frames = [
+    { tilemap = 206 },
+    { tilemap = 207 },
+    { tilemap = 208 },
+    { tilemap = 209 },
+    { tilemap = 210 },
+
+    { tilemap = 209, transform = "FlipY" },
+    { tilemap = 208, transform = "FlipY" },
+    { tilemap = 207, transform = "FlipY" },
+
+    { tilemap = 206, transform = "FlipY" },
+
+    { tilemap = 207, transform = "FlipXY" },
+    { tilemap = 208, transform = "FlipXY" },
+    { tilemap = 209, transform = "FlipXY" },
+
+    { tilemap = 210, transform = "FlipX" },
+
+    { tilemap = 209, transform = "FlipX" },
+    { tilemap = 208, transform = "FlipX" },
+    { tilemap = 207, transform = "FlipX" }
+]
 
 # [sprites.Sardaukar]
 # frames = []
