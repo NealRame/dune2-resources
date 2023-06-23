@@ -6,7 +6,7 @@ use crate::*;
 
 pub struct TileBitmap<'a> {
     resource: &'a Resources,
-    tileset: String,
+    tileset_id: String,
     tile_index: usize,
     faction: Option<Faction>,
 }
@@ -14,13 +14,13 @@ pub struct TileBitmap<'a> {
 impl<'a> TileBitmap<'a> {
     pub fn new(
         resource: &'a Resources,
-        tileset: String,
+        tileset_id: String,
         tile_index: usize,
         faction: Option<Faction>,
     ) -> Self {
         Self {
             resource,
-            tileset,
+            tileset_id,
             tile_index,
             faction,
         }
@@ -29,12 +29,12 @@ impl<'a> TileBitmap<'a> {
 
 impl Bitmap for TileBitmap<'_> {
     fn width(&self) -> u32 {
-        let tileset = self.resource.tilesets.get(&self.tileset).unwrap();
+        let tileset = self.resource.tilesets.get(&self.tileset_id).unwrap();
         tileset.tile_size.width
     }
 
     fn height(&self) -> u32 {
-        let tileset = self.resource.tilesets.get(&self.tileset).unwrap();
+        let tileset = self.resource.tilesets.get(&self.tileset_id).unwrap();
         tileset.tile_size.height
     }
 }
@@ -42,7 +42,7 @@ impl Bitmap for TileBitmap<'_> {
 impl BitmapGetPixel for TileBitmap<'_> {
     fn get_pixel(&self, point: Point) -> Option<Color> {
         let palette = &self.resource.palette;
-        let tileset = self.resource.tilesets.get(&self.tileset).unwrap();
+        let tileset = self.resource.tilesets.get(&self.tileset_id).unwrap();
         point_to_index(point, self.size()).map(|index| {
             let mut color_index =
                 tileset.tiles[self.tile_index][index] as usize;

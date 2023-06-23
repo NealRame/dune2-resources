@@ -15,11 +15,11 @@ pub struct Resources {
 impl Resources {
     pub fn tile_bitmap(
         &self,
-        tileset: &String,
+        tileset_id: &str,
         tile_index: usize,
         faction: Option<Faction>,
     ) -> TileBitmap {
-        TileBitmap::new(self, tileset.clone(), tile_index, faction)
+        TileBitmap::new(self, tileset_id.into(), tile_index, faction)
     }
 
     pub fn tilemap_bitmap(
@@ -32,10 +32,10 @@ impl Resources {
 
     pub fn sprite_frame_bitmap(
         &self,
-        sprite_id: &String,
+        sprite_id: &str,
         sprite_frame_index: usize,
         faction: Option<Faction>,
     ) -> SpriteFrameBitmap {
-        SpriteFrameBitmap::new(self, sprite_id, sprite_frame_index, faction)
+        SpriteFrameBitmap::new(self, sprite_id.into(), sprite_frame_index, faction)
     }
 }

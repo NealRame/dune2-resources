@@ -11,9 +11,9 @@ pub struct Tilemap {
 }
 
 pub struct TilemapBitmap<'a> {
-    resources: &'a Resources,
-    index: usize,
-    faction: Option<Faction>,
+    bitmaps: Vec<TileBitmap<'a>>,
+    tilemap_shape: Shape,
+    tile_size: Size,
 }
 
 impl<'a> TilemapBitmap<'a> {
@@ -22,47 +22,44 @@ impl<'a> TilemapBitmap<'a> {
         index: usize,
         faction: Option<Faction>,
     ) -> Self {
+        let tilemap = resources.tilemaps.get(index).unwrap();
+        let tileset = resources.tilesets.get(&tilemap.tileset).unwrap();
+        let tileset_id = &tilemap.tileset;
         Self {
-            resources,
-            index,
-            faction,
+            tilemap_shape: tilemap.shape,
+            tile_size: tileset.tile_size,
+            bitmaps: tilemap.tiles.iter().map(|tile_index| {
+                TileBitmap::new(
+                    resources,
+                    tileset_id.into(),
+                    *tile_index,
+                    faction,
+                )
+            }).collect::<Vec<TileBitmap>>(),
         }
     }
 }
 
 impl Bitmap for TilemapBitmap<'_> {
     fn width(&self) -> u32 {
-        let tilemap = &self.resources.tilemaps[self.index];
-        let tileset = &self.resources.tilesets[&tilemap.tileset];
-        tilemap.shape.columns*tileset.tile_size.width
+        self.tilemap_shape.columns*self.bitmaps[0].width()
     }
 
     fn height(&self) -> u32 {
-        let tilemap = &self.resources.tilemaps[self.index];
-        let tileset = &self.resources.tilesets[&tilemap.tileset];
-        tilemap.shape.rows*tileset.tile_size.height
+        self.tilemap_shape.rows*self.bitmaps[0].height()
     }
 }
 
 impl BitmapGetPixel for TilemapBitmap<'_> {
     fn get_pixel(&self, point: Point) -> Option<Color> {
-        let tilemap = &self.resources.tilemaps[self.index];
-        let tileset = &self.resources.tilesets[&tilemap.tileset];
+        let col = (point.x/self.tile_size.width) as usize;
+        let row = (point.y/self.tile_size.height) as usize;
+        let index = row*self.tilemap_shape.columns as usize + col;
 
-        let col = (point.x/tileset.tile_size.width) as usize;
-        let row = (point.y/tileset.tile_size.height) as usize;
-        let index = row*tilemap.shape.columns as usize + col;
+        let bitmap_x = point.x%self.tile_size.width;
+        let bitmap_y = point.y%self.tile_size.height;
 
-        let bitmap = self.resources.tile_bitmap(
-            &tilemap.tileset,
-            tilemap.tiles[index],
-            if tilemap.remapable { self.faction } else { None },
-        );
-
-        let bitmap_x = point.x%tileset.tile_size.width;
-        let bitmap_y = point.y%tileset.tile_size.height;
-
-        bitmap.get_pixel(Point {
+        self.bitmaps[index].get_pixel(Point {
             x: bitmap_x,
             y: bitmap_y,
         })

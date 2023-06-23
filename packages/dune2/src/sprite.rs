@@ -18,7 +18,19 @@ pub struct SpriteFrame {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Sprite {
-    pub frames: Vec<SpriteFrame>,
+    frames: Vec<SpriteFrame>,
+}
+
+impl Sprite {
+    pub fn new(frames: Vec<SpriteFrame>) -> Self {
+        Self {
+            frames,
+        }
+    }
+
+    pub fn frame_count(&self) -> usize {
+        self.frames.len()
+    }
 }
 
 pub struct SpriteFrameBitmap<'a> {
@@ -29,16 +41,19 @@ pub struct SpriteFrameBitmap<'a> {
 impl<'a> SpriteFrameBitmap<'a> {
     pub fn new(
         resources: &'a Resources,
-        sprite_id: &String,
+        sprite_id: String,
         sprite_frame_index: usize,
         faction: Option<Faction>,
     ) -> Self {
-        let sprite_frame = &resources.sprites.get(sprite_id).unwrap().frames[sprite_frame_index];
-        let bitmap = Box::new(resources.tilemap_bitmap(sprite_frame.tilemap, faction));
-        return Self {
-            bitmap,
+        let sprite = resources.sprites.get(&sprite_id).unwrap();
+        let sprite_frame = sprite.frames.get(sprite_frame_index).unwrap();
+        Self {
             transformation: sprite_frame.transform,
-        };
+            bitmap: Box::new(resources.tilemap_bitmap(
+                sprite_frame.tilemap,
+                faction,
+            )),
+        }
     }
 }
 

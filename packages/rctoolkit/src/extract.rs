@@ -201,7 +201,7 @@ fn extract_sprites(
 
         fs::create_dir_all(&output_dir)?;
 
-        for i in 0..rc.sprites.get(sprite).unwrap().frames.len() {
+        for i in 0..rc.sprites.get(sprite).unwrap().frame_count() {
             let bitmap = rc.sprite_frame_bitmap(sprite, i, Some(faction));
             let src_rect = bitmap.rect();
 
