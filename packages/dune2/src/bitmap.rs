@@ -113,7 +113,10 @@ pub fn blit<T, U>(
 }
 
 /// 
-pub fn point_to_index(p: Point, size: Size) -> Option<usize> {
+pub fn point_to_index(
+    p: Point,
+    size: Size,
+) -> Option<usize> {
     if p.x >= size.width || p.y >= size.height {
         return None;
     }
