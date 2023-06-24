@@ -117,8 +117,9 @@ pub fn point_to_index(
     p: Point,
     size: Size,
 ) -> Option<usize> {
-    if p.x >= size.width || p.y >= size.height {
-        return None;
+    if p.x < size.width && p.y < size.height {
+        Some((p.y*size.width + p.x) as usize)
+    } else {
+        None
     }
-    Some((p.y*size.width + p.x) as usize)
 }
