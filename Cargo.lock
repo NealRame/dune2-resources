@@ -234,7 +234,9 @@ name = "dune2"
 version = "0.1.0"
 dependencies = [
  "bitvec",
+ "flate2",
  "paste",
+ "rmp-serde",
  "serde",
 ]
 
@@ -244,9 +246,7 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "dune2",
- "flate2",
  "image",
- "rmp-serde",
  "serde",
  "toml",
 ]

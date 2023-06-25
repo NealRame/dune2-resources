@@ -7,13 +7,7 @@ use std::str;
 
 use clap::Args;
 
-use flate2::Compression;
-use flate2::write::DeflateEncoder;
-
-use rmp_serde::Serializer;
-
 use serde::Deserialize;
-use serde::Serialize;
 
 use toml;
 
@@ -132,12 +126,8 @@ pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
         );
     }
 
-    let mut output = DeflateEncoder::new(
-        fs::File::create(&args.output_file)?,
-        Compression::best(),
-    );
-
-    rc.serialize(&mut Serializer::new(&mut output))?;
+    let mut output = fs::File::create(&args.output_file)?;
+    rc.write_to(&mut output)?;
 
     Ok(())
 }
