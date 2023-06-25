@@ -5,10 +5,6 @@ use std::str::FromStr;
 
 use clap::{Args, Subcommand};
 
-use flate2::read::DeflateDecoder;
-
-use rmp_serde;
-
 use dune2::{Bitmap};
 
 use crate::image::BMPImage;
@@ -220,8 +216,11 @@ fn extract_sprites(
  * RUN
  *****************************************************************************/
 pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
-    let mut inflate_reader = DeflateDecoder::new(fs::File::open(&args.input_rc_file)?);
-    let rc: dune2::Resources = rmp_serde::from_read(&mut inflate_reader)?;
+    // let mut inflate_reader = DeflateDecoder::new(fs::File::open(&args.input_rc_file)?);
+    // let rc: dune2::Resources = rmp_serde::from_read(&mut inflate_reader)?;
+
+    let mut reader = fs::File::open(&args.input_rc_file)?;
+    let rc: dune2::Resources = dune2::Resources::read_from(&mut reader)?;
 
     match &args.command {
         Commands::Palette(args) => extract_palette(&rc, args),
