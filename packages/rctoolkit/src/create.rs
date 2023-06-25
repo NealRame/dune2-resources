@@ -7,7 +7,6 @@ use std::str;
 
 use clap::Args;
 
-use dune2::Sprite;
 use flate2::Compression;
 use flate2::write::DeflateEncoder;
 
@@ -18,7 +17,7 @@ use serde::Serialize;
 
 use toml;
 
-use dune2::{Tilemap, Tileset};
+use dune2::{Sprite, Tilemap, Tileset};
 
 #[derive(Args)]
 pub struct Cli {
