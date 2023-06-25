@@ -1,31 +1,44 @@
 pub mod bitmap;
-pub mod color;
-pub mod constants;
-pub mod icn;
-pub mod io;
-pub mod map;
-pub mod point;
-pub mod rect;
-pub mod resources;
-pub mod shape;
-pub mod shp;
-pub mod size;
-pub mod sprite;
-pub mod tilemap;
-pub mod tileset;
-
 pub use bitmap::*;
+
+pub mod color;
 pub use color::*;
+
+pub mod constants;
 pub use constants::*;
-pub use icn::*;
+
+pub mod io;
 pub use io::*;
-pub use map::*;
+
+pub mod point;
 pub use point::*;
+
+pub mod rect;
 pub use rect::*;
+
+pub mod resources;
 pub use resources::*;
+
+pub mod shape;
 pub use shape::*;
-pub use shp::*;
+
+pub mod size;
 pub use size::*;
+
+pub mod sprite;
 pub use sprite::*;
+
+pub mod tilemap;
 pub use tilemap::*;
+
+pub mod tileset;
 pub use tileset::*;
+
+#[cfg(feature = "icn")] pub mod icn;
+#[cfg(feature = "icn")] pub use icn::*;
+
+#[cfg(feature = "map")] pub mod map;
+#[cfg(feature = "map")] pub use map::*;
+
+#[cfg(feature = "shp")] pub mod shp;
+#[cfg(feature = "shp")] pub use shp::*;
