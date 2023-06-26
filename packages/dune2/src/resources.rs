@@ -26,16 +26,16 @@ impl Resources {
         tileset_id: &str,
         tile_index: usize,
         faction: Option<Faction>,
-    ) -> TileBitmap {
-        TileBitmap::new(self, tileset_id.into(), tile_index, faction)
+    ) -> Result<TileBitmap, Box<dyn std::error::Error>> {
+        TileBitmap::create(self, tileset_id.into(), tile_index, faction)
     }
 
     pub fn tilemap_bitmap(
         &self,
         index: usize,
         faction: Option<Faction>,
-    ) -> TilemapBitmap {
-        TilemapBitmap::new(self, index, faction)
+    ) -> Result<TilemapBitmap, Box<dyn std::error::Error>> {
+        TilemapBitmap::create(self, index, faction)
     }
 
     pub fn sprite_frame_bitmap(
@@ -43,8 +43,8 @@ impl Resources {
         sprite_id: &str,
         sprite_frame_index: usize,
         faction: Option<Faction>,
-    ) -> SpriteFrameBitmap {
-        SpriteFrameBitmap::new(self, sprite_id.into(), sprite_frame_index, faction)
+    ) -> Result<SpriteFrameBitmap, Box<dyn std::error::Error>> {
+        SpriteFrameBitmap::create(self, sprite_id.into(), sprite_frame_index, faction)
     }
 }
 

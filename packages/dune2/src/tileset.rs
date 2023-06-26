@@ -5,47 +5,51 @@ use serde::{Deserialize, Serialize};
 use crate::*;
 
 pub struct TileBitmap<'a> {
-    resource: &'a Resources,
-    tileset_id: String,
-    tile_index: usize,
     faction: Option<Faction>,
+    palette: &'a Palette,
+    tile_size: Size,
+    tile_data: &'a Vec<u8>,
 }
 
 impl<'a> TileBitmap<'a> {
-    pub fn new(
+    pub fn create(
         resource: &'a Resources,
         tileset_id: String,
         tile_index: usize,
         faction: Option<Faction>,
-    ) -> Self {
-        Self {
-            resource,
-            tileset_id,
-            tile_index,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let palette = &resource.palette;
+        let tileset = resource.tilesets.get(&tileset_id).ok_or(
+            format!("Tileset {} not found", tileset_id)
+        )?;
+
+        let tile_data = tileset.tiles.get(tile_index).ok_or(
+            format!("Tile #{} not found in tileset {}", tile_index, tileset_id)
+        )?;
+
+        Ok(Self {
             faction,
-        }
+            palette,
+            tile_data,
+            tile_size: tileset.tile_size,
+        })
     }
 }
 
 impl Bitmap for TileBitmap<'_> {
     fn width(&self) -> u32 {
-        let tileset = self.resource.tilesets.get(&self.tileset_id).unwrap();
-        tileset.tile_size.width
+        self.tile_size.width
     }
 
     fn height(&self) -> u32 {
-        let tileset = self.resource.tilesets.get(&self.tileset_id).unwrap();
-        tileset.tile_size.height
+        self.tile_size.height
     }
 }
 
 impl BitmapGetPixel for TileBitmap<'_> {
     fn get_pixel(&self, point: Point) -> Option<Color> {
-        let palette = &self.resource.palette;
-        let tileset = self.resource.tilesets.get(&self.tileset_id).unwrap();
         point_to_index(point, self.size()).map(|index| {
-            let mut color_index =
-                tileset.tiles[self.tile_index][index] as usize;
+            let mut color_index = self.tile_data[index] as usize;
 
             if let Some(faction) = self.faction {
                 let faction_palette_offset = 16*(faction as usize);
@@ -56,7 +60,7 @@ impl BitmapGetPixel for TileBitmap<'_> {
                 }
             }
 
-            palette.color_at(color_index)
+            self.palette.color_at(color_index)
         })
     }
 }
@@ -74,7 +78,6 @@ impl fmt::Display for TilesetSizeError {
 }
 
 impl std::error::Error for TilesetSizeError {}
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Tileset {

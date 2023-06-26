@@ -17,26 +17,29 @@ pub struct TilemapBitmap<'a> {
 }
 
 impl<'a> TilemapBitmap<'a> {
-    pub fn new(
+    pub fn create(
         resources: &'a Resources,
         index: usize,
         faction: Option<Faction>,
-    ) -> Self {
+    ) -> Result<Self, Box<dyn std::error::Error>> {
         let tilemap = resources.tilemaps.get(index).unwrap();
         let tileset = resources.tilesets.get(&tilemap.tileset).unwrap();
         let tileset_id = &tilemap.tileset;
-        Self {
+
+        let bitmaps = tilemap.tiles.iter().map(|tile_index| {
+            TileBitmap::create(
+                resources,
+                tileset_id.into(),
+                *tile_index,
+                faction,
+            )
+        }).collect::<Result<Vec<TileBitmap>, Box<dyn std::error::Error>>>()?;
+
+        Ok(Self {
             tilemap_shape: tilemap.shape,
             tile_size: tileset.tile_size,
-            bitmaps: tilemap.tiles.iter().map(|tile_index| {
-                TileBitmap::new(
-                    resources,
-                    tileset_id.into(),
-                    *tile_index,
-                    faction,
-                )
-            }).collect::<Vec<TileBitmap>>(),
-        }
+            bitmaps,
+        })
     }
 }
 

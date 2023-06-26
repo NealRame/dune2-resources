@@ -34,26 +34,28 @@ impl Sprite {
 }
 
 pub struct SpriteFrameBitmap<'a> {
-    bitmap: Box<TilemapBitmap<'a>>,
+    bitmap: TilemapBitmap<'a>,
     transformation: Option<SpriteFrameTransform>,
 }
 
 impl<'a> SpriteFrameBitmap<'a> {
-    pub fn new(
+    pub fn create(
         resources: &'a Resources,
         sprite_id: String,
         sprite_frame_index: usize,
         faction: Option<Faction>,
-    ) -> Self {
+    ) -> Result<Self, Box<dyn std::error::Error>> {
         let sprite = resources.sprites.get(&sprite_id).unwrap();
         let sprite_frame = sprite.frames.get(sprite_frame_index).unwrap();
-        Self {
+        let bitmap = resources.tilemap_bitmap(
+            sprite_frame.tilemap,
+            faction,
+        )?;
+
+        Ok(Self {
             transformation: sprite_frame.transform,
-            bitmap: Box::new(resources.tilemap_bitmap(
-                sprite_frame.tilemap,
-                faction,
-            )),
-        }
+            bitmap,
+        })
     }
 }
 

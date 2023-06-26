@@ -141,7 +141,7 @@ fn extract_tiles(
         fs::create_dir_all(&output_dir)?;
 
         for i in 0..rc.tilesets.get(tileset).unwrap().tiles.len() {
-            let bitmap = rc.tile_bitmap(tileset, i, None);
+            let bitmap = rc.tile_bitmap(tileset, i, None)?;
             let src_rect = bitmap.rect();
 
             let mut image = BMPImage::new(args.scale*bitmap.size());
@@ -170,7 +170,7 @@ fn extract_tilemaps(
     for i in 0..rc.tilemaps.len() {
         let output_filepath = output_dir.join(format!("{:02}.bmp", i));
 
-        let bitmap = rc.tilemap_bitmap(i, Some(faction));
+        let bitmap = rc.tilemap_bitmap(i, Some(faction))?;
         let src_rect = bitmap.rect();
 
         let mut image = BMPImage::new(args.scale*bitmap.size());
@@ -198,7 +198,7 @@ fn extract_sprites(
         fs::create_dir_all(&output_dir)?;
 
         for i in 0..rc.sprites.get(sprite).unwrap().frame_count() {
-            let bitmap = rc.sprite_frame_bitmap(sprite, i, Some(faction));
+            let bitmap = rc.sprite_frame_bitmap(sprite, i, Some(faction))?;
             let src_rect = bitmap.rect();
 
             let mut image = BMPImage::new(args.scale*bitmap.size());
@@ -216,9 +216,6 @@ fn extract_sprites(
 // RUN
 // ============================================================================
 pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
-    // let mut inflate_reader = DeflateDecoder::new(fs::File::open(&args.input_rc_file)?);
-    // let rc: dune2::Resources = rmp_serde::from_read(&mut inflate_reader)?;
-
     let mut reader = fs::File::open(&args.input_rc_file)?;
     let rc: dune2::Resources = dune2::Resources::read_from(&mut reader)?;
 
