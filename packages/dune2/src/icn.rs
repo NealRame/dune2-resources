@@ -108,7 +108,7 @@ impl ICNRPal {
     }
 }
 
-pub struct ICNRTbl;
+struct ICNRTbl;
 
 impl ICNRTbl {
     fn read_from(
