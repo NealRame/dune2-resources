@@ -42,3 +42,6 @@ pub use tileset::*;
 
 #[cfg(feature = "shp")] pub mod shp;
 #[cfg(feature = "shp")] pub use shp::*;
+
+#[cfg(feature = "wasm")] pub mod wasm;
+#[cfg(feature = "wasm")] pub use wasm::*;

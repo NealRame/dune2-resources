@@ -1,0 +1,17 @@
+{
+  "name": "dune2-wasm-app-test",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "dune2": "file:../../packages/dune2/pkg"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.2",
+    "vite": "^4.3.9",
+    "vite-plugin-wasm": "^3.2.2"
+  }
+}

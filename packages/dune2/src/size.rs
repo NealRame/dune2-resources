@@ -3,9 +3,13 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
+
 use crate::shape::*;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 pub struct Size {
     pub width: u32,
     pub height: u32,
