@@ -24,7 +24,3 @@ serde = { version = "1.0.162", features = ["derive"] }
 wasm-bindgen = { version = "0.2.87", optional = true }
 web-sys = { version = "0.3.64", features = ["console", "ImageData"], optional = true }
 wee_alloc = { version = "0.4.5", optional = true }
-
-[profile.release]
-# Tell `rustc` to optimize for small code size.
-opt-level = "s"
