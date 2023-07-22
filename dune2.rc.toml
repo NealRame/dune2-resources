@@ -1,23 +1,23 @@
 [palette]
-path = "data/DUNE/BENE.PAL"
+path = "DUNE/BENE.PAL"
 
 ###############################################################################
 # Tilsets
 
 [[tilesets]]
-path = "data/DUNE/ICON.ICN"
+path = "DUNE/ICON.ICN"
 kind = "ICN"
 
 [[tilesets]]
-path = "data/DUNE/UNITS.SHP"
+path = "DUNE/UNITS.SHP"
 kind = "SHP"
 
 [[tilesets]]
-path = "data/DUNE/UNITS1.SHP"
+path = "DUNE/UNITS1.SHP"
 kind = "SHP"
 
 [[tilesets]]
-path = "data/DUNE/UNITS2.SHP"
+path = "DUNE/UNITS2.SHP"
 kind = "SHP"
 
 ###############################################################################
