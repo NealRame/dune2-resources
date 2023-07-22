@@ -6,11 +6,11 @@ use clap::Parser;
 #[command(author, about, version)]
 pub struct Cli {
     /// Input file path
-    pub input_filepath: PathBuf,
+    pub input_filepath: Option<PathBuf>,
 
     /// Output folder path
-    #[arg(short, long, default_value = "output")]
-    pub output_dir: Option<PathBuf>,
+    #[arg(short, long, default_value = "pak_output")]
+    pub output_dir: PathBuf,
 
     /// Overwrite existing files
     #[arg(short = 'f', long, default_value = "false", action = clap::ArgAction::SetTrue)]

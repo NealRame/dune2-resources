@@ -50,20 +50,17 @@ fn read_cstring<T>(reader: &mut T)
 
 struct PAKRawEntry(u64, String);
 
-struct PAKRawEntryReader<T>
-    where T: io::BufRead + io::Seek {
-    source: T,
+struct PAKRawEntryReader<'a> {
+    source: io::Cursor<&'a [u8]>,
 }
 
-impl<T> PAKRawEntryReader<T>
-    where T: io::BufRead + io::Seek {
-    fn new(source: T) -> PAKRawEntryReader<T> {
-        PAKRawEntryReader { source }
+impl PAKRawEntryReader<'_> {
+    fn new(input: &[u8]) -> PAKRawEntryReader {
+        PAKRawEntryReader { source: io::Cursor::new(input) }
     }
 }
 
-impl<T> Iterator for PAKRawEntryReader<T>
-    where T: io::BufRead + io::Seek {
+impl Iterator for PAKRawEntryReader<'_> {
     type Item = PAKRawEntry;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -77,15 +74,29 @@ impl<T> Iterator for PAKRawEntryReader<T>
     }
 }
 
+fn read_input_data(
+    input_filepath: &Option<PathBuf>,
+) -> Result<Vec<u8>, Box<dyn Error>> {
+    let mut buf = Vec::new();
+    match input_filepath {
+        Some(input_filepath) => {
+            let mut input = fs::File::open(&input_filepath)?;
+            input.read_to_end(buf.as_mut())?;
+        },
+        None => {
+            let mut input = io::stdin().lock();
+            input.read_to_end(buf.as_mut())?;
+        },
+    }
+    Ok(buf)
+}
+
 pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
-    let output_dirpath = config.output_dir.unwrap_or_else(|| {
-        PathBuf::from(&config.input_filepath.file_stem().unwrap())
-    });
+    fs::create_dir_all(&config.output_dir)?;
 
-    fs::create_dir_all(&output_dirpath)?;
-
-    let reader = PAKRawEntryReader::new(io::BufReader::new(fs::File::open(&config.input_filepath)?));
-    let pak_raw_entries = reader.collect::<Vec<PAKRawEntry>>();
+    let pak_data = read_input_data(&config.input_filepath)?;
+    let pak_reader = PAKRawEntryReader::new(&pak_data);
+    let pak_raw_entries = pak_reader.collect::<Vec<PAKRawEntry>>();
 
     for (i, entry) in pak_raw_entries[0..(pak_raw_entries.len() - 1)].iter().enumerate() {
         let next_entry = &pak_raw_entries[i + 1];
@@ -94,16 +105,16 @@ pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
         let size = (next_entry.0 - entry.0) as usize;
         let name = &entry.1;
 
-        let mut data = vec![0; size];
-        let mut input = fs::File::open(&config.input_filepath)?;
+        let mut entry_data = vec![0; size];
+        let mut entry_input = io::Cursor::new(pak_data.as_slice());
 
-        input.seek(io::SeekFrom::Start(offset))?;
-        input.read(&mut data)?;
+        entry_input.seek(io::SeekFrom::Start(offset))?;
+        entry_input.read(&mut entry_data)?;
 
         if config.list {
             println!("{}: {} bytes", name, size);
         } else {
-            let output_filepath = output_dirpath.join(name);
+            let output_filepath = config.output_dir.join(name);
 
             if config.verbose {
                 println!("Extracting {} ...", output_filepath.display());
@@ -114,7 +125,7 @@ pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
                 return Err(Box::new(io::Error::new(io::ErrorKind::AlreadyExists, message)));
             }
 
-            fs::File::create(output_filepath)?.write_all(&data)?;
+            fs::File::create(output_filepath)?.write_all(&entry_data)?;
         }
     }
 
