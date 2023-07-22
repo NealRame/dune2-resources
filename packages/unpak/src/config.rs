@@ -9,7 +9,7 @@ pub struct Cli {
     pub input_filepath: Option<PathBuf>,
 
     /// Output folder path
-    #[arg(short, long, default_value = "pak_output")]
+    #[arg(short = 'd', long, default_value = "pak_output")]
     pub output_dir: PathBuf,
 
     /// Overwrite existing files
