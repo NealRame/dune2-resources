@@ -56,21 +56,27 @@ impl Config {
     fn try_read_from_file(
         config_filepath: &PathBuf,
     ) -> Result<Self, Box<dyn Error>> {
-        let config_dir = config_filepath.parent().unwrap();
         let config_str = fs::read_to_string(config_filepath)?;
         let mut config = toml::from_str::<Config>(&config_str)?;
+
+        let data_dir =
+            std::env::var("DUNE2_DATA_DIR")
+                .map(|s| PathBuf::from(s))
+                .unwrap_or_else(|_| {
+                    config_filepath.parent().unwrap().to_path_buf()
+                });
 
         // if palette source path is relative, make it absolute by joining it
         // with the config file's directory
         if !config.palette.path.is_absolute() {
-            config.palette.path = config_dir.join(&config.palette.path);
+            config.palette.path = data_dir.join(&config.palette.path);
         }
 
         // if source paths are relative, make them absolute by joining them
         // with the config file's directory
         for tilset in config.tilesets.iter_mut() {
             if !tilset.path.is_absolute() {
-                tilset.path = config_dir.join(&tilset.path);
+                tilset.path = data_dir.join(&tilset.path);
             }
         }
 
