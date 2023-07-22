@@ -5,7 +5,7 @@ use std::str::FromStr;
 
 use clap::{Args, Subcommand};
 
-use dune2::{Bitmap};
+use dune2_resources::{self as dune2, Bitmap};
 
 use crate::image::BMPImage;
 

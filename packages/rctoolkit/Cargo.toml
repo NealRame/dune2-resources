@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.2.7", features = ["derive", "env"] }
-dune2 = { path = "../dune2", features = ["shp", "icn"] }
+dune2-resources = { path = "../dune2", features = ["shp", "icn"] }
 image = "0.24.6"
 serde = "1.0.162"
 toml = "0.7.3"

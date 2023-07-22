@@ -1,6 +1,6 @@
 use image::{Rgb, RgbImage};
 
-use dune2::Bitmap;
+use dune2_resources::{self as dune2, Bitmap};
 
 pub struct BMPImage {
     pub buffer: RgbImage,
