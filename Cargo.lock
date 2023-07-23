@@ -236,18 +236,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
 
 [[package]]
-name = "dune2-rc-toolkit"
-version = "0.1.0"
-dependencies = [
- "clap",
- "dune2-resources",
- "image",
- "serde",
- "toml",
-]
-
-[[package]]
-name = "dune2-resources"
+name = "dune2-rc"
 version = "0.1.0"
 dependencies = [
  "bitvec",
@@ -259,6 +248,17 @@ dependencies = [
  "wasm-bindgen",
  "web-sys",
  "wee_alloc",
+]
+
+[[package]]
+name = "dune2-rc-toolkit"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "dune2-rc",
+ "image",
+ "serde",
+ "toml",
 ]
 
 [[package]]

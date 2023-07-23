@@ -11,7 +11,7 @@ use serde::Deserialize;
 
 use toml;
 
-use dune2_resources::{self as dune2, Sprite, Tilemap, Tileset};
+use dune2_rc::{self as dune2, Sprite, Tilemap, Tileset};
 
 #[derive(Args)]
 pub struct Cli {

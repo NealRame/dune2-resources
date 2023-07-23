@@ -1,5 +1,5 @@
 [package]
-name = "dune2-resources"
+name = "dune2-rc"
 version = "0.1.0"
 edition = "2021"
 
