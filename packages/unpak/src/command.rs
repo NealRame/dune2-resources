@@ -100,31 +100,38 @@ pub fn run(config: Cli) -> Result<(), Box<dyn Error>> {
     let pak_reader = PAKRawEntryReader::new(&pak_data);
     let pak_raw_entries = pak_reader.collect::<Vec<PAKRawEntry>>();
 
-    for (i, entry) in pak_raw_entries[0..(pak_raw_entries.len() - 1)].iter().enumerate() {
+    let mut entry_data = Vec::with_capacity(4096);
+    let mut entry_input = io::Cursor::new(pak_data.as_slice());
+
+    for i in 0..(pak_raw_entries.len() - 1) {
+        let entry = &pak_raw_entries[i];
         let next_entry = &pak_raw_entries[i + 1];
 
-        let offset = entry.0;
-        let size = (next_entry.0 - entry.0) as usize;
-        let name = &entry.1;
-
-        let mut entry_data = vec![0; size];
-        let mut entry_input = io::Cursor::new(pak_data.as_slice());
-
-        entry_input.seek(io::SeekFrom::Start(offset))?;
-        entry_input.read(&mut entry_data)?;
+        let entry_size = (next_entry.0 - entry.0) as usize;
+        let entry_name = &entry.1;
 
         if config.list {
-            println!("{}: {} bytes", name, size);
+            println!("{}: {} bytes", entry_name, entry_size);
         } else {
-            let output_filepath = config.output_dir.join(name);
+            let entry_offset = entry.0;
+
+            entry_data.resize(entry_size, 0);
+            entry_input.seek(io::SeekFrom::Start(entry_offset))?;
+            entry_input.read(&mut entry_data)?;
+
+            let output_filepath = config.output_dir.join(entry_name);
 
             if config.verbose {
-                println!("Extracting {} ...", output_filepath.display());
+                println!("Extracting {}", output_filepath.display());
             }
-    
+
             if output_filepath.exists() && !config.overwrite {
-                let message = format!("File already exists: {}", output_filepath.display());
-                return Err(Box::new(io::Error::new(io::ErrorKind::AlreadyExists, message)));
+                return Err(Box::new(
+                    io::Error::new(
+                        io::ErrorKind::AlreadyExists,
+                        format!("{}", output_filepath.display()),
+                    )
+                ));
             }
 
             fs::File::create(output_filepath)?.write_all(&entry_data)?;
