@@ -2,7 +2,7 @@ use std::fs;
 use std::iter;
 use std::path;
 
-use std::error::{Error};
+use std::error::Error;
 use std::io::{Read, Seek, SeekFrom};
 
 use crate::io::*;
