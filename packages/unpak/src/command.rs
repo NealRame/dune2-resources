@@ -11,8 +11,9 @@ use std::path::PathBuf;
 
 use crate::config::Cli;
 
-fn read_offset<T>(reader: &mut T)
-    -> Option<u64>
+fn read_offset<T>(
+    reader: &mut T,
+) -> Option<u64>
     where T: io::BufRead + io::Seek
 {
     let mut buf = [0; 4];
@@ -31,8 +32,9 @@ fn read_offset<T>(reader: &mut T)
     }
 }
 
-fn read_cstring<T>(reader: &mut T)
-    -> Option<String>
+fn read_cstring<T>(
+    reader: &mut T,
+) -> Option<String>
     where T: io::BufRead
 {
     let mut buf = Vec::new();
