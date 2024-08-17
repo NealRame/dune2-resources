@@ -1,6 +1,6 @@
-use std::error::{Error};
-use std::io::{Read};
 use std::collections::HashMap;
+use std::error::Error;
+use std::io::Read;
 
 use flate2::Compression;
 use flate2::read::DeflateDecoder;
