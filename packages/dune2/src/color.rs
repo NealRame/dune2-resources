@@ -16,12 +16,6 @@ pub struct Color {
     pub blue: u8,
 }
 
-pub const BLACK: Color = Color {
-    red: 0,
-    green: 0,
-    blue: 0,
-};
-
 impl Color {
     pub fn new(red: u8, green: u8, blue: u8) -> Self {
         Self { red, green, blue }
