@@ -1,4 +1,4 @@
-use std::error::{Error};
+use std::error::Error;
 use std::io::{Read, Seek, SeekFrom};
 use std::path;
 
