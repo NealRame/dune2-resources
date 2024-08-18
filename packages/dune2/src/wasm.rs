@@ -9,7 +9,6 @@ extern crate web_sys;
 use crate::{
     Bitmap,
     BitmapPutPixel,
-    BLACK,
     Color,
     Faction,
     Point,
@@ -20,6 +19,12 @@ use crate::{
 
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+pub const BLACK: Color = Color {
+    red: 0,
+    green: 0,
+    blue: 0,
+};
 
 #[wasm_bindgen]
 pub struct Dune2Resources {
