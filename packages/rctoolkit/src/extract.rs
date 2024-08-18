@@ -3,11 +3,34 @@ use std::error::Error;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-use clap::{Args, Subcommand};
+use clap::{Args, Subcommand, ValueEnum};
 
 use dune2_rc::{self as dune2, Bitmap};
 
 use crate::image::BMPImage;
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
+pub enum CliExtractFaction {
+    Harkonnen,
+    Atreides,
+    Ordos,
+    Fremen,
+    Sardaukar,
+    Mercenary,
+}
+
+impl Into<dune2::constants::Faction> for CliExtractFaction {
+    fn into(self) -> dune2::constants::Faction {
+        match self {
+            Self::Harkonnen => dune2::constants::Faction::Harkonnen,
+            Self::Atreides => dune2::constants::Faction::Atreides,
+            Self::Ordos => dune2::constants::Faction::Ordos,
+            Self::Fremen => dune2::constants::Faction::Fremen,
+            Self::Sardaukar => dune2::constants::Faction::Sardaukar,
+            Self::Mercenary => dune2::constants::Faction::Mercenary,
+        }
+    }
+}
 
 #[derive(Args)]
 pub struct Dune2PaletteCommandArgs {
@@ -43,7 +66,7 @@ pub struct Dune2TilemapCommandArgs {
 
     /// Faction to export
     #[arg(short = 'F', long, default_value = "harkonnen")]
-    pub faction: String,
+    pub faction: CliExtractFaction,
 
     /// Scale factor
     #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..=4))]
@@ -62,7 +85,7 @@ pub struct Dune2SpriteCommandArgs {
 
     /// Faction to export
     #[arg(short = 'F', long, default_value = "harkonnen")]
-    pub faction: String,
+    pub faction: CliExtractFaction,
 
     /// Scale factor
     #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..=4))]
@@ -75,9 +98,13 @@ pub struct Dune2SpriteCommandArgs {
 
 #[derive(Subcommand)]
 pub enum Commands {
+    /// Extract palette
     Palette(Dune2PaletteCommandArgs),
+    /// Extract tiles
     Tiles(Dune2TilesCommandArgs),
+    /// Extract tilemaps
     Tilemaps(Dune2TilemapCommandArgs),
+    /// Extract sprites
     Sprites(Dune2SpriteCommandArgs),
 }
 
@@ -162,7 +189,7 @@ fn extract_tilemaps(
     rc: &dune2::Resources,
     args: &Dune2TilemapCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
-    let faction = dune2::Faction::from_str(&args.faction)?;
+    let faction = args.faction.into();
     let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tilemaps")?);
 
     fs::create_dir_all(&output_dir)?;
@@ -190,10 +217,10 @@ fn extract_sprites(
     rc: &dune2::Resources,
     args: &Dune2SpriteCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
-    let faction = dune2::Faction::from_str(&args.faction)?;
+    let faction = args.faction.into();
 
     for sprite in rc.sprites.keys() {
-        let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tilesets")?).join(sprite);
+        let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("sprites")?).join(sprite);
 
         fs::create_dir_all(&output_dir)?;
 
