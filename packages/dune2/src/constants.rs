@@ -1,6 +1,3 @@
-use std::error::Error;
-use std::str::FromStr;
-
 pub const COLOR_HARKONNEN: usize = 144;
 pub const COLOR_ATREIDES: usize = 160;
 pub const COLOR_ORDOS: usize = 176;
@@ -16,20 +13,4 @@ pub enum Faction {
     Fremen,
     Sardaukar,
     Mercenary,
-}
-
-impl FromStr for Faction {
-    type Err = Box<dyn Error>;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "harkonnen" => Ok(Faction::Harkonnen),
-            "atreides" => Ok(Faction::Atreides),
-            "ordos" => Ok(Faction::Ordos),
-            "fremen" => Ok(Faction::Fremen),
-            "sardaukar" => Ok(Faction::Sardaukar),
-            "mercenary" => Ok(Faction::Mercenary),
-            _ => Err("Invalid faction".into()),
-        }
-    }
 }
