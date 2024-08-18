@@ -1,37 +1,23 @@
 pub mod bitmap;
-pub use bitmap::*;
-
 pub mod color;
-pub use color::*;
-
 pub mod constants;
-pub use constants::*;
-
 pub mod io;
-pub use io::*;
-
 pub mod point;
-pub use point::*;
-
 pub mod rect;
-pub use rect::*;
-
 pub mod resources;
-pub use resources::*;
-
 pub mod shape;
-pub use shape::*;
-
 pub mod size;
-pub use size::*;
-
 pub mod sprite;
-pub use sprite::*;
-
 pub mod tilemap;
-pub use tilemap::*;
-
 pub mod tileset;
+
+pub use bitmap::*;
+pub use constants::*;
+pub use io::*;
+pub use resources::*;
+pub use shape::*;
+pub use sprite::*;
+pub use tilemap::*;
 pub use tileset::*;
 
 #[cfg(feature = "icn")] pub mod icn;
