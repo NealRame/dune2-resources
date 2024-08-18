@@ -17,10 +17,9 @@ enum SHPVersion {
     V107,
 }
 
-fn shp_read_version<T>(reader: &mut T)
-    -> Result<SHPVersion, Box<dyn Error>>
-    where T: Read + Seek
-{
+fn shp_read_version<T: Read + Seek>(
+    reader: &mut T,
+) -> Result<SHPVersion, Box<dyn Error>> {
     reader.seek(SeekFrom::Start(4))?;
 
     let mut buf = [0; 2];
@@ -36,36 +35,35 @@ fn shp_read_version<T>(reader: &mut T)
     Ok(version)
 }
 
-fn shp_read_frame_count<T>(reader: &mut T)
-    -> Result<usize, Box<dyn Error>>
-    where T: Read + Seek
-{
+fn shp_read_frame_count<T: Read + Seek>(
+    reader: &mut T,
+) -> Result<usize, Box<dyn Error>> {
     let mut buf = [0; 2];
     reader.read_exact(&mut buf)?;
 
     Ok(u16::from_le_bytes(buf) as usize)
 }
 
-fn shp_read_frame_offset_v100<T>(
+fn shp_read_frame_offset_v100<T: Read + Seek>(
     reader: &mut T,
-) -> Result<u64, Box<dyn Error>> where T: Read + Seek {
+) -> Result<u64, Box<dyn Error>> {
     let mut buf = [0; 2];
     reader.read_exact(&mut buf)?;
     Ok(u16::from_le_bytes(buf) as u64)
 }
 
-fn shp_read_frame_offset_v107<T>(
+fn shp_read_frame_offset_v107<T: Read + Seek>(
     reader: &mut T,
-) -> Result<u64, Box<dyn Error>> where T: Read + Seek {
+) -> Result<u64, Box<dyn Error>> {
     let mut buf = [0; 4];
     reader.read_exact(&mut buf)?;
     Ok((u32::from_le_bytes(buf) + 2) as u64)
 }
 
-fn shp_read_frame_offsets<T>(
+fn shp_read_frame_offsets<T: Read + Seek>(
     reader: &mut T,
     version: SHPVersion,
-) -> Result<Vec<(u64, usize)>, Box<dyn Error>> where T: Read + Seek {
+) -> Result<Vec<(u64, usize)>, Box<dyn Error>> {
     let frame_count = shp_read_frame_count(reader)?;
     let mut offsets = Vec::with_capacity(frame_count);
 
@@ -172,12 +170,11 @@ pub struct SHPFrame {
     pub data: Vec<u8>,
 }
 
-fn shp_read_frame<T>(
+fn shp_read_frame<T: Read + Seek>(
     reader: &mut T,
     offset: u64,
     size: u64,
-) -> Result<SHPFrame, Box<dyn Error>> where T: Read + Seek {
-
+) -> Result<SHPFrame, Box<dyn Error>> {
     const HAS_REMAP_TABLE: usize = 0;
     const NO_LCW: usize = 1;
     const CUSTOM_SIZE_REMAP: usize = 2;
@@ -250,9 +247,9 @@ fn shp_read_frame<T>(
 }
 
 impl Tileset {
-    pub fn from_shp_reader<T>(
+    pub fn from_shp_reader<T: Read + Seek>(
         reader: &mut T,
-    ) -> Result<Vec<Tileset>, Box<dyn Error>> where T: Read + Seek {
+    ) -> Result<Vec<Tileset>, Box<dyn Error>> {
         let shp_version = shp_read_version(reader)?;
         let shp_offsets = shp_read_frame_offsets(reader, shp_version)?;
 
