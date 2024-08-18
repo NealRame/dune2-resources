@@ -32,8 +32,11 @@ impl Into<dune2::constants::Faction> for CliExtractFaction {
     }
 }
 
+// ============================================================================
+// Extract Palette
+// ============================================================================
 #[derive(Args)]
-pub struct Dune2PaletteCommandArgs {
+pub struct CliExtractPaletteCommandArgs {
     /// Output folder path
     #[arg(short, long, default_value = "palette.bmp")]
     pub output_filepath: PathBuf,
@@ -43,86 +46,9 @@ pub struct Dune2PaletteCommandArgs {
     pub force_overwrite: bool,
 }
 
-#[derive(Args)]
-pub struct Dune2TilesCommandArgs {
-    /// Output folder path
-    #[arg(short = 'd', long)]
-    pub output_dir: Option<PathBuf>,
-
-    /// Scale factor
-    #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..=4))]
-    pub scale: u32,
-
-    /// Overwrite existing files
-    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
-    pub force_overwrite: bool,
-}
-
-#[derive(Args)]
-pub struct Dune2TilemapCommandArgs {
-    /// Output folder path
-    #[arg(short = 'd', long)]
-    pub output_dir: Option<PathBuf>,
-
-    /// Faction to export
-    #[arg(short = 'F', long, default_value = "harkonnen")]
-    pub faction: CliExtractFaction,
-
-    /// Scale factor
-    #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..=4))]
-    pub scale: u32,
-
-    /// Overwrite existing files
-    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
-    pub force_overwrite: bool,
-}
-
-#[derive(Args)]
-pub struct Dune2SpriteCommandArgs {
-    /// Output folder path
-    #[arg(short = 'd', long)]
-    pub output_dir: Option<PathBuf>,
-
-    /// Faction to export
-    #[arg(short = 'F', long, default_value = "harkonnen")]
-    pub faction: CliExtractFaction,
-
-    /// Scale factor
-    #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..=4))]
-    pub scale: u32,
-
-    /// Overwrite existing files
-    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
-    pub force_overwrite: bool,
-}
-
-#[derive(Subcommand)]
-pub enum Commands {
-    /// Extract palette
-    Palette(Dune2PaletteCommandArgs),
-    /// Extract tiles
-    Tiles(Dune2TilesCommandArgs),
-    /// Extract tilemaps
-    Tilemaps(Dune2TilemapCommandArgs),
-    /// Extract sprites
-    Sprites(Dune2SpriteCommandArgs),
-}
-
-#[derive(Args)]
-pub struct Cli {
-    /// Input file path
-    pub input_rc_file: PathBuf,
-
-    #[command(subcommand)]
-    pub command: Commands,
-}
-
-// ============================================================================
-// Extract Palette
-// ============================================================================
 fn extract_palette(
     rc: &dune2::Resources,
-    args: &Dune2PaletteCommandArgs,
+    args: &CliExtractPaletteCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     if let Some(parent) = args.output_filepath.parent() {
         fs::create_dir_all(parent)?;
@@ -158,9 +84,24 @@ fn extract_palette(
 // ============================================================================
 // Extract Tiles
 // ============================================================================
+#[derive(Args)]
+pub struct CliExtractTilesCommandArgs {
+    /// Output folder path
+    #[arg(short = 'd', long)]
+    pub output_dir: Option<PathBuf>,
+
+    /// Scale factor
+    #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..=4))]
+    pub scale: u32,
+
+    /// Overwrite existing files
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub force_overwrite: bool,
+}
+
 fn extract_tiles(
     rc: &dune2::Resources,
-    args: &Dune2TilesCommandArgs,
+    args: &CliExtractTilesCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     for tileset in rc.tilesets.keys() {
         let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tilesets")?).join(tileset);
@@ -185,9 +126,28 @@ fn extract_tiles(
 // ============================================================================
 // Extract Tilemaps
 // ============================================================================
+#[derive(Args)]
+pub struct CliExtractTilemapCommandArgs {
+    /// Output folder path
+    #[arg(short = 'd', long)]
+    pub output_dir: Option<PathBuf>,
+
+    /// Faction to export
+    #[arg(short = 'F', long, default_value = "harkonnen")]
+    pub faction: CliExtractFaction,
+
+    /// Scale factor
+    #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..=4))]
+    pub scale: u32,
+
+    /// Overwrite existing files
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub force_overwrite: bool,
+}
+
 fn extract_tilemaps(
     rc: &dune2::Resources,
-    args: &Dune2TilemapCommandArgs,
+    args: &CliExtractTilemapCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     let faction = args.faction.into();
     let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tilemaps")?);
@@ -213,9 +173,28 @@ fn extract_tilemaps(
 // ============================================================================
 // Extract Sprites
 // ============================================================================
+#[derive(Args)]
+pub struct CliExtractSpriteCommandArgs {
+    /// Output folder path
+    #[arg(short = 'd', long)]
+    pub output_dir: Option<PathBuf>,
+
+    /// Faction to export
+    #[arg(short = 'F', long, default_value = "harkonnen")]
+    pub faction: CliExtractFaction,
+
+    /// Scale factor
+    #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..=4))]
+    pub scale: u32,
+
+    /// Overwrite existing files
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub force_overwrite: bool,
+}
+
 fn extract_sprites(
     rc: &dune2::Resources,
-    args: &Dune2SpriteCommandArgs,
+    args: &CliExtractSpriteCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
     let faction = args.faction.into();
 
@@ -240,8 +219,29 @@ fn extract_sprites(
 }
 
 // ============================================================================
-// RUN
+// Extract run
 // ============================================================================
+#[derive(Subcommand)]
+pub enum Commands {
+    /// Extract palette
+    Palette(CliExtractPaletteCommandArgs),
+    /// Extract tiles
+    Tiles(CliExtractTilesCommandArgs),
+    /// Extract tilemaps
+    Tilemaps(CliExtractTilemapCommandArgs),
+    /// Extract sprites
+    Sprites(CliExtractSpriteCommandArgs),
+}
+
+#[derive(Args)]
+pub struct Cli {
+    /// Input file path
+    pub input_rc_file: PathBuf,
+
+    #[command(subcommand)]
+    pub command: Commands,
+}
+
 pub fn run(args: &Cli) -> Result<(), Box<dyn Error>> {
     let mut reader = fs::File::open(&args.input_rc_file)?;
     let rc: dune2::Resources = dune2::Resources::read_from(&mut reader)?;
