@@ -103,20 +103,35 @@ fn extract_tiles(
     rc: &dune2::Resources,
     args: &CliExtractTilesCommandArgs,
 ) -> Result<(), Box<dyn Error>> {
-    for tileset in rc.tilesets.keys() {
-        let output_dir = args.output_dir.clone().unwrap_or(PathBuf::from_str("tilesets")?).join(tileset);
+    let base_output_dir = if let Some(dir) = args.output_dir.as_ref() {
+        PathBuf::clone(dir)
+    } else {
+        PathBuf::from_str("tilesets")?
+    };
+
+    for (name, tileset) in rc.tilesets.iter() {
+        let output_dir = base_output_dir.join(name);
 
         fs::create_dir_all(&output_dir)?;
 
-        for i in 0..rc.tilesets.get(tileset).unwrap().tiles.len() {
-            let bitmap = rc.tile_bitmap(tileset, i, None)?;
+        let tile_count = tileset.tiles.len();
+        let tile_index_width = if tile_count > 0 {
+            f32::log10(tile_count as f32) as usize + 1
+        } else {
+            1
+        };
+
+        for tile_index in 0..tile_count {
+            let filename = format!("{:01$}.bmp", tile_index, tile_index_width);
+
+            let bitmap = rc.tile_bitmap(name, tile_index, None)?;
             let src_rect = bitmap.rect();
 
             let mut image = BMPImage::new(args.scale*bitmap.size());
             let dst_rect = image.rect();
 
             dune2::bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
-            image.save(output_dir.join(format!("{:02}.bmp", i)))?;
+            image.save(output_dir.join(filename))?;
         }
     }
 
