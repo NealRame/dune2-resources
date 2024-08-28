@@ -15,6 +15,7 @@ wasm = ["dep:js-sys", "dep:wasm-bindgen", "dep:web-sys", "dep:wee_alloc"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.86"
 bitvec = { version = "1.0.1", optional = true }
 flate2 = { version = "1.0.26", default-features = false, features = ["rust_backend"] }
 js-sys = { version = "0.3.64", optional = true }

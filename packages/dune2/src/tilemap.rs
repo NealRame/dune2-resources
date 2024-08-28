@@ -1,14 +1,26 @@
 use serde::{Deserialize, Serialize};
 
-use crate::*;
+use anyhow::Result;
+
+use crate::Bitmap;
+use crate::BitmapGetPixel;
+use crate::Color;
+use crate::Faction;
+use crate::Point;
+use crate::Resources;
+use crate::Shape;
+use crate::Size;
+use crate::TileBitmap;
+
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Tilemap {
-    pub remapable: bool,
+    pub class: String,
     pub shape: Shape,
-    pub tiles: Vec<usize>,
-    pub tileset: String,
+    pub tiles: Box<[usize]>,
+    pub tileset: Box<str>,
 }
+
 
 pub struct TilemapBitmap<'a> {
     bitmaps: Vec<TileBitmap<'a>>,
@@ -17,28 +29,24 @@ pub struct TilemapBitmap<'a> {
 }
 
 impl<'a> TilemapBitmap<'a> {
-    pub fn create(
-        resources: &'a Resources,
-        index: usize,
+    pub fn try_with_resources(
+        tilemap: &Tilemap,
         faction: Option<Faction>,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
-        let tilemap = resources.tilemaps.get(index).unwrap();
-        let tileset = resources.tilesets.get(&tilemap.tileset).unwrap();
-        let tileset_id = &tilemap.tileset;
-
-        let bitmaps = tilemap.tiles.iter().map(|tile_index| {
-            TileBitmap::create(
-                resources,
-                tileset_id.into(),
-                *tile_index,
-                faction,
-            )
-        }).collect::<Result<Vec<TileBitmap>, Box<dyn std::error::Error>>>()?;
+        resources: &'a Resources,
+    ) -> Result<Self> {
+        let tileset = resources.get_tileset(&tilemap.tileset)?;
+        let bitmaps = tilemap.tiles
+            .iter()
+            .map(|tile_index| -> Result<TileBitmap> {
+                let tile = tileset.get_tile(*tile_index)?;
+                Ok(TileBitmap::with_resources(tile, faction, resources))
+            })
+            .collect::<Result<Vec<TileBitmap>, _>>()?;
 
         Ok(Self {
-            tilemap_shape: tilemap.shape,
-            tile_size: tileset.tile_size,
             bitmaps,
+            tilemap_shape: tilemap.shape,
+            tile_size: tileset.tile_size(),
         })
     }
 }
@@ -55,16 +63,23 @@ impl Bitmap for TilemapBitmap<'_> {
 
 impl BitmapGetPixel for TilemapBitmap<'_> {
     fn get_pixel(&self, point: Point) -> Option<Color> {
-        let col = (point.x/self.tile_size.width) as usize;
-        let row = (point.y/self.tile_size.height) as usize;
-        let index = row*self.tilemap_shape.columns as usize + col;
+        if point.x < 0 || point.y < 0 {
+            return None;
+        }
 
-        let bitmap_x = point.x%self.tile_size.width;
-        let bitmap_y = point.y%self.tile_size.height;
+        let x = point.x.abs() as u32;
+        let y = point.y.abs() as u32;
+
+        let tilemap_col = x/self.tile_size.width;
+        let tilemap_row = y/self.tile_size.height;
+        let index = (tilemap_row*self.tilemap_shape.columns + tilemap_col) as usize;
+
+        let tile_bitmap_x = (x%self.tile_size.width) as i32;
+        let tile_bitmap_y = (y%self.tile_size.height) as i32;
 
         self.bitmaps[index].get_pixel(Point {
-            x: bitmap_x,
-            y: bitmap_y,
+            x: tile_bitmap_x,
+            y: tile_bitmap_y,
         })
     }
 }

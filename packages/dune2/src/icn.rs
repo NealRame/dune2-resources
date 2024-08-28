@@ -1,21 +1,23 @@
 use std::fs;
+use std::io::{Read, Seek, SeekFrom};
 use std::iter;
 use std::path;
 
-use std::error::Error;
-use std::io::{Read, Seek, SeekFrom};
+use anyhow::{anyhow, Result};
 
 use crate::io::*;
-use crate::{Size, Tileset};
+use crate::{Size, Tile};
+
 
 fn check_chunk_id(
     reader: &mut impl Read,
     value: &[u8],
-) -> Result<(), Box<dyn Error>> {
+) -> Result<()> {
     let mut buf = vec![0; value.len()];
+
     reader.read(&mut buf)?;
     if buf != value {
-        return Err(format!("Expected {:?}, got {:?}", value, buf).into());
+        return Err(anyhow!("ICN: invalid chunk ID"));
     }
     Ok(())
 }
@@ -29,23 +31,22 @@ struct ICNInfo {
 impl ICNInfo {
     fn read_from(
         reader: &mut impl Read,
-    ) -> Result<ICNInfo, Box<dyn Error>> {
+    ) -> Result<ICNInfo> {
         check_chunk_id(reader, b"SINF")?;
-    
+
         let sinf_chunk_size = u32::try_read_from::<MSB>(reader)?;
 
         if sinf_chunk_size != 4 {
-            return Err(
-                format!("Expected SINF chunk size to be 4, got {}",
-                sinf_chunk_size,
-            ).into());
+            return Err(anyhow!(
+                "ICN: Expected SINF chunk size to be 4, got {sinf_chunk_size}"
+            ));
         }
 
         let width  = u8::try_read_from::<MSB>(reader)? as u16;
         let height = u8::try_read_from::<MSB>(reader)? as u16;
         let shift  = u8::try_read_from::<MSB>(reader)? as u16;
         let bit_per_pixels = u8::try_read_from::<MSB>(reader)? as u16;
-    
+
         Ok(Self {
             width: width << shift,
             height: height << shift,
@@ -68,7 +69,7 @@ impl ICNSSet {
     fn read_from<T: Read + Seek>(
         reader: &mut T,
         info: &ICNInfo,
-    ) -> Result<Vec<Vec<u8>>, Box<dyn Error>> {
+    ) -> Result<Vec<Vec<u8>>> {
         check_chunk_id(reader, b"SSET")?;
 
         let sset_chunk_size = u32::try_read_from::<MSB>(reader)? as usize;
@@ -77,12 +78,16 @@ impl ICNSSet {
 
         reader.seek(SeekFrom::Current(8))?;
 
-        (0..tile_count).map(|_| {
-            let mut tile = vec![0; tile_size];
+        let mut tiles = Vec::new();
 
-            reader.read_exact(&mut tile)?;
-            Ok::<Vec<_>, Box<dyn Error>>(tile)
-        }).collect::<Result<Vec<_>, _>>()
+        for _ in 0..tile_count {
+            let mut tile_data = vec![0; tile_size];
+            reader.read_exact(&mut tile_data)?;
+
+            tiles.push(tile_data);
+        }
+
+        Ok(tiles)
     }
 }
 
@@ -92,19 +97,23 @@ impl ICNRPal {
     fn read_from(
         reader: &mut impl Read,
         info: &ICNInfo,
-    ) -> Result<Vec<Vec<u8>>, Box<dyn Error>> {
+    ) -> Result<Vec<Vec<u8>>> {
         check_chunk_id(reader, b"RPAL")?;
 
         let rpal_chunk_size = u32::try_read_from::<MSB>(reader)? as usize;
         let pal_size = info.get_palette_size();
         let pal_count = rpal_chunk_size/pal_size;
 
-        (0..pal_count).map(|_| {
-            let mut pal = vec![0; pal_size];
+        let mut pals = Vec::new();
 
-            reader.read_exact(&mut pal)?;
-            Ok::<Vec<_>, Box<dyn Error>>(pal)
-        }).collect::<Result<Vec<_>, _>>()
+        for _ in 0..pal_count {
+            let mut pal_data = vec![0; pal_size];
+            reader.read_exact(&mut pal_data)?;
+
+            pals.push(pal_data);
+        }
+
+        Ok(pals)
     }
 }
 
@@ -113,7 +122,7 @@ struct ICNRTbl;
 impl ICNRTbl {
     fn read_from(
         reader: &mut impl Read,
-    ) -> Result<Vec<u8>, Box<dyn Error>> {
+    ) -> Result<Vec<u8>> {
         check_chunk_id(reader, b"RTBL")?;
 
         let rtbl_chunk_size = u32::try_read_from::<MSB>(reader)? as usize;
@@ -125,10 +134,10 @@ impl ICNRTbl {
     }
 }
 
-impl Tileset {
+impl Tile {
     pub fn from_icn_reader<T>(
         reader: &mut T,
-    ) -> Result<Tileset, Box<dyn Error>> where T: Read + Seek {
+    ) -> Result<Vec<Tile>> where T: Read + Seek {
         check_chunk_id(reader, b"FORM")?;
 
         reader.seek(SeekFrom::Current(4))?; // Skip chunk size
@@ -141,36 +150,35 @@ impl Tileset {
         let rtbl = ICNRTbl::read_from(reader)?;
 
         if sset.len() != rtbl.len() {
-            return Err("SSET and RTBL size mismatch".into());
+            return Err(anyhow!("ICN: SSET and RTBL size mismatch"));
         }
+
+        let tile_size = Size {
+            width: info.width as u32,
+            height: info.height as u32,
+        };
 
         let tiles = iter::zip(sset.iter(), rtbl.iter())
             .map(|(raw_data, rpal_index)| {
                 let bpp = info.bit_per_pixels;
-                let mut data = Vec::new();
+                let mut tile_data = Vec::new();
 
                 for b in raw_data {
                     for i in (0..8/bpp).rev() {
                         let p = (b >> i*bpp) & ((1 << bpp) - 1);
-                        data.push(rpal[*rpal_index as usize][p as usize]);
+                        tile_data.push(rpal[*rpal_index as usize][p as usize]);
                     }
                 }
 
-                data
+                Tile::new(&tile_data[..], tile_size)
             }).collect::<Vec<_>>();
 
-        Ok(Tileset {
-            tiles,
-            tile_size: Size {
-                width: info.width as u32,
-                height: info.height as u32,
-            },
-        })
+        Ok(tiles)
     }
 
     pub fn from_icn_file<P>(
         path: P,
-    ) -> Result<Tileset, Box<dyn Error>> where P: AsRef<path::Path> {
+    ) -> Result<Vec<Tile>> where P: AsRef<path::Path> {
         let mut reader = fs::File::open(path)?;
         Self::from_icn_reader(&mut reader)
     }
