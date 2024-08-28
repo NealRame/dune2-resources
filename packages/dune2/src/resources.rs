@@ -14,6 +14,7 @@ use rmp_serde;
 
 use crate::*;
 
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ResourcesError {
     TilesetNotFound(String),
@@ -35,7 +36,6 @@ pub struct Resources {
     pub palette: Palette,
     pub tilesets: HashMap<String, Tileset>,
     pub tilemaps: Vec<Tilemap>,
-    // pub sprites: HashMap<String, Sprite>,
 }
 
 impl Resources {
@@ -43,7 +43,7 @@ impl Resources {
         &self,
         tileset_id: &str,
     ) -> Result<&Tileset> {
-        return self.tilesets
+        self.tilesets
             .get(tileset_id)
             .ok_or(anyhow!(ResourcesError::TilesetNotFound(
                 tileset_id.into(),
@@ -61,23 +61,6 @@ impl Resources {
 
         Ok(TileBitmap::with_resources(tile, faction, self))
     }
-
-    // pub fn tilemap_bitmap(
-    //     &self,
-    //     index: usize,
-    //     faction: Option<Faction>,
-    // ) -> Result<TilemapBitmap, Box<dyn std::error::Error>> {
-    //     TilemapBitmap::create(self, index, faction)
-    // }
-
-    // pub fn sprite_frame_bitmap(
-    //     &self,
-    //     sprite_id: &str,
-    //     sprite_frame_index: usize,
-    //     faction: Option<Faction>,
-    // ) -> Result<SpriteFrameBitmap, Box<dyn std::error::Error>> {
-    //     SpriteFrameBitmap::create(self, sprite_id.into(), sprite_frame_index, faction)
-    // }
 }
 
 impl Resources {
@@ -86,6 +69,7 @@ impl Resources {
     ) -> Result<Resources> where R: Read {
         let mut inflate_reader = DeflateDecoder::new(reader);
         let rc = rmp_serde::decode::from_read(&mut inflate_reader)?;
+
         Ok(rc)
     }
 }
@@ -96,6 +80,7 @@ impl Resources {
         writer: &mut W,
     ) -> Result<()> where W: std::io::Write {
         let mut output = DeflateEncoder::new(writer, Compression::best());
+
         rmp_serde::encode::write(&mut output, self)?;
         Ok(())
     }
