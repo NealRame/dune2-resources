@@ -1,4 +1,5 @@
-use std::ops::{Mul};
+use std::fmt;
+use std::ops::Mul;
 
 use serde::{Deserialize, Serialize};
 
@@ -6,6 +7,12 @@ use serde::{Deserialize, Serialize};
 pub struct Shape {
     pub rows: u32,
     pub columns: u32,
+}
+
+impl fmt::Display for Shape {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{{columns={}, rows={}}}", self.columns, self.rows)
+    }
 }
 
 impl Mul<u32> for Shape {

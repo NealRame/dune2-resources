@@ -2,2586 +2,1105 @@
 path = "DUNE/BENE.PAL"
 
 ###############################################################################
-# Tilsets
+# Tiles sources
+###############################################################################
 
-[[tilesets]]
+[[sources]]
 path = "DUNE/ICON.ICN"
 kind = "ICN"
 
-[[tilesets]]
+[[sources]]
 path = "DUNE/UNITS.SHP"
 kind = "SHP"
 
-[[tilesets]]
+[[sources]]
 path = "DUNE/UNITS1.SHP"
 kind = "SHP"
 
-[[tilesets]]
+[[sources]]
 path = "DUNE/UNITS2.SHP"
 kind = "SHP"
 
 ###############################################################################
+# Tilesets
+###############################################################################
+
+[[tilesets]]
+id = "terrain"
+size = { width = 16, height = 16 }
+tile_refs = [
+    { index = 127 },
+    { index = 128 },
+    { index = 129 },
+    { index = 130 },
+    { index = 131 },
+    { index = 132 },
+    { index = 133 },
+    { index = 134 },
+    { index = 135 },
+    { index = 136 },
+    { index = 137 },
+    { index = 138 },
+    { index = 139 },
+    { index = 140 },
+    { index = 141 },
+    { index = 142 },
+    { index = 143 },
+    { index = 144 },
+    { index = 145 },
+    { index = 146 },
+    { index = 147 },
+    { index = 148 },
+    { index = 149 },
+    { index = 150 },
+    { index = 151 },
+    { index = 152 },
+    { index = 153 },
+    { index = 154 },
+    { index = 155 },
+    { index = 156 },
+    { index = 157 },
+    { index = 158 },
+    { index = 159 },
+    { index = 160 },
+    { index = 161 },
+    { index = 162 },
+    { index = 163 },
+    { index = 164 },
+    { index = 165 },
+    { index = 166 },
+    { index = 167 },
+    { index = 168 },
+    { index = 169 },
+    { index = 170 },
+    { index = 171 },
+    { index = 172 },
+    { index = 173 },
+    { index = 174 },
+    { index = 175 },
+    { index = 176 },
+    { index = 177 },
+    { index = 178 },
+    { index = 179 },
+    { index = 180 },
+    { index = 181 },
+    { index = 182 },
+    { index = 183 },
+    { index = 184 },
+    { index = 185 },
+    { index = 186 },
+    { index = 187 },
+    { index = 188 },
+    { index = 189 },
+    { index = 190 },
+    { index = 191 },
+    { index = 192 },
+    { index = 193 },
+    { index = 194 },
+    { index = 195 },
+    { index = 196 },
+    { index = 197 },
+    { index = 198 },
+    { index = 199 },
+    { index = 200 },
+    { index = 201 },
+    { index = 202 },
+    { index = 203 },
+    { index = 204 },
+    { index = 205 },
+    { index = 206 },
+    { index = 207 },
+    { index = 208 },
+    { index = 209 },
+]
+
+[[tilesets]]
+id = "buildings"
+size = { width = 16, height = 16 }
+tile_refs = [
+    { index = 33 }, # wall
+    { index = 34 },
+    { index = 35 },
+    { index = 36 },
+    { index = 37 },
+    { index = 38 },
+    { index = 39 },
+    { index = 40 },
+    { index = 41 },
+    { index = 42 },
+    { index = 43 },
+    { index = 44 },
+    { index = 45 },
+    { index = 46 },
+    { index = 47 },
+    { index = 48 },
+    { index = 49 },
+    { index = 50 },
+    { index = 51 },
+    { index = 52 },
+    { index = 53 },
+    { index = 54 },
+    { index = 55 },
+    { index = 56 },
+    { index = 57 },
+    { index = 58 },
+    { index = 59 },
+    { index = 60 },
+    { index = 61 },
+    { index = 62 },
+    { index = 63 },
+    { index = 64 },
+    { index = 65 },
+    { index = 66 },
+    { index = 67 },
+    { index = 68 },
+    { index = 69 },
+    { index = 70 },
+    { index = 71 },
+    { index = 72 },
+    { index = 73 },
+    { index = 74 },
+    { index = 75 },
+    { index = 76 },
+    { index = 77 },
+    { index = 78 },
+    { index = 79 },
+    { index = 80 },
+    { index = 81 },
+    { index = 82 },
+    { index = 83 },
+    { index = 84 },
+    { index = 85 },
+    { index = 86 },
+    { index = 87 },
+    { index = 88 },
+    { index = 89 },
+    { index = 90 },
+    { index = 91 },
+    { index = 92 },
+    { index = 93 },
+    { index = 94 },
+    { index = 95 },
+    { index = 96 },
+    { index = 97 },
+    { index = 98 },
+    { index = 99 },
+    { index = 100 },
+    { index = 101 },
+    { index = 102 },
+    { index = 103 },
+    { index = 104 },
+    { index = 105 },
+    { index = 106 },
+    { index = 107 },
+    { index = 126 }, # concrete slab
+    { index = 210 }, # building site 3x3
+    { index = 211 },
+    { index = 212 },
+    { index = 220 },
+    { index = 221 },
+    { index = 222 },
+    { index = 229 },
+    { index = 230 },
+    { index = 231 },
+    { index = 251 }, # building site 3x2
+    { index = 252 },
+    { index = 253 },
+    { index = 258 },
+    { index = 259 },
+    { index = 260 },
+    { index = 238 }, # building site 2x2
+    { index = 239 },
+    { index = 244 },
+    { index = 245 },
+    { index = 213 }, # rubble 3x3
+    { index = 214 },
+    { index = 215 },
+    { index = 223 },
+    { index = 224 },
+    { index = 225 },
+    { index = 232 },
+    { index = 233 },
+    { index = 234 },
+    { index = 125 }, # rubble 2x2
+    { index = 240 },
+    { index = 246 },
+    { index = 247 },
+    { index = 313 }, # rubble 1x1
+    { index = 355 }, # rubble 1x1
+    { index = 216 }, # palace
+    { index = 217 },
+    { index = 218 },
+    { index = 219 },
+    { index = 226 },
+    { index = 227 },
+    { index = 228 },
+    { index = 235 },
+    { index = 236 },
+    { index = 237 },
+    { index = 241 }, # light factory
+    { index = 242 },
+    { index = 243 },
+    { index = 248 },
+    { index = 249 },
+    { index = 250 },
+    { index = 254 }, # heavy factory
+    { index = 255 },
+    { index = 256 },
+    { index = 257 },
+    { index = 261 },
+    { index = 262 },
+    { index = 263 },
+    { index = 264 },
+    { index = 265 },
+    { index = 266 },
+    { index = 267 },
+    { index = 270 }, # hightech factory
+    { index = 271 },
+    { index = 272 },
+    { index = 276 },
+    { index = 277 },
+    { index = 278 },
+    { index = 279 },
+    { index = 280 }, # sesearch center
+    { index = 281 },
+    { index = 282 },
+    { index = 283 },
+    { index = 284 },
+    { index = 285 }, # wor
+    { index = 286 },
+    { index = 287 },
+    { index = 288 },
+    { index = 289 },
+    { index = 290 },
+    { index = 291 }, # construction yard
+    { index = 292 },
+    { index = 293 },
+    { index = 294 },
+    { index = 295 },
+    { index = 296 },
+    { index = 297 },
+    { index = 298 },
+    { index = 299 }, # barracks
+    { index = 300 },
+    { index = 301 },
+    { index = 302 },
+    { index = 303 },
+    { index = 304 }, # windtrap
+    { index = 305 },
+    { index = 306 },
+    { index = 307 },
+    { index = 308 },
+    { index = 309}, # starport
+    { index = 310},
+    { index = 311},
+    { index = 312},
+    { index = 314},
+    { index = 315},
+    { index = 316},
+    { index = 317},
+    { index = 318},
+    { index = 319},
+    { index = 320},
+    { index = 321},
+    { index = 322},
+    { index = 323},
+    { index = 324},
+    { index = 325},
+    { index = 326},
+    { index = 327},
+    { index = 328},
+    { index = 329},
+    { index = 330},
+    { index = 331},
+    { index = 332 }, # refinery
+    { index = 333 },
+    { index = 334 },
+    { index = 335 },
+    { index = 336 },
+    { index = 337 },
+    { index = 338 },
+    { index = 339 },
+    { index = 340 },
+    { index = 341 },
+    { index = 342 },
+    { index = 343 },
+    { index = 344 },
+    { index = 345 }, # repair facility
+    { index = 346 },
+    { index = 347 },
+    { index = 348 },
+    { index = 349 },
+    { index = 350 },
+    { index = 351 },
+    { index = 352 },
+    { index = 353 },
+    { index = 354 }, # turret
+    { index = 356 },
+    { index = 357 },
+    { index = 358 },
+    { index = 359 },
+    { index = 360 },
+    { index = 361 },
+    { index = 362 },
+    { index = 363 },
+    { index = 364 },
+    { index = 365 },
+    { index = 366 },
+    { index = 367 },
+    { index = 368 },
+    { index = 369 },
+    { index = 370 },
+    { index = 371 },
+    { index = 372 }, # spice silos
+    { index = 373 },
+    { index = 374 },
+    { index = 375 },
+    { index = 376 },
+    { index = 379 }, # outpost
+    { index = 380 },
+    { index = 381 },
+    { index = 382 },
+    { index = 383 },
+    { index = 386 },
+    { index = 387 },
+    { index = 388 },
+    { index = 143 },
+]
+
+[[tilesets]]
+id = "units_16x16"
+size = { width = 16, height = 16 }
+tile_refs = [
+    { index = 389 }, # Quad
+    { index = 390 },
+    { index = 391 },
+    { index = 392 },
+    { index = 393 },
+    { index = 392, transform = "FlipX" },
+    { index = 391, transform = "FlipX" },
+    { index = 390, transform = "FlipX" },
+    { index = 394 }, # Trike
+    { index = 395 },
+    { index = 396 },
+    { index = 397 },
+    { index = 398 },
+    { index = 397, transform = "FlipX" },
+    { index = 396, transform = "FlipX" },
+    { index = 395, transform = "FlipX" },
+    { index = 452 }, # Civil
+    { index = 453 },
+    { index = 454 },
+    { index = 455 },
+    { index = 456 },
+    { index = 457 },
+    { index = 458 },
+    { index = 459 },
+    { index = 460 },
+    { index = 456, transform = "FlipX" },
+    { index = 457, transform = "FlipX" },
+    { index = 455, transform = "FlipX" },
+    { index = 461 },
+    { index = 462 }, # Infantry 1
+    { index = 463 },
+    { index = 464 },
+    { index = 465 },
+    { index = 466 },
+    { index = 467 },
+    { index = 468 },
+    { index = 469 },
+    { index = 470 },
+    { index = 465, transform = "FlipX" },
+    { index = 466, transform = "FlipX" },
+    { index = 467, transform = "FlipX" },
+    { index = 471 }, # Troopers 1
+    { index = 472 },
+    { index = 473 },
+    { index = 474 },
+    { index = 475 },
+    { index = 476 },
+    { index = 477 },
+    { index = 478 },
+    { index = 479 },
+    { index = 474, transform = "FlipX" },
+    { index = 475, transform = "FlipX" },
+    { index = 476, transform = "FlipX" },
+    { index = 480 }, # Infantry 3
+    { index = 481 },
+    { index = 482 },
+    { index = 483 },
+    { index = 484 },
+    { index = 485 },
+    { index = 486 },
+    { index = 487 },
+    { index = 488 },
+    { index = 489 },
+    { index = 490 },
+    { index = 491 },
+    { index = 484, transform = "FlipX" },
+    { index = 485, transform = "FlipX" },
+    { index = 486, transform = "FlipX" },
+    { index = 487, transform = "FlipX" },
+    { index = 492 }, # Troopers 3
+    { index = 493 },
+    { index = 494 },
+    { index = 495 },
+    { index = 496 },
+    { index = 497 },
+    { index = 498 },
+    { index = 499 },
+    { index = 500 },
+    { index = 501 },
+    { index = 502 },
+    { index = 503 },
+    { index = 496, transform = "FlipX" },
+    { index = 497, transform = "FlipX" },
+    { index = 498, transform = "FlipX" },
+    { index = 499, transform = "FlipX" },
+    # { index = 504 }, # Ornithopter
+    { index = 593 }, # Tank
+    { index = 594 },
+    { index = 595 },
+    { index = 596 },
+    { index = 597 },
+    { index = 596, transform = "FlipX" },
+    { index = 595, transform = "FlipX" },
+    { index = 594, transform = "FlipX" },
+    { index = 598 }, # Combat Tank Turret
+    { index = 599 },
+    { index = 600 },
+    { index = 601 },
+    { index = 602 },
+    { index = 601, transform = "FlipX" },
+    { index = 600, transform = "FlipX" },
+    { index = 599, transform = "FlipX" },
+    { index = 623 }, # Sonic Tank Turret
+    { index = 624 },
+    { index = 625 },
+    { index = 626 },
+    { index = 627 },
+    { index = 626, transform = "FlipX" },
+    { index = 625, transform = "FlipX" },
+    { index = 624, transform = "FlipX" },
+    { index = 628 }, # Missile Tank Turret
+    { index = 629 },
+    { index = 630 },
+    { index = 631 },
+    { index = 632 },
+    { index = 631, transform = "FlipX" },
+    { index = 630, transform = "FlipX" },
+    { index = 629, transform = "FlipX" },
+    { index = 603 }, # Siege Tank
+    { index = 604 },
+    { index = 605 },
+    { index = 606 },
+    { index = 607 },
+    { index = 606, transform = "FlipX" },
+    { index = 605, transform = "FlipX" },
+    { index = 604, transform = "FlipX" },
+    { index = 608 }, # Siege Tank Turret
+    { index = 609 },
+    { index = 610 },
+    { index = 611 },
+    { index = 612 },
+    { index = 611, transform = "FlipX" },
+    { index = 610, transform = "FlipX" },
+    { index = 609, transform = "FlipX" },
+    { index = 613 }, # Devastator
+    { index = 614 },
+    { index = 615 },
+    { index = 616 },
+    { index = 617 },
+    { index = 616, transform = "FlipX" },
+    { index = 615, transform = "FlipX" },
+    { index = 614, transform = "FlipX" },
+    { index = 618 }, # Devastator Turret
+    { index = 619 },
+    { index = 620 },
+    { index = 621 },
+    { index = 622 },
+    { index = 621, transform = "FlipX" },
+    { index = 620, transform = "FlipX" },
+    { index = 619, transform = "FlipX" },
+    { index = 578 }, # Harvester Sand
+    { index = 579 },
+    { index = 580 },
+    { index = 581 },
+    { index = 582 },
+    { index = 583 },
+    { index = 584 },
+    { index = 585 },
+    { index = 586 },
+    { index = 587 },
+    { index = 588 },
+    { index = 589 },
+    { index = 590 },
+    { index = 591 },
+    { index = 592 },
+    { index = 587, transform = "FlipX" },
+    { index = 588, transform = "FlipX" },
+    { index = 589, transform = "FlipX" },
+    { index = 584, transform = "FlipX" },
+    { index = 585, transform = "FlipX" },
+    { index = 586, transform = "FlipX" },
+    { index = 581, transform = "FlipX" },
+    { index = 582, transform = "FlipX" },
+    { index = 583, transform = "FlipX" },
+]
+
+[[tilesets]]
+id = "units_24x24"
+size = { width = 24, height = 24 }
+tile_refs = [
+    { index = 399 }, # Harvester
+    { index = 400 },
+    { index = 401 },
+    { index = 402 },
+    { index = 403 },
+    { index = 402, transform = "FlipX" },
+    { index = 401, transform = "FlipX" },
+    { index = 400, transform = "FlipX" },
+    { index = 404 }, # MCV
+    { index = 405 },
+    { index = 406 },
+    { index = 407 },
+    { index = 408 },
+    { index = 407, transform = "FlipX" },
+    { index = 406, transform = "FlipX" },
+    { index = 405, transform = "FlipX" },
+    { index = 434 }, # Carryall
+    { index = 435 },
+    { index = 436 },
+    { index = 435, transform = "FlipY" },
+    { index = 434, transform = "FlipY" },
+    { index = 435, transform = "FlipXY" },
+    { index = 436, transform = "FlipX" },
+    { index = 435, transform = "FlipX" },
+    { index = 437 }, # Carryall Loaded
+    { index = 438 },
+    { index = 439 },
+    { index = 438, transform = "FlipY" },
+    { index = 437, transform = "FlipY" },
+    { index = 438, transform = "FlipXY" },
+    { index = 439, transform = "FlipX" },
+    { index = 438, transform = "FlipX" },
+    { index = 440 }, # Ornithopter
+    { index = 441 },
+    { index = 442 },
+    { index = 443 },
+    { index = 444 },
+    { index = 445 },
+    { index = 446 },
+    { index = 447 },
+    { index = 448 },
+    { index = 443, transform = "FlipY" },
+    { index = 444, transform = "FlipY" },
+    { index = 445, transform = "FlipY" },
+    { index = 440, transform = "FlipY" },
+    { index = 441, transform = "FlipY" },
+    { index = 442, transform = "FlipY" },
+    { index = 443, transform = "FlipXY" },
+    { index = 444, transform = "FlipXY" },
+    { index = 445, transform = "FlipXY" },
+    { index = 446, transform = "FlipX" },
+    { index = 447, transform = "FlipX" },
+    { index = 448, transform = "FlipX" },
+    { index = 443, transform = "FlipX" },
+    { index = 444, transform = "FlipX" },
+    { index = 445, transform = "FlipX" },
+    { index = 573 }, # Sand Worm
+    { index = 574 },
+    { index = 575 },
+    { index = 576 },
+    { index = 577 },
+]
+
+[[tilesets]]
+id = "units_32x32"
+size = { width = 32, height = 32 }
+tile_refs = [
+    { index = 449 }, # Fregate
+    { index = 450 },
+    { index = 451 },
+    { index = 450, transform = "FlipY" },
+    { index = 449, transform = "FlipY" },
+    { index = 450, transform = "FlipXY" },
+    { index = 451, transform = "FlipX" },
+    { index = 450, transform = "FlipX" },
+]
+
+###############################################################################
 # Tilemaps
+###############################################################################
 
+# Building site 3x3 ###########################################################
 [[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [210, 211, 212, 220, 221, 222, 229, 230, 231]
-tileset = "tiles_16x16"
-remapable = true
+class = "building_site"
+shape = { columns = 3, rows = 3 }
+tiles = [76, 77, 78, 79, 80, 81, 82, 83, 84]
+tileset = "buildings"
 
+# Building site 3x2 ###########################################################
 [[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [213, 214, 215, 223, 224, 225, 232, 233, 234]
-tileset = "tiles_16x16"
-remapable = true
+class = "building_site"
+shape = { columns = 3, rows = 2 }
+tiles = [85, 86, 87, 88, 89, 90]
+tileset = "buildings"
 
+# Building site 2x2 ###########################################################
 [[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [216, 217, 218, 226, 227, 228, 235, 236, 237]
-tileset = "tiles_16x16"
-remapable = true
+class = "building_site"
+shape = { columns = 2, rows = 2 }
+tiles = [91, 92, 93, 94]
+tileset = "buildings"
 
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [219, 217, 218, 226, 227, 228, 235, 236, 237]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [238, 239, 244, 245]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [125, 240, 246, 247]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [241, 242, 248, 249]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [241, 243, 248, 249]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [241, 242, 248, 250]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [241, 243, 248, 250]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [251, 252, 253, 258, 259, 260]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [223, 224, 225, 232, 233, 234]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [254, 255, 256, 261, 262, 263]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [257, 255, 256, 261, 262, 263]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [254, 255, 256, 261, 264, 265]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [257, 255, 256, 261, 264, 265]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [254, 255, 256, 261, 266, 267]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [257, 255, 256, 261, 266, 267]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [210, 268, 269, 273, 274, 275]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [223, 224, 225, 232, 233, 234]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [270, 271, 272, 276, 277, 278]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [270, 271, 272, 279, 277, 278]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [270, 271, 272, 276, 277, 278]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [270, 271, 272, 279, 277, 278]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [270, 271, 272, 276, 277, 278]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [270, 271, 272, 279, 277, 278]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [238, 239, 244, 245]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [125, 240, 246, 247]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [280, 281, 282, 283]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [280, 281, 282, 284]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [238, 239, 244, 245]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [125, 240, 246, 247]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [285, 286, 288, 289]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [287, 286, 290, 289]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [143, 291, 295, 296]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [125, 240, 246, 247]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [292, 293, 297, 298]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [294, 293, 297, 298]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [238, 239, 244, 245]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [125, 240, 246, 247]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [299, 300, 301, 302]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [299, 300, 301, 303]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [238, 239, 244, 245]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [125, 240, 246, 247]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [304, 305, 306, 307]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [304, 305, 306, 308]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [210, 211, 212, 220, 221, 222, 229, 230, 231]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [213, 214, 215, 223, 313, 225, 232, 233, 234]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [309, 310, 311, 314, 315, 316, 319, 320, 321]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [312, 310, 311, 314, 315, 316, 319, 320, 321]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [309, 310, 311, 317, 318, 316, 322, 323, 321]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [312, 310, 311, 317, 318, 316, 322, 323, 321]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [309, 310, 311, 324, 325, 316, 328, 329, 321]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [312, 310, 311, 324, 325, 316, 328, 329, 321]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [309, 310, 311, 326, 327, 316, 330, 331, 321]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 3, columns = 3 }
-tiles = [312, 310, 311, 326, 327, 316, 330, 331, 321]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [210, 268, 269, 273, 274, 275]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [223, 224, 225, 232, 233, 234]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [332, 333, 334, 337, 338, 339]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [332, 335, 334, 337, 338, 339]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [332, 333, 336, 337, 338, 340]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [332, 335, 336, 337, 338, 340]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [332, 333, 341, 337, 338, 343]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [332, 335, 341, 337, 338, 343]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [332, 333, 342, 337, 338, 344]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [332, 335, 342, 337, 338, 344]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [210, 268, 269, 273, 274, 275]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [223, 224, 225, 232, 233, 234]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [345, 346, 347, 349, 350, 351]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [345, 348, 347, 349, 350, 351]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [345, 346, 347, 349, 350, 351]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [345, 348, 347, 349, 350, 351]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [345, 346, 347, 349, 350, 351]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [345, 348, 347, 349, 350, 351]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [345, 346, 347, 349, 352, 353]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 3 }
-tiles = [345, 348, 347, 349, 352, 353]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [354]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [355]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [356]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [357]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [358]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [359]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [360]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [361]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [362]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [363]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [354]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [355]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [364]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [365]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [366]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [367]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [368]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [369]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [370]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [371]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [238, 239, 244, 245]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [125, 240, 246, 247]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [372, 373, 375, 376]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [372, 374, 375, 376]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [238, 239, 244, 245]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [377, 378, 384, 385]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [379, 380, 386, 387]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [379, 381, 388, 387]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [379, 382, 386, 387]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [379, 383, 388, 387]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 2, columns = 2 }
-tiles = [379, 383, 388, 387]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [20]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [21]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [22]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [23]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [24]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [25]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [26]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [27]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [28]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [29]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [30]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [31]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [32]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [33]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [34]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [35]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [36]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [37]
-tileset = "tiles_8x8"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [389]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [390]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [391]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [392]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [393]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [394]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [395]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [396]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [397]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [398]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [409]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [410]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [411]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [412]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [413]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [414]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [415]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [416]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [417]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [418]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [419]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [420]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [421]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [422]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [423]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [424]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [425]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [426]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [427]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [428]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [429]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [430]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [431]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [432]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [433]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [440]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [441]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [442]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [443]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [444]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [445]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [472]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [473]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [474]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [475]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [476]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [477]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [478]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [479]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [480]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [481]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [482]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [483]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [484]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [485]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [486]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [487]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [488]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [489]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [490]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [491]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [492]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [493]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [494]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [495]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [496]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [497]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [498]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [499]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [500]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [501]
-tileset = "tiles_16x16"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [0]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [1]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [2]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [3]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [4]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [5]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [6]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [7]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [8]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [9]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [10]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [11]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [12]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [13]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [14]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [15]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [16]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [17]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [18]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [19]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [20]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [21]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [22]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [23]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [24]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [25]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [26]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [27]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [28]
-tileset = "tiles_24x24"
-remapable = true
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [29]
-tileset = "tiles_24x24"
-remapable = true
-
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [0]
-tileset = "tiles_3x3"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [0]
-tileset = "tiles_4x4"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [38]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [0]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [1]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [2]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [3]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [4]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [5]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [6]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [7]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [8]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [9]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [10]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [11]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [12]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [13]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [14]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [15]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [16]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [17]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [18]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [19]
-tileset = "tiles_8x8"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [0]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [1]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [2]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [3]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [4]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [5]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [6]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [7]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [8]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [9]
-tileset = "tiles_10x10"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [399]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [400]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [401]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [402]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [403]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [404]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [405]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [406]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [407]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [408]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [434]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [435]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [436]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [437]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [438]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [439]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [446]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [447]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [448]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [449]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [450]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [451]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [452]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [453]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [454]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [455]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [456]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [457]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [458]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [459]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [460]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [461]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [462]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [463]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [464]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [465]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [466]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [467]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [468]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [469]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [470]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [471]
-tileset = "tiles_16x16"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [0]
-tileset = "tiles_16x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [1]
-tileset = "tiles_16x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [2]
-tileset = "tiles_16x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [30]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [31]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [32]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [33]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [34]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [35]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [36]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [37]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [38]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [39]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [40]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [41]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [42]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [43]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [44]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [45]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [46]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [47]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [48]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [49]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [50]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [51]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [52]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [53]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [54]
-tileset = "tiles_24x24"
-remapable = false
-
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [55]
-tileset = "tiles_24x24"
-remapable = false
+# Rubble 3x3 ##################################################################
+[[tilemaps]] # rubble 3x3
+class = "rubble"
+shape = { columns = 3, rows = 3 }
+tiles = [95, 96, 97, 98, 99, 100, 101, 102, 103]
+tileset = "buildings"
 
+# Rubble 3x2 ##################################################################
 [[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [56]
-tileset = "tiles_24x24"
-remapable = false
+class = "rubble"
+shape = { columns = 3, rows = 2 }
+tiles = [98, 99, 100, 101, 102, 103]
+tileset = "buildings"
 
+# Rubble 2x2 ##################################################################
 [[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [57]
-tileset = "tiles_24x24"
-remapable = false
+class = "rubble"
+shape = { columns = 2, rows = 2 }
+tiles = [104, 105, 106, 107]
+tileset = "buildings"
 
-[[tilemaps]]
+# Turret ######################################################################
+[[tilemaps]] # 1
+class = "turret"
 shape = { rows = 1, columns = 1 }
-tiles = [58]
-tileset = "tiles_24x24"
-remapable = false
+tiles = [217]
+tileset = "buildings"
 
-[[tilemaps]]
+[[tilemaps]] # 2
+class = "turret"
 shape = { rows = 1, columns = 1 }
-tiles = [59]
-tileset = "tiles_24x24"
-remapable = false
+tiles = [218]
+tileset = "buildings"
 
-[[tilemaps]]
+[[tilemaps]] # 3
+class = "turret"
 shape = { rows = 1, columns = 1 }
-tiles = [60]
-tileset = "tiles_24x24"
-remapable = false
+tiles = [219]
+tileset = "buildings"
 
-[[tilemaps]]
+[[tilemaps]] # 4
+class = "turret"
 shape = { rows = 1, columns = 1 }
-tiles = [61]
-tileset = "tiles_24x24"
-remapable = false
+tiles = [220]
+tileset = "buildings"
 
-[[tilemaps]]
+[[tilemaps]] # 5
+class = "turret"
 shape = { rows = 1, columns = 1 }
-tiles = [62]
-tileset = "tiles_24x24"
-remapable = false
+tiles = [221]
+tileset = "buildings"
 
-[[tilemaps]]
+[[tilemaps]] # 6
+class = "turret"
 shape = { rows = 1, columns = 1 }
-tiles = [63]
-tileset = "tiles_24x24"
-remapable = false
+tiles = [222]
+tileset = "buildings"
 
-[[tilemaps]]
+[[tilemaps]] # 7
+class = "turret"
 shape = { rows = 1, columns = 1 }
-tiles = [64]
-tileset = "tiles_24x24"
-remapable = false
+tiles = [223]
+tileset = "buildings"
 
-[[tilemaps]]
+[[tilemaps]] # 8
+class = "turret"
 shape = { rows = 1, columns = 1 }
-tiles = [0]
-tileset = "tiles_32x32"
-remapable = false
+tiles = [224]
+tileset = "buildings"
 
-[[tilemaps]]
+[[tilemaps]] # 9
+class = "turret"
 shape = { rows = 1, columns = 1 }
-tiles = [1]
-tileset = "tiles_32x32"
-remapable = false
+tiles = [225]
+tileset = "buildings"
 
-[[tilemaps]]
-shape = { rows = 1, columns = 1 }
-tiles = [2]
-tileset = "tiles_32x32"
-remapable = false
-
-##############################################################################
-# Sprites
-
-[sprites.Barracks]
-frames = [
-    { tilemap = 38 },
-    { tilemap = 39 },
-    { tilemap = 40 },
-    { tilemap = 41 },
-]
-
-[sprites.ConstructionYard]
-frames = [
-    { tilemap = 34 },
-    { tilemap = 35 },
-    { tilemap = 36 },
-    { tilemap = 37 },
-]
-
-[sprites.HeavyFactory]
-frames = [
-    { tilemap = 10 },
-    { tilemap = 11 },
-    { tilemap = 12 },
-    { tilemap = 13 },
-    { tilemap = 14 },
-    { tilemap = 15 },
-    { tilemap = 16 },
-    { tilemap = 17 },
-]
-
-[sprites.HighTechFactory]
-frames = [
-    { tilemap = 18 },
-    { tilemap = 19 },
-    { tilemap = 20 },
-    { tilemap = 21 },
-    { tilemap = 22 },
-    { tilemap = 23 },
-    { tilemap = 24 },
-    { tilemap = 25 },
-]
-
-[sprites.LightFactory]
-frames = [
-    { tilemap = 4 },
-    { tilemap = 5 },
-    { tilemap = 6 },
-    { tilemap = 7 },
-    { tilemap = 8 },
-    { tilemap = 9 },
-]
-
-[sprites.Outpost]
-frames = [
-    { tilemap = 100 },
-    { tilemap = 101 },
-    { tilemap = 102 },
-    { tilemap = 103 },
-    { tilemap = 104 },
-    { tilemap = 105 },
-]
-
-[sprites.Palace]
-frames = [
-    { tilemap = 0 },
-    { tilemap = 1 },
-    { tilemap = 2 },
-    { tilemap = 3 },
-]
-
-[sprites.Refinery]
-frames = [
-    { tilemap = 56 },
-    { tilemap = 57 },
-    { tilemap = 58 },
-    { tilemap = 59 },
-    { tilemap = 60 },
-    { tilemap = 61 },
-    { tilemap = 62 },
-    { tilemap = 63 },
-    { tilemap = 64 },
-    { tilemap = 65 },
-]
-
-[sprites.RepairFacility]
-frames = [
-    { tilemap = 66 },
-    { tilemap = 67 },
-    { tilemap = 68 },
-    { tilemap = 69 },
-    { tilemap = 70 },
-    { tilemap = 71 },
-    { tilemap = 72 },
-    { tilemap = 73 },
-    { tilemap = 74 },
-    { tilemap = 75 },
-]
-
-[sprites.ResearchCenter]
-frames = [
-    { tilemap = 26 },
-    { tilemap = 27 },
-    { tilemap = 28 },
-    { tilemap = 29 },
-]
-
-[sprites.RocketTurret]
-frames = [
-    { tilemap = 86 },
-    { tilemap = 87 },
-    { tilemap = 88 },
-    { tilemap = 89 },
-    { tilemap = 90 },
-    { tilemap = 91 },
-    { tilemap = 92 },
-    { tilemap = 93 },
-    { tilemap = 94 },
-    { tilemap = 95 },
-]
-
-[sprites.SpiceSilos]
-frames = [
-    { tilemap = 96 },
-    { tilemap = 97 },
-    { tilemap = 98 },
-    { tilemap = 99 },
-]
-
-[sprites.Starport]
-frames = [
-    { tilemap = 46 },
-    { tilemap = 47 },
-    { tilemap = 48 },
-    { tilemap = 49 },
-    { tilemap = 50 },
-    { tilemap = 51 },
-    { tilemap = 52 },
-    { tilemap = 53 },
-    { tilemap = 54 },
-    { tilemap = 55 },
-]
-
-[sprites.Turret]
-frames = [
-    { tilemap = 76 },
-    { tilemap = 77 },
-    { tilemap = 78 },
-    { tilemap = 79 },
-    { tilemap = 80 },
-    { tilemap = 81 },
-    { tilemap = 82 },
-    { tilemap = 83 },
-    { tilemap = 84 },
-    { tilemap = 85 },
-]
-
-[sprites.WindTrap]
-frames = [
-    { tilemap = 42 },
-    { tilemap = 43 },
-    { tilemap = 44 },
-    { tilemap = 45 },
-]
-
-[sprites.WOR]
-frames = [
-    { tilemap = 30 },
-    { tilemap = 31 },
-    { tilemap = 32 },
-    { tilemap = 33 },
-]
-
-[sprites.Harvester]
-frames = [
-    { tilemap = 196 },
-    { tilemap = 197 },
-    { tilemap = 198 },
-    { tilemap = 199 },
-    { tilemap = 200 },
-    { tilemap = 199, transform = "FlipX" },
-    { tilemap = 198, transform = "FlipX" },
-    { tilemap = 197, transform = "FlipX" },
-]
-
-[sprites.HarvesterSand]
-frames = [
-    { tilemap = 286 },
-    { tilemap = 287 },
-    { tilemap = 288 },
-    { tilemap = 289 },
-    { tilemap = 290 },
-    { tilemap = 291 },
-    { tilemap = 292 },
-    { tilemap = 293 },
-    { tilemap = 294 },
-    { tilemap = 295 },
-    { tilemap = 296 },
-    { tilemap = 297 },
-    { tilemap = 298 },
-    { tilemap = 299 },
-    { tilemap = 300 },
-    { tilemap = 295, transform = "FlipX" },
-    { tilemap = 296, transform = "FlipX" },
-    { tilemap = 297, transform = "FlipX" },
-    { tilemap = 292, transform = "FlipX" },
-    { tilemap = 293, transform = "FlipX" },
-    { tilemap = 294, transform = "FlipX" },
-    { tilemap = 289, transform = "FlipX" },
-    { tilemap = 290, transform = "FlipX" },
-    { tilemap = 291, transform = "FlipX" },
-]
-
-[sprites.MCV]
-frames = [
-    { tilemap = 201 },
-    { tilemap = 202 },
-    { tilemap = 203 },
-    { tilemap = 204 },
-    { tilemap = 205 },
-    { tilemap = 204, transform = "FlipX" },
-    { tilemap = 203, transform = "FlipX" },
-    { tilemap = 202, transform = "FlipX" },
-]
-
-[sprites.Infantry]
-frames = [
-    { tilemap = 135 },
-    { tilemap = 136 },
-    { tilemap = 137 },
-    { tilemap = 138 },
-    { tilemap = 139 },
-    { tilemap = 140 },
-    { tilemap = 141 },
-    { tilemap = 142 },
-    { tilemap = 143 },
-    { tilemap = 144 },
-    { tilemap = 145 },
-    { tilemap = 146 },
-    { tilemap = 139, transform = "FlipX" },
-    { tilemap = 140, transform = "FlipX" },
-    { tilemap = 141, transform = "FlipX" },
-    { tilemap = 142, transform = "FlipX" },
-]
-
-[sprites.Troopers]
-frames = [
-    { tilemap = 147 },
-    { tilemap = 148 },
-    { tilemap = 149 },
-    { tilemap = 150 },
-    { tilemap = 151 },
-    { tilemap = 152 },
-    { tilemap = 153 },
-    { tilemap = 154 },
-    { tilemap = 155 },
-    { tilemap = 156 },
-    { tilemap = 157 },
-    { tilemap = 158 },
-    { tilemap = 151, transform = "FlipX" },
-    { tilemap = 152, transform = "FlipX" },
-    { tilemap = 153, transform = "FlipX" },
-    { tilemap = 154, transform = "FlipX" },
-]
-
-[sprites.Trike]
-frames = [
-    { tilemap = 130 },
-    { tilemap = 131 },
-    { tilemap = 132 },
-    { tilemap = 133 },
-    { tilemap = 134 },
-    { tilemap = 133, transform = "FlipX" },
-    { tilemap = 132, transform = "FlipX" },
-    { tilemap = 131, transform = "FlipX" },
-]
-
-[sprites.Quad]
-frames = [
-    { tilemap = 125 },
-    { tilemap = 126 },
-    { tilemap = 127 },
-    { tilemap = 128 },
-    { tilemap = 129 },
-    { tilemap = 128, transform = "FlipX" },
-    { tilemap = 127, transform = "FlipX" },
-    { tilemap = 126, transform = "FlipX" },
-]
-
-[sprites.Tank]
-frames = [
-    { tilemap = 166 },
-    { tilemap = 167 },
-    { tilemap = 168 },
-    { tilemap = 169 },
-    { tilemap = 170 },
-    { tilemap = 169, transform = "FlipX" },
-    { tilemap = 168, transform = "FlipX" },
-    { tilemap = 167, transform = "FlipX" },
-]
-
-[sprites.TankTurret]
-frames = [
-    { tilemap = 171 },
-    { tilemap = 172 },
-    { tilemap = 173 },
-    { tilemap = 174 },
-    { tilemap = 175 },
-    { tilemap = 174, transform = "FlipX" },
-    { tilemap = 173, transform = "FlipX" },
-    { tilemap = 172, transform = "FlipX" },
-]
-
-[sprites.MissileTankTurret]
-frames = [
-    { tilemap = 254 },
-    { tilemap = 255 },
-    { tilemap = 256 },
-    { tilemap = 257 },
-    { tilemap = 258 },
-    { tilemap = 257, transform = "FlipX" },
-    { tilemap = 256, transform = "FlipX" },
-    { tilemap = 255, transform = "FlipX" },
-]
-
-[sprites.SonicTankTurret]
-frames = [
-    { tilemap = 249 },
-    { tilemap = 250 },
-    { tilemap = 251 },
-    { tilemap = 252 },
-    { tilemap = 253 },
-    { tilemap = 252, transform = "FlipX" },
-    { tilemap = 251, transform = "FlipX" },
-    { tilemap = 250, transform = "FlipX" },
-]
-
-[sprites.SiegeTank]
-frames = [
-    { tilemap = 176 },
-    { tilemap = 177 },
-    { tilemap = 178 },
-    { tilemap = 179 },
-    { tilemap = 180 },
-    { tilemap = 179, transform = "FlipX" },
-    { tilemap = 178, transform = "FlipX" },
-    { tilemap = 177, transform = "FlipX" },
-]
-
-[sprites.SiegeTankTurret]
-frames = [
-    { tilemap = 181 },
-    { tilemap = 182 },
-    { tilemap = 183 },
-    { tilemap = 184 },
-    { tilemap = 185 },
-    { tilemap = 184, transform = "FlipX" },
-    { tilemap = 183, transform = "FlipX" },
-    { tilemap = 182, transform = "FlipX" },
-]
-
-[sprites.Devastator]
-frames = [
-    { tilemap = 186 },
-    { tilemap = 187 },
-    { tilemap = 188 },
-    { tilemap = 189 },
-    { tilemap = 190 },
-    { tilemap = 189, transform = "FlipX" },
-    { tilemap = 188, transform = "FlipX" },
-    { tilemap = 187, transform = "FlipX" },
-]
-
-[sprites.DevastatorTurret]
-frames = [
-    { tilemap = 191 },
-    { tilemap = 192 },
-    { tilemap = 193 },
-    { tilemap = 194 },
-    { tilemap = 195 },
-    { tilemap = 194, transform = "FlipX" },
-    { tilemap = 193, transform = "FlipX" },
-    { tilemap = 192, transform = "FlipX" },
-]
-
-[sprites.Carryall]
-frames = [
-    { tilemap = 211 },
-    { tilemap = 212 },
-    { tilemap = 213 },
-    { tilemap = 212, transform = "FlipY" },
-    { tilemap = 211, transform = "FlipY" },
-    { tilemap = 212, transform = "FlipXY" },
-    { tilemap = 213, transform = "FlipX" },
-    { tilemap = 212, transform = "FlipX" },
-]
-
-[sprites.LoadedCarryall]
-frames = [
-    { tilemap = 214 },
-    { tilemap = 215 },
-    { tilemap = 216 },
-    { tilemap = 215, transform = "FlipY" },
-    { tilemap = 214, transform = "FlipY" },
-    { tilemap = 215, transform = "FlipXY" },
-    { tilemap = 216, transform = "FlipX" },
-    { tilemap = 215, transform = "FlipX" },
-]
-
-[sprites.LandedOrnithopter]
-frames = [
-    { tilemap = 159 },
-    { tilemap = 159, transform = "FlipX" },
-    { tilemap = 159, transform = "FlipY" },
-    { tilemap = 159, transform = "FlipXY" },
-]
-
-[sprites.Ornithopter]
-frames = [
-    { tilemap = 217 },
-    { tilemap = 218 },
-    { tilemap = 219 },
-
-    { tilemap = 220 },
-    { tilemap = 221 },
-    { tilemap = 222 },
-
-    { tilemap = 223 },
-    { tilemap = 224 },
-    { tilemap = 225 },
-
-    { tilemap = 220, transform = "FlipY" },
-    { tilemap = 221, transform = "FlipY" },
-    { tilemap = 222, transform = "FlipY" },
-
-    { tilemap = 217, transform = "FlipY" },
-    { tilemap = 218, transform = "FlipY" },
-    { tilemap = 219, transform = "FlipY" },
-
-    { tilemap = 220, transform = "FlipXY" },
-    { tilemap = 221, transform = "FlipXY" },
-    { tilemap = 222, transform = "FlipXY" },
-
-    { tilemap = 223, transform = "FlipX" },
-    { tilemap = 224, transform = "FlipX" },
-    { tilemap = 225, transform = "FlipX" },
-
-    { tilemap = 220, transform = "FlipX" },
-    { tilemap = 221, transform = "FlipX" },
-    { tilemap = 222, transform = "FlipX" },
-]
-
-[sprites.SandWorm]
-frames = [
-    { tilemap = 334 },
-    { tilemap = 335 },
-    { tilemap = 336 },
-    { tilemap = 337 },
-    { tilemap = 338 },
-]
-
-[sprites.Frigate]
-frames = [
-    { tilemap = 339 },
-    { tilemap = 340 },
-    { tilemap = 341 },
-    { tilemap = 340, transform = "FlipY" },
-    { tilemap = 339, transform = "FlipY" },
-    { tilemap = 340, transform = "FlipXY" },
-    { tilemap = 341, transform = "FlipX" },
-    { tilemap = 340, transform = "FlipX" },
-]
-
-# [sprites.Fremen]
-# frames = []
-
-# [sprites.Raider]
-# frames = []
-
-# [sprites.Saboteur]
-# frames = []
-
-[sprites.DeathHand]
-frames = [
-    { tilemap = 206 },
-    { tilemap = 207 },
-    { tilemap = 208 },
-    { tilemap = 209 },
-    { tilemap = 210 },
-
-    { tilemap = 209, transform = "FlipY" },
-    { tilemap = 208, transform = "FlipY" },
-    { tilemap = 207, transform = "FlipY" },
-
-    { tilemap = 206, transform = "FlipY" },
-
-    { tilemap = 207, transform = "FlipXY" },
-    { tilemap = 208, transform = "FlipXY" },
-    { tilemap = 209, transform = "FlipXY" },
-
-    { tilemap = 210, transform = "FlipX" },
-
-    { tilemap = 209, transform = "FlipX" },
-    { tilemap = 208, transform = "FlipX" },
-    { tilemap = 207, transform = "FlipX" }
-]
-
-# [sprites.Sardaukar]
-# frames = []
+# Rocket turret ###############################################################
+[[tilemaps]] # 1
+class = "rocket_turret"
+shape = { rows = 1, columns = 1 }
+tiles = [217]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "rocket_turret"
+shape = { rows = 1, columns = 1 }
+tiles = [226]
+tileset = "buildings"
+
+[[tilemaps]] # 3
+class = "rocket_turret"
+shape = { rows = 1, columns = 1 }
+tiles = [227]
+tileset = "buildings"
+
+[[tilemaps]] # 4
+class = "rocket_turret"
+shape = { rows = 1, columns = 1 }
+tiles = [228]
+tileset = "buildings"
+
+[[tilemaps]] # 5
+class = "rocket_turret"
+shape = { rows = 1, columns = 1 }
+tiles = [229]
+tileset = "buildings"
+
+[[tilemaps]] # 6
+class = "rocket_turret"
+shape = { rows = 1, columns = 1 }
+tiles = [230]
+tileset = "buildings"
+
+[[tilemaps]] # 7
+class = "rocket_turret"
+shape = { rows = 1, columns = 1 }
+tiles = [231]
+tileset = "buildings"
+
+[[tilemaps]] # 8
+class = "rocket_turret"
+shape = { rows = 1, columns = 1 }
+tiles = [232]
+tileset = "buildings"
+
+[[tilemaps]] # 9
+class = "rocket_turret"
+shape = { rows = 1, columns = 1 }
+tiles = [233]
+tileset = "buildings"
+
+# Construction yard ###########################################################
+[[tilemaps]] # 1
+class = "construction_yard"
+shape = { columns = 2, rows = 2 }
+tiles = [247, 155, 159, 160]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "construction_yard"
+shape = { columns = 2, rows = 2 }
+tiles = [156, 157, 161, 162]
+tileset = "buildings"
+
+[[tilemaps]] # 3
+class = "construction_yard"
+shape = { columns = 2, rows = 2 }
+tiles = [158, 157, 161, 162]
+tileset = "buildings"
+
+# Wind trap ###################################################################
+[[tilemaps]] # 1
+class = "wind_trap"
+shape = { columns = 2, rows = 2 }
+tiles = [168, 169, 170, 171]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "wind_trap"
+shape = { columns = 2, rows = 2 }
+tiles = [168, 169, 170, 172]
+tileset = "buildings"
+
+# Spice silos #################################################################
+[[tilemaps]] # 1
+class = "spice_silos"
+shape = { columns = 2, rows = 2 }
+tiles = [234, 235, 237, 238]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "spice_silos"
+shape = { columns = 2, rows = 2 }
+tiles = [234, 236, 237, 238]
+tileset = "buildings"
+
+# Outpost #####################################################################
+[[tilemaps]] # 1
+class = "outpost"
+shape = { columns = 2, rows = 2 }
+tiles = [239, 240, 244, 245]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "outpost"
+shape = { columns = 2, rows = 2 }
+tiles = [239, 241, 246, 245]
+tileset = "buildings"
+
+[[tilemaps]] # 3
+class = "outpost"
+shape = { columns = 2, rows = 2 }
+tiles = [239, 242, 244, 245]
+tileset = "buildings"
+
+[[tilemaps]] # 4
+class = "outpost"
+shape = { columns = 2, rows = 2 }
+tiles = [239, 243, 246, 245]
+tileset = "buildings"
+
+# Light factory ###############################################################
+[[tilemaps]] # 1
+class = "light_factory"
+shape = { columns = 2, rows = 2 }
+tiles = [120, 121, 123, 124]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "light_factory"
+shape = { columns = 2, rows = 2 }
+tiles = [120, 122, 123, 124]
+tileset = "buildings"
+
+[[tilemaps]] # 3
+class = "light_factory"
+shape = { columns = 2, rows = 2 }
+tiles = [120, 121, 123, 125]
+tileset = "buildings"
+
+[[tilemaps]] # 4
+class = "light_factory"
+shape = { columns = 2, rows = 2 }
+tiles = [120, 122, 123, 125]
+tileset = "buildings"
+
+# Barrack #####################################################################
+[[tilemaps]] # 1
+class = "barrack"
+shape = { columns = 2, rows = 2 }
+tiles = [163, 164, 165, 166]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "barrack"
+shape = { columns = 2, rows = 2 }
+tiles = [163, 164, 165, 167]
+tileset = "buildings"
+
+# WOR #########################################################################
+[[tilemaps]] # 1
+class = "wor"
+shape = { columns = 2, rows = 2 }
+tiles = [149, 150, 152, 153]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "wor"
+shape = { columns = 2, rows = 2 }
+tiles = [151, 150, 154, 153]
+tileset = "buildings"
+
+# Research center #############################################################
+[[tilemaps]] # 1
+class = "research_center"
+shape = { columns = 2, rows = 2 }
+tiles = [144, 145, 146, 147]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "research_center"
+shape = { columns = 2, rows = 2 }
+tiles = [144, 145, 146, 148]
+tileset = "buildings"
+
+# Heavy factory ###############################################################
+[[tilemaps]] # 1
+class = "heavy_factory"
+shape = { columns = 3, rows = 2 }
+tiles = [126, 127, 128, 130, 131, 132]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "heavy_factory"
+shape = { columns = 3, rows = 2 }
+tiles = [129, 127, 128, 130, 131, 132]
+tileset = "buildings"
+
+[[tilemaps]] # 3
+class = "heavy_factory"
+shape = { columns = 3, rows = 2 }
+tiles = [126, 127, 128, 130, 133, 134]
+tileset = "buildings"
+
+[[tilemaps]] # 4
+class = "heavy_factory"
+shape = { columns = 3, rows = 2 }
+tiles = [129, 127, 128, 130, 133, 134]
+tileset = "buildings"
+
+[[tilemaps]] # 5
+class = "heavy_factory"
+shape = { columns = 3, rows = 2 }
+tiles = [126, 127, 128, 130, 135, 136]
+tileset = "buildings"
+
+[[tilemaps]] # 6
+class = "heavy_factory"
+shape = { columns = 3, rows = 2 }
+tiles = [129, 127, 128, 130, 135, 136]
+tileset = "buildings"
+
+# Hightech factory ############################################################
+[[tilemaps]] # 1
+class = "hightech_factory"
+shape = { columns = 3, rows = 2 }
+tiles = [137, 138, 139, 140, 141, 142]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "hightech_factory"
+shape = { columns = 3, rows = 2 }
+tiles = [137, 138, 139, 143, 141, 142]
+tileset = "buildings"
+
+# Refinery ####################################################################
+[[tilemaps]] # 1
+class = "refinery"
+shape = { columns = 3, rows = 2 }
+tiles = [195, 196, 197, 200, 201, 202]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "refinery"
+shape = { columns = 3, rows = 2 }
+tiles = [195, 198, 197, 200, 201, 202]
+tileset = "buildings"
+
+[[tilemaps]] # 3
+class = "refinery"
+shape = { columns = 3, rows = 2 }
+tiles = [195, 196, 199, 200, 201, 203]
+tileset = "buildings"
+
+[[tilemaps]] # 4
+class = "refinery"
+shape = { columns = 3, rows = 2 }
+tiles = [195, 198, 199, 200, 201, 203]
+tileset = "buildings"
+
+[[tilemaps]] # 5
+class = "refinery"
+shape = { columns = 3, rows = 2 }
+tiles = [195, 196, 204, 200, 201, 206]
+tileset = "buildings"
+
+[[tilemaps]] # 6
+class = "refinery"
+shape = { columns = 3, rows = 2 }
+tiles = [195, 198, 204, 200, 201, 206]
+tileset = "buildings"
+
+[[tilemaps]] # 7
+class = "refinery"
+shape = { columns = 3, rows = 2 }
+tiles = [195, 196, 205, 200, 201, 207]
+tileset = "buildings"
+
+[[tilemaps]] # 8
+class = "refinery"
+shape = { columns = 3, rows = 2 }
+tiles = [195, 198, 205, 200, 201, 207]
+tileset = "buildings"
+
+# Repair facility #############################################################
+[[tilemaps]] # 1
+class = "repair facility"
+shape = { columns = 3, rows = 2 }
+tiles = [208, 209, 210, 212, 213, 214]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "repair facility"
+shape = { columns = 3, rows = 2 }
+tiles = [208, 211, 210, 212, 213, 214]
+tileset = "buildings"
+
+[[tilemaps]] # 3
+class = "repair facility"
+shape = { columns = 3, rows = 2 }
+tiles = [208, 209, 210, 212, 215, 216]
+tileset = "buildings"
+
+[[tilemaps]] # 4
+class = "repair facility"
+shape = { columns = 3, rows = 2 }
+tiles = [208, 211, 210, 212, 215, 216]
+tileset = "buildings"
+
+# Starport ####################################################################
+[[tilemaps]] # 1
+class = "starport"
+shape = { columns = 3, rows = 3 }
+tiles = [173, 174, 175, 177, 178, 179, 182, 183, 184]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "starport"
+shape = { columns = 3, rows = 3 }
+tiles = [176, 174, 175, 177, 178, 179, 182, 183, 184]
+tileset = "buildings"
+
+[[tilemaps]] # 3
+class = "starport"
+shape = { columns = 3, rows = 3 }
+tiles = [173, 174, 175, 180, 181, 179, 185, 186, 184]
+tileset = "buildings"
+
+[[tilemaps]] # 4
+class = "starport"
+shape = { columns = 3, rows = 3 }
+tiles = [176, 174, 175, 180, 181, 179, 185, 186, 184]
+tileset = "buildings"
+
+[[tilemaps]] # 5
+class = "starport"
+shape = { columns = 3, rows = 3 }
+tiles = [173, 174, 175, 187, 188, 179, 191, 192, 184]
+tileset = "buildings"
+
+[[tilemaps]] # 6
+class = "starport"
+shape = { columns = 3, rows = 3 }
+tiles = [176, 174, 175, 187, 188, 179, 191, 192, 184]
+tileset = "buildings"
+
+[[tilemaps]] # 7
+class = "starport"
+shape = { columns = 3, rows = 3 }
+tiles = [173, 174, 175, 189, 190, 179, 193, 194, 184]
+tileset = "buildings"
+
+[[tilemaps]] # 8
+class = "starport"
+shape = { columns = 3, rows = 3 }
+tiles = [176, 174, 175, 189, 190, 179, 193, 194, 184]
+tileset = "buildings"
+
+# Palace ######################################################################
+[[tilemaps]] # 1
+class = "palace"
+shape = { columns = 3, rows = 3 }
+tiles = [110, 111, 112, 114, 115, 116, 117, 118, 119]
+tileset = "buildings"
+
+[[tilemaps]] # 2
+class = "palace"
+shape = { columns = 3, rows = 3 }
+tiles = [113, 111, 112, 114, 115, 116, 117, 118, 119]
+tileset = "buildings"

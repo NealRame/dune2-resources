@@ -7,7 +7,8 @@ pub mod rect;
 pub mod resources;
 pub mod shape;
 pub mod size;
-pub mod sprite;
+// pub mod sprite;
+pub mod tile;
 pub mod tilemap;
 pub mod tileset;
 
@@ -16,9 +17,10 @@ pub use constants::*;
 pub use io::*;
 pub use resources::*;
 pub use shape::*;
-pub use sprite::*;
+// pub use sprite::*;
 pub use tilemap::*;
 pub use tileset::*;
+pub use tile::*;
 
 #[cfg(feature = "icn")] pub mod icn;
 #[cfg(feature = "icn")] pub use icn::*;

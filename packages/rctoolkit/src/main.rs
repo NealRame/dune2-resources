@@ -1,29 +1,39 @@
-mod image;
+mod check;
 mod create;
 mod extract;
+mod image;
+mod info;
+mod resources_config;
+mod source;
 
 use clap::{Parser, Subcommand};
 
 #[derive(Subcommand)]
 pub enum Commands {
-    Create(create::Cli),
-    Extract(extract::Cli),
+    Check(check::Args),
+    Create(create::Args),
+    Source(source::Args),
+    Extract(extract::Args),
+    Info(info::Args),
 }
 
 #[derive(Parser)]
 #[command(author, about, version)]
 #[command(propagate_version = true)]
-pub struct Cli {
+pub struct Args {
     #[command(subcommand)]
     pub command: Commands,
 }
 
 fn main() {
-    let cli = Cli::parse();
+    let args = Args::parse();
 
-    let res = match &cli.command {
+    let res = match &args.command {
+        Commands::Check(args) => check::run(args),
         Commands::Create(args) => create::run(args),
+        Commands::Source(args) => source::run(args),
         Commands::Extract(args) => extract::run(args),
+        Commands::Info(args) => info::run(args),
     };
 
     if let Err(err) = res {

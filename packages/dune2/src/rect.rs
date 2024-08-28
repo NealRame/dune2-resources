@@ -60,22 +60,22 @@ impl Rect {
 
     pub fn top_right(&self) -> Point {
         Point {
-            x: self.right(),
-            y: self.top(),
+            x: self.right() as i32,
+            y: self.top() as i32,
         }
     }
 
     pub fn bottom_left(&self) -> Point {
         Point {
-            x: self.left(),
-            y: self.bottom(),
+            x: self.left() as i32,
+            y: self.bottom() as i32,
         }
     }
 
     pub fn bottom_right(&self) -> Point {
         Point {
-            x: self.right(),
-            y: self.bottom(),
+            x: self.right() as i32,
+            y: self.bottom() as i32,
         }
     }
 
@@ -91,20 +91,20 @@ impl Rect {
         self.size
     }
 
-    pub fn left(&self) -> u32 {
+    pub fn left(&self) -> i32 {
         self.top_left.x
     }
 
-    pub fn right(&self) -> u32 {
-        self.top_left.x + self.size.width
+    pub fn right(&self) -> i32 {
+        self.top_left.x + self.size.width as i32
     }
 
-    pub fn top(&self) -> u32 {
+    pub fn top(&self) -> i32 {
         self.top_left.y
     }
 
-    pub fn bottom(&self) -> u32 {
-        self.top_left.y + self.size.height
+    pub fn bottom(&self) -> i32 {
+        self.top_left.y + self.size.height as i32
     }
 
     pub fn intersected(&self, other: &Rect) -> Option<Rect> {
@@ -142,8 +142,8 @@ impl Iterator for RectIterator {
     fn next(&mut self) -> Option<Self::Item> {
         if self.current < self.last {
             let point = Point {
-                x: self.rect.left() + (self.current%self.rect.width()),
-                y: self.rect.top() + (self.current/self.rect.width()),
+                x: self.rect.left() + (self.current%self.rect.width()) as i32,
+                y: self.rect.top() + (self.current/self.rect.width()) as i32,
             };
             self.current += 1;
             Some(point)

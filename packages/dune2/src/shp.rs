@@ -1,16 +1,16 @@
-use std::error::Error;
+use std::fs;
 use std::io::{Read, Seek, SeekFrom};
+use std::iter;
 use std::path;
 
-use std::fs;
-use std::iter;
+use anyhow::{anyhow, Result};
 
 use bitvec::prelude::*;
 
 use serde::{Deserialize, Serialize};
 
 use crate::io::*;
-use crate::{Size, Tileset};
+use crate::{Size, Tile};
 
 enum SHPVersion {
     V100,
@@ -19,7 +19,7 @@ enum SHPVersion {
 
 fn shp_read_version<T: Read + Seek>(
     reader: &mut T,
-) -> Result<SHPVersion, Box<dyn Error>> {
+) -> Result<SHPVersion> {
     reader.seek(SeekFrom::Start(4))?;
 
     let mut buf = [0; 2];
@@ -37,7 +37,7 @@ fn shp_read_version<T: Read + Seek>(
 
 fn shp_read_frame_count<T: Read + Seek>(
     reader: &mut T,
-) -> Result<usize, Box<dyn Error>> {
+) -> Result<usize> {
     let mut buf = [0; 2];
     reader.read_exact(&mut buf)?;
 
@@ -46,7 +46,7 @@ fn shp_read_frame_count<T: Read + Seek>(
 
 fn shp_read_frame_offset_v100<T: Read + Seek>(
     reader: &mut T,
-) -> Result<u64, Box<dyn Error>> {
+) -> Result<u64> {
     let mut buf = [0; 2];
     reader.read_exact(&mut buf)?;
     Ok(u16::from_le_bytes(buf) as u64)
@@ -54,7 +54,7 @@ fn shp_read_frame_offset_v100<T: Read + Seek>(
 
 fn shp_read_frame_offset_v107<T: Read + Seek>(
     reader: &mut T,
-) -> Result<u64, Box<dyn Error>> {
+) -> Result<u64> {
     let mut buf = [0; 4];
     reader.read_exact(&mut buf)?;
     Ok((u32::from_le_bytes(buf) + 2) as u64)
@@ -63,7 +63,7 @@ fn shp_read_frame_offset_v107<T: Read + Seek>(
 fn shp_read_frame_offsets<T: Read + Seek>(
     reader: &mut T,
     version: SHPVersion,
-) -> Result<Vec<(u64, usize)>, Box<dyn Error>> {
+) -> Result<Vec<(u64, usize)>> {
     let frame_count = shp_read_frame_count(reader)?;
     let mut offsets = Vec::with_capacity(frame_count);
 
@@ -91,7 +91,7 @@ fn copy_block(data: &mut Vec<u8>, count: usize, pos: usize, relative: bool) {
 fn inflate_lcw_data<T: Read + Seek>(
     reader: &mut T,
     output: &mut Vec<u8>,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<()> {
     let relative = u8::try_read_from::<LSB>(reader)? == 0;
 
     if !relative {
@@ -174,7 +174,7 @@ fn shp_read_frame<T: Read + Seek>(
     reader: &mut T,
     offset: u64,
     size: u64,
-) -> Result<SHPFrame, Box<dyn Error>> {
+) -> Result<SHPFrame> {
     const HAS_REMAP_TABLE: usize = 0;
     const NO_LCW: usize = 1;
     const CUSTOM_SIZE_REMAP: usize = 2;
@@ -184,27 +184,19 @@ fn shp_read_frame<T: Read + Seek>(
     let mut flags: BitArr!(for 16, in u8, Lsb0) = BitArray::<_, _>::ZERO;
 
     reader.read_exact(&mut flags.as_raw_mut_slice())?;
-    
+
     let slices = u8::try_read_from::<LSB>(reader)? as u32;
     let width = u16::try_read_from::<LSB>(reader)? as u32;
     let height = u8::try_read_from::<LSB>(reader)? as u32;
 
     if slices != height {
-        return Err(format!(
-            "slices({}) != height({})",
-            slices,
-            height
-        ).into());
+        return Err(anyhow!("SHP: slices({slices}) != height({height})"));
     }
 
     let frame_size = u16::try_read_from::<LSB>(reader)? as usize;
 
     if size != frame_size as u64 {
-        return Err(format!(
-            "frame_size({}) != size({})",
-            frame_size,
-            size
-        ).into());
+        return Err(anyhow!("SHP: frame_size({frame_size}) != size({size})"));
     }
 
     let rle_data_size = u16::try_read_from::<LSB>(reader)? as usize;
@@ -238,44 +230,38 @@ fn shp_read_frame<T: Read + Seek>(
     }
 
     Ok(SHPFrame {
+        data,
         size: Size {
             width,
             height,
         },
-        data,
     })
 }
 
-impl Tileset {
+impl Tile {
     pub fn from_shp_reader<T: Read + Seek>(
         reader: &mut T,
-    ) -> Result<Vec<Tileset>, Box<dyn Error>> {
+    ) -> Result<Vec<Tile>> {
         let shp_version = shp_read_version(reader)?;
         let shp_offsets = shp_read_frame_offsets(reader, shp_version)?;
 
-        let mut tilesets = Vec::<Tileset>::new();
+        let mut tiles = Vec::<Tile>::new();
 
         for (offset, size) in shp_offsets.iter().copied() {
             let shp_frame = shp_read_frame(reader, offset, size as u64)?;
 
-            if let Some(tileset) = tilesets.iter_mut().find(|tileset| {
-                tileset.tile_size == shp_frame.size
-            }) {
-                tileset.tiles.push(shp_frame.data);
-            } else {
-                tilesets.push(Tileset {
-                    tile_size: shp_frame.size,
-                    tiles: vec![shp_frame.data],
-                });
-            }
+            tiles.push(Tile::new(
+                &shp_frame.data[..],
+                shp_frame.size,
+            ));
         }
 
-        Ok(tilesets)
+        Ok(tiles)
     }
 
     pub fn from_shp_file<P>(
         path: P,
-    ) -> Result<Vec<Tileset>, Box<dyn Error>> where P: AsRef<path::Path> {
+    ) -> Result<Vec<Tile>> where P: AsRef<path::Path> {
         let mut reader = fs::File::open(path)?;
         Self::from_shp_reader(&mut reader)
     }

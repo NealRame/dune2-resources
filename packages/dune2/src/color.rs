@@ -4,8 +4,9 @@ use std::fs;
 use std::io;
 use std::path;
 
-use std::error::Error;
 use std::ops::Mul;
+
+use anyhow::{anyhow, Result};
 
 use serde::{Deserialize, Serialize};
 
@@ -76,14 +77,14 @@ impl Palette {
 
     pub fn from_pal_file(
         path: &path::PathBuf,
-    ) -> Result<Self, Box<dyn Error>> {
+    ) -> Result<Self> {
         let mut reader = fs::File::open(path)?;
         Self::from_pal_reader(&mut reader)
     }
 
     pub fn from_pal_reader(
         reader: &mut impl io::Read,
-    ) -> Result<Palette, Box<dyn Error>> {
+    ) -> Result<Palette> {
         let mut palette = Palette::new();
         let mut buf = [0; 3];
 
@@ -91,7 +92,7 @@ impl Palette {
             let color = match reader.read(&mut buf)? {
                 0 => break,
                 3 => Color::from(&buf),
-                _ => return Err(format!("Invalid palette file").into()),
+                _ => return Err(anyhow!("Invalid palette file")),
             };
             // We have to multiply each channel by 4 because the palette is 6
             // bits per channel

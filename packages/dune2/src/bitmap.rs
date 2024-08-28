@@ -54,16 +54,16 @@ pub enum BlitSizePolicy {
 }
 
 fn create_range_mapper(
-    i_min: u32, i_max: u32,
-    o_min: u32, o_max: u32,
-) -> impl Fn(u32) -> u32 {
+    i_min: i32, i_max: i32,
+    o_min: i32, o_max: i32,
+) -> impl Fn(i32) -> i32 {
     let i_min = i_min as f32;
     let i_max = i_max as f32;
     let o_min = o_min as f32;
     let o_max = o_max as f32;
     return move |n| {
         let n = n as f32;
-        ((n - i_min)/(i_max - i_min)*(o_max - o_min) + o_min) as u32
+        ((n - i_min)/(i_max - i_min)*(o_max - o_min) + o_min) as i32
     };
 }
 
@@ -104,22 +104,24 @@ pub fn blit<T, U>(
         for x in dst_rect.left()..dst_rect.right() {
             let dst = Point { x, y };
             let src = Point {
-                x: x_map(x) as u32,
-                y: y_map(y) as u32,
+                x: x_map(x),
+                y: y_map(y),
             };
             dst_bitmap.put_pixel(dst, src_bitmap.get_pixel(src).unwrap());
         }
     }
 }
 
-/// 
+///
 pub fn point_to_index(
     p: Point,
     size: Size,
 ) -> Option<usize> {
-    if p.x < size.width && p.y < size.height {
-        Some((p.y*size.width + p.x) as usize)
-    } else {
-        None
+    if p.x < 0 && (p.x as u32) >= size.width {
+        return None;
     }
+    if p.y < 0 && (p.y as u32) >= size.height {
+        return None;
+    }
+    Some(((p.y as u32)*size.width + (p.x as u32)) as usize)
 }

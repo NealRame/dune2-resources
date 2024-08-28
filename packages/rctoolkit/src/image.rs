@@ -34,13 +34,19 @@ impl dune2::Bitmap for BMPImage {
 
 impl dune2::BitmapPutPixel for BMPImage {
     fn put_pixel(&mut self, p: dune2::Point, color: dune2::Color) -> &mut Self {
-        if p.x < self.width() || p.y < self.height() {
-            self.buffer.put_pixel(p.x, p.y, Rgb([
-                color.red,
-                color.green,
-                color.blue,
-            ]));
+        if p.x < 0 || (p.x as u32) >= self.width() {
+            return self;
         }
+
+        if p.y < 0 || (p.y as u32) >= self.height() {
+            return self;
+        }
+
+        self.buffer.put_pixel(p.x as u32, p.y as u32, Rgb([
+            color.red,
+            color.green,
+            color.blue,
+        ]));
         self
     }
 }
