@@ -95,13 +95,13 @@ fn info_tilemaps(
 ) -> Result<()> {
     let mut classes = HashMap::<String, usize>::from_iter(
         rc.tilemaps.iter().map(|tilemap| {
-            (tilemap.class.clone(), 0 as usize)
+            (String::from(tilemap.class.as_ref()), 0 as usize)
         })
     );
 
     rc.tilemaps.iter().enumerate().for_each(move |(index, tilemap)| {
-        let class = &tilemap.class;
-        let class_count = classes.get_mut(class).unwrap();
+        let class = String::from(tilemap.class.as_ref());
+        let class_count = classes.get_mut(&class).unwrap();
 
         *class_count += 1;
 

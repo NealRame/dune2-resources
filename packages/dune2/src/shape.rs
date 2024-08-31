@@ -3,7 +3,12 @@ use std::ops::Mul;
 
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
+
+
 #[derive(Clone, Copy, Debug, Deserialize, Serialize)]
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 pub struct Shape {
     pub rows: u32,
     pub columns: u32,

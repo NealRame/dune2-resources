@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
@@ -7,6 +5,7 @@ extern crate js_sys;
 extern crate web_sys;
 
 use crate::{
+    point_to_index,
     Bitmap,
     BitmapPutPixel,
     Color,
@@ -14,7 +13,7 @@ use crate::{
     Point,
     Resources,
     Size,
-    point_to_index,
+    Tilemap,
 };
 
 pub const BLACK: Color = Color {
@@ -30,6 +29,7 @@ pub struct Dune2Resources {
 
 #[wasm_bindgen]
 impl Dune2Resources {
+    #[wasm_bindgen(js_name = load)]
     pub fn load(
         data: &[u8],
     ) -> Result<Dune2Resources, JsError> {
@@ -53,25 +53,23 @@ impl Dune2Resources {
     #[wasm_bindgen(js_name = getTileSize)]
     pub fn get_tile_size(
         &self,
-        tileset: &str,
-    ) -> Result<Size, JsValue> {
+        tileset_id: &str,
+    ) -> Result<Size, JsError> {
         self.resources
-            .tilesets
-            .get(tileset)
-            .map(|tileset| tileset.tile_size)
-            .ok_or_else(|| JsValue::from_str("Invalid tileset"))
+            .get_tileset(tileset_id)
+            .map(|tileset| tileset.tile_size())
+            .map_err(|err| JsError::new(err.to_string().as_str()))
     }
 
     #[wasm_bindgen(js_name = getTileCount)]
     pub fn get_tile_count(
         &self,
-        tileset: &str,
-    ) -> Result<usize, JsValue> {
+        tileset_id: &str,
+    ) -> Result<usize, JsError> {
         self.resources
-            .tilesets
-            .get(tileset)
-            .map(|tileset| tileset.tiles.len())
-            .ok_or_else(|| JsValue::from_str("Invalid tileset"))
+            .get_tileset(tileset_id)
+            .map(|tileset| tileset.tile_count())
+            .map_err(|err| JsError::new(err.to_string().as_str()))
     }
 
     #[wasm_bindgen(js_name = getTile)]
@@ -79,20 +77,28 @@ impl Dune2Resources {
         &self,
         tileset: &str,
         tile: usize,
-        faction: &str,
-        scale: u32,
+        faction: JsValue,
+        scale: JsValue,
     ) -> Result<web_sys::ImageData, JsValue> {
-        let faction =
-            Faction::from_str(faction)
-                .map_err(|_| JsValue::from_str("Invalid faction"))?;
+        let faction = if let Some(v) = faction.as_string() {
+            match Faction::try_from_str(v.as_str()) {
+                Ok(faction) => Some(faction),
+                Err(err) => return Err(JsValue::from_str(err.to_string().as_str()))
+            }
+        } else { None };
+
+        let scale = u32::max(1, scale.as_f64().unwrap_or(1.) as u32);
 
         let src_bitmap =
             self.resources
-                .tile_bitmap(tileset, tile, Some(faction))
-                .map_err(|_| JsValue::from_str("Failed to get tile bitmap"))?;
+                .get_tile_bitmap(tileset, tile, faction)
+                .map_err(|err| JsValue::from_str(err.to_string().as_str()))?;
         let src_rect = src_bitmap.rect();
 
-        let mut dst_bitmap = RGBABitmap::new(src_bitmap.size()*scale, Some(BLACK));
+        let mut dst_bitmap = RGBABitmap::new(
+            src_bitmap.size()*scale,
+            Some(BLACK)
+        );
         let dst_rect = dst_bitmap.rect();
 
         crate::bitmap::blit(
@@ -112,111 +118,19 @@ impl Dune2Resources {
     pub fn get_tilemap_count(
         &self,
     ) -> usize {
-        self.resources
-            .tilemaps
-            .len()
+        self.resources.tilemaps.len()
     }
 
     #[wasm_bindgen(js_name = getTilemapSize)]
-    pub fn get_tilemap_size(
-        &self,
-        tilemap: usize,
-    ) -> Result<Size, JsValue> {
-        let tilemap = self.resources
-            .tilemaps
-            .get(tilemap)
-            .ok_or_else(|| JsValue::from_str("Invalid tilemap"))?;
-        let tile_size = self.get_tile_size(&tilemap.tileset)?;
-        Ok(tile_size*tilemap.shape)
-    }
-
-    #[wasm_bindgen(js_name = getTilemap)]
     pub fn get_tilemap(
         &self,
-        tilemap: usize,
-        faction: &str,
-        scale: u32,
-    ) -> Result<web_sys::ImageData, JsValue> {
-        let faction =
-            Faction::from_str(faction)
-                .map_err(|_| JsValue::from_str("Invalid faction"))?;
+        tilemap_index: usize,
+    ) -> Result<Tilemap, JsError> {
+        let tilemap = self.resources.tilemaps
+            .get(tilemap_index)
+            .ok_or_else(|| JsError::new("Invalid tilemap index value"))?;
 
-        let src_bitmap =
-            self.resources
-                .tilemap_bitmap(tilemap, Some(faction))
-                .map_err(|_| JsValue::from_str("Failed to get tile bitmap"))?;
-        let src_rect = src_bitmap.rect();
-
-        let mut dst_bitmap = RGBABitmap::new(src_bitmap.size()*scale, Some(BLACK));
-        let dst_rect = dst_bitmap.rect();
-
-        crate::bitmap::blit(
-            &src_bitmap,
-            &src_rect,
-            &mut dst_bitmap,
-            &dst_rect
-        );
-
-        web_sys::ImageData::new_with_u8_clamped_array(
-            wasm_bindgen::Clamped(dst_bitmap.data.as_slice()),
-            dst_bitmap.width(),
-        )
-    }
-
-    #[wasm_bindgen(js_name = getSprites)]
-    pub fn get_sprites(
-        &self,
-    ) -> Vec<JsString> {
-        self.resources
-            .sprites
-            .keys()
-            .map(|sprite| JsString::from(sprite.as_str()))
-            .collect()
-    }
-
-    #[wasm_bindgen(js_name = getSpriteFrameCount)]
-    pub fn get_sprite_frame_count(
-        &self,
-        sprite: &str,
-    ) -> Result<usize, JsValue> {
-        self.resources.sprites
-            .get(sprite)
-            .map(|sprite| sprite.frame_count())
-            .ok_or_else(|| JsValue::from_str("Invalid sprite"))
-    }
-
-    #[wasm_bindgen(js_name = getSpriteFrame)]
-    pub fn get_sprite_frame(
-        &self,
-        sprite: &str,
-        frame: usize,
-        faction: &str,
-        scale: u32,
-    ) -> Result<web_sys::ImageData, JsValue> {
-        let faction =
-            Faction::from_str(faction)
-                .map_err(|_| JsValue::from_str("Invalid faction"))?;
-
-        let src_bitmap =
-            self.resources
-                .sprite_frame_bitmap(sprite, frame, Some(faction))
-                .map_err(|_| JsValue::from_str("Failed to get sprite bitmap"))?;
-        let src_rect = src_bitmap.rect();
-
-        let mut dst_bitmap = RGBABitmap::new(src_bitmap.size()*scale, Some(BLACK));
-        let dst_rect = dst_bitmap.rect();
-
-        crate::bitmap::blit(
-            &src_bitmap,
-            &src_rect,
-            &mut dst_bitmap,
-            &dst_rect
-        );
-
-        web_sys::ImageData::new_with_u8_clamped_array(
-            wasm_bindgen::Clamped(dst_bitmap.data.as_slice()),
-            dst_bitmap.width(),
-        )
+        Ok(tilemap.clone())
     }
 }
 
