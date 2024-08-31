@@ -1,26 +1,78 @@
-use serde::{Deserialize, Serialize};
-
 use anyhow::Result;
 
-use crate::Bitmap;
-use crate::BitmapGetPixel;
-use crate::Color;
-use crate::Faction;
-use crate::Point;
-use crate::Resources;
-use crate::Shape;
-use crate::Size;
-use crate::TileBitmap;
+use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "wasm")]
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug, Serialize, Deserialize)]
+use crate::{
+    Bitmap,
+    BitmapGetPixel,
+    Color,
+    Faction,
+    Point,
+    Resources,
+    Shape,
+    Size,
+    TileBitmap,
+};
+
+// Q: Why there is two declartion for struct Tilemap ?
+// A: I cannot use [cfg_attr(feature = "wasm", wasm_bindgen(skip))] because of
+// the following compilation error:
+//  - error: expected non-macro attribute, found attribute macro `wasm_bindgen`
+//
+// I found this solution [https://github.com/rustwasm/wasm-bindgen/issues/2703]
+// but it uses nightly Rust channel and I don't want to use it.
+//
+// So I decided to duplicate the struct declaration.
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[cfg(not(feature = "wasm"))]
 pub struct Tilemap {
-    pub class: String,
+    pub class: Box<str>,
     pub shape: Shape,
     pub tiles: Box<[usize]>,
     pub tileset: Box<str>,
 }
 
+#[cfg(feature = "wasm")]
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[wasm_bindgen]
+pub struct Tilemap {
+    #[wasm_bindgen(skip)]
+    pub class: Box<str>,
+    #[wasm_bindgen(skip)]
+    pub shape: Shape,
+    #[wasm_bindgen(skip)]
+    pub tiles: Box<[usize]>,
+    #[wasm_bindgen(skip)]
+    pub tileset: Box<str>,
+}
+
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
+impl Tilemap {
+    #[wasm_bindgen(js_name = getClass)]
+    pub fn get_class(&self) -> String {
+        String::from(self.class.as_ref())
+    }
+
+    #[wasm_bindgen(js_name = getShape)]
+    pub fn get_shape(&self) -> Shape {
+        self.shape
+    }
+
+    #[wasm_bindgen(js_name = getTiles)]
+    pub fn get_tiles(&self) -> Vec<usize> {
+        Vec::from(self.tiles.as_ref())
+    }
+
+    #[wasm_bindgen(js_name = getTileset)]
+    pub fn get_tileset(&self) -> String {
+        String::from(self.tileset.as_ref())
+    }
+}
 
 pub struct TilemapBitmap<'a> {
     bitmaps: Vec<TileBitmap<'a>>,

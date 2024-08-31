@@ -94,7 +94,7 @@ fn check_tilemaps(
     for tilemap in tilemaps.iter() {
         let tileset_id = String::from(tilemap.tileset.as_ref());
         let tileset = tilesets.get(&tileset_id).ok_or(
-            anyhow!(CreateError::TilesetInvalidId(tileset_id))
+            anyhow!(CreateError::TilesetInvalidId(tileset_id.clone()))
         )?;
 
         for tile_index in tilemap.tiles.iter() {
