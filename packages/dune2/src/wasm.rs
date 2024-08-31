@@ -17,9 +17,6 @@ use crate::{
     point_to_index,
 };
 
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 pub const BLACK: Color = Color {
     red: 0,
     green: 0,
