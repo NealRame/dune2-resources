@@ -66,10 +66,10 @@ impl Tileset {
     }
 
     pub fn get_id(&self) -> &str {
-        return &self.id
+        &self.id
     }
 
-    pub fn get_tile(
+    pub fn tile_at(
         &self,
         tile_index: usize,
     ) -> Result<&Tile> {
@@ -82,7 +82,7 @@ impl Tileset {
     }
 
     pub fn tile_iter(&self) -> std::slice::Iter<'_, Tile> {
-        return self.tiles.iter();
+        self.tiles.iter()
     }
 
     pub fn tile_size(&self) -> Size {

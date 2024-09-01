@@ -57,7 +57,7 @@ impl Resources {
         faction: Option<Faction>,
     ) -> Result<TileBitmap> {
         let tileset = self.get_tileset(tileset_id)?;
-        let tile = tileset.get_tile(tile_index)?;
+        let tile = tileset.tile_at(tile_index)?;
 
         Ok(TileBitmap::with_resources(tile, faction, self))
     }

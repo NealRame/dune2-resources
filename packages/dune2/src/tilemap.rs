@@ -90,7 +90,7 @@ impl<'a> TilemapBitmap<'a> {
         let bitmaps = tilemap.tiles
             .iter()
             .map(|tile_index| -> Result<TileBitmap> {
-                let tile = tileset.get_tile(*tile_index)?;
+                let tile = tileset.tile_at(*tile_index)?;
                 Ok(TileBitmap::with_resources(tile, faction, resources))
             })
             .collect::<Result<Vec<TileBitmap>, _>>()?;

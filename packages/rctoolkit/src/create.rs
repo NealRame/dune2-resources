@@ -98,7 +98,7 @@ fn check_tilemaps(
         )?;
 
         for tile_index in tilemap.tiles.iter() {
-            tileset.get_tile(*tile_index)?;
+            tileset.tile_at(*tile_index)?;
         }
     }
     Ok(())
