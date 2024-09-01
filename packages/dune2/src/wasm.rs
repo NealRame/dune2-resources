@@ -5,15 +5,7 @@ extern crate js_sys;
 extern crate web_sys;
 
 use crate::{
-    point_to_index,
-    Bitmap,
-    BitmapPutPixel,
-    Color,
-    Faction,
-    Point,
-    Resources,
-    Size,
-    Tilemap,
+    point_to_index, Bitmap, BitmapPutPixel, Color, Faction, Point, Rect, Resources, Shape, Size, TileBitmap, Tilemap
 };
 
 pub const BLACK: Color = Color {
@@ -50,8 +42,8 @@ impl Dune2Resources {
             .collect()
     }
 
-    #[wasm_bindgen(js_name = getTileSize)]
-    pub fn get_tile_size(
+    #[wasm_bindgen(js_name = getTilesetTileSize)]
+    pub fn get_tileset_tile_size(
         &self,
         tileset_id: &str,
     ) -> Result<Size, JsError> {
@@ -61,8 +53,8 @@ impl Dune2Resources {
             .map_err(|err| JsError::new(err.to_string().as_str()))
     }
 
-    #[wasm_bindgen(js_name = getTileCount)]
-    pub fn get_tile_count(
+    #[wasm_bindgen(js_name = getTilesetTileCount)]
+    pub fn get_tileset_tile_count(
         &self,
         tileset_id: &str,
     ) -> Result<usize, JsError> {
@@ -72,20 +64,73 @@ impl Dune2Resources {
             .map_err(|err| JsError::new(err.to_string().as_str()))
     }
 
-    #[wasm_bindgen(js_name = getTile)]
-    pub fn get_tile(
+    #[wasm_bindgen(js_name = getTilesetTextureData)]
+    pub fn get_tileset_texture_data(
+        &self,
+        tileset_id: &str,
+        shape: Shape,
+        faction: JsValue,
+    ) -> Result<Vec<u8>, JsError> {
+        let palette = &self.resources.palette;
+        let faction =
+            if faction.is_truthy() {
+                Some(Faction::try_from_js_value(&faction)?)
+            } else {
+                None
+            };
+
+        let tileset =
+            self.resources
+                .get_tileset(tileset_id)
+                .map_err(|err| JsError::new(err.to_string().as_str()))?;
+
+        let tile_size = tileset.tile_size();
+        let tile_count = usize::min(
+            tileset.tile_count(),
+            (shape.columns*shape.rows) as usize,
+        );
+
+        let texture_size = tile_size*shape;
+        let mut dst = RGBABitmap::new(texture_size, Some(BLACK));
+
+        for tile_index in 0..tile_count {
+            let tile = tileset
+                .tile_at(tile_index)
+                .map_err(|err| JsError::new(err.to_string().as_str()))?;
+
+            let src = TileBitmap::with_palette(tile, faction, palette);
+            let src_rect = src.rect();
+
+            let dst_x = tile_size.width*(tile_index as u32)%shape.columns;
+            let dst_y = tile_size.height*(tile_index as u32)/shape.columns;
+            let dst_rect = Rect::from_point_and_size(
+                Point {
+                    x: dst_x as i32,
+                    y: dst_y as i32,
+                },
+                tile_size,
+            );
+
+            crate::bitmap::blit(&src, &src_rect, &mut dst, &dst_rect);
+        }
+
+        Ok(dst.data)
+    }
+
+    #[wasm_bindgen(js_name = getTilesetTile)]
+    pub fn get_tileset_tile(
         &self,
         tileset: &str,
         tile: usize,
         faction: JsValue,
         scale: JsValue,
     ) -> Result<web_sys::ImageData, JsValue> {
-        let faction = if let Some(v) = faction.as_string() {
-            match Faction::try_from_str(v.as_str()) {
-                Ok(faction) => Some(faction),
-                Err(err) => return Err(JsValue::from_str(err.to_string().as_str()))
-            }
-        } else { None };
+        let faction =
+            if faction.is_truthy() {
+                Some(Faction::try_from_js_value(&faction)?)
+            } else {
+                None
+            };
 
         let scale = u32::max(1, scale.as_f64().unwrap_or(1.) as u32);
 
