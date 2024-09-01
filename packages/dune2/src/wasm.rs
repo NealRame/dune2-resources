@@ -121,7 +121,7 @@ impl Dune2Resources {
         self.resources.tilemaps.len()
     }
 
-    #[wasm_bindgen(js_name = getTilemapSize)]
+    #[wasm_bindgen(js_name = getTilemap)]
     pub fn get_tilemap(
         &self,
         tilemap_index: usize,
