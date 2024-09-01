@@ -68,13 +68,16 @@ impl Dune2Resources {
     pub fn get_tileset_texture_data(
         &self,
         tileset_id: &str,
-        shape: Shape,
-        faction: JsValue,
+        columns: u32,
+        faction: Option<String>,
     ) -> Result<Vec<u8>, JsError> {
         let palette = &self.resources.palette;
         let faction =
-            if faction.is_truthy() {
-                Some(Faction::try_from_js_value(&faction)?)
+            if let Some(str) = faction {
+                let faction =
+                    Faction::try_from_str(str.as_ref())
+                        .map_err(|err| JsError::new(err.to_string().as_str()))?;
+                Some(faction)
             } else {
                 None
             };
@@ -85,31 +88,29 @@ impl Dune2Resources {
                 .map_err(|err| JsError::new(err.to_string().as_str()))?;
 
         let tile_size = tileset.tile_size();
-        let tile_count = usize::min(
-            tileset.tile_count(),
-            (shape.columns*shape.rows) as usize,
-        );
+        let tile_count = tileset.tile_count() as u32;
+        let rows = if tile_count%columns != 0 {
+            tile_count/columns + 1
+        } else {
+            tile_count/columns
+        };
 
-        let texture_size = tile_size*shape;
+        let texture_size = tile_size*Shape{ rows, columns };
         let mut dst = RGBABitmap::new(texture_size, Some(BLACK));
 
         for tile_index in 0..tile_count {
             let tile = tileset
-                .tile_at(tile_index)
+                .tile_at(tile_index as usize)
                 .map_err(|err| JsError::new(err.to_string().as_str()))?;
 
             let src = TileBitmap::with_palette(tile, faction, palette);
             let src_rect = src.rect();
 
-            let dst_x = tile_size.width*(tile_index as u32)%shape.columns;
-            let dst_y = tile_size.height*(tile_index as u32)/shape.columns;
-            let dst_rect = Rect::from_point_and_size(
-                Point {
-                    x: dst_x as i32,
-                    y: dst_y as i32,
-                },
-                tile_size,
-            );
+            let dst_top_left = Point {
+                x: (tile_size.width*tile_index%columns) as i32,
+                y: (tile_size.height*tile_index/columns) as i32,
+            };
+            let dst_rect = Rect::from_point_and_size(dst_top_left, tile_size);
 
             crate::bitmap::blit(&src, &src_rect, &mut dst, &dst_rect);
         }
