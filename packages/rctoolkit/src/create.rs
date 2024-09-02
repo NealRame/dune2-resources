@@ -137,7 +137,6 @@ pub fn run(args: &Args) -> Result<()> {
         palette,
         tilesets,
         tilemaps,
-        // sprites: config.sprites,
     };
 
     if args.output_file.exists() && !args.force_overwrite {
