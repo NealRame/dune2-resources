@@ -1,10 +1,14 @@
 mod check;
 mod create;
 mod extract;
+mod icn;
 mod image;
 mod info;
+mod io;
 mod resources_config;
+mod shp;
 mod source;
+
 
 use clap::{Parser, Subcommand};
 

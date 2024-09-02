@@ -7,8 +7,10 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.86"
+bitvec = "1.0.1"
 clap = { version = "4.2.7", features = ["derive", "env"] }
-dune2-rc = { path = "../dune2", features = ["shp", "icn"] }
-image = "0.24.6"
+dune2-rc = { path = "../dune2" }
+image = "0.25.2"
+paste = "1.0.15"
 serde = "1.0.162"
-toml = "0.7.3"
+toml = "0.8.19"

@@ -5,8 +5,9 @@ use std::path;
 
 use anyhow::{anyhow, Result};
 
+use dune2_rc::{Size, Tile};
+
 use crate::io::*;
-use crate::{Size, Tile};
 
 
 fn check_chunk_id(
@@ -134,52 +135,50 @@ impl ICNRTbl {
     }
 }
 
-impl Tile {
-    pub fn from_icn_reader<T>(
-        reader: &mut T,
-    ) -> Result<Vec<Tile>> where T: Read + Seek {
-        check_chunk_id(reader, b"FORM")?;
+fn read_tiles_from_reader<T>(
+    reader: &mut T,
+) -> Result<Vec<Tile>> where T: Read + Seek {
+    check_chunk_id(reader, b"FORM")?;
 
-        reader.seek(SeekFrom::Current(4))?; // Skip chunk size
+    reader.seek(SeekFrom::Current(4))?; // Skip chunk size
 
-        check_chunk_id(reader, b"ICON")?;
+    check_chunk_id(reader, b"ICON")?;
 
-        let info = ICNInfo::read_from(reader)?;
-        let sset = ICNSSet::read_from(reader, &info)?;
-        let rpal = ICNRPal::read_from(reader, &info)?;
-        let rtbl = ICNRTbl::read_from(reader)?;
+    let info = ICNInfo::read_from(reader)?;
+    let sset = ICNSSet::read_from(reader, &info)?;
+    let rpal = ICNRPal::read_from(reader, &info)?;
+    let rtbl = ICNRTbl::read_from(reader)?;
 
-        if sset.len() != rtbl.len() {
-            return Err(anyhow!("ICN: SSET and RTBL size mismatch"));
-        }
+    if sset.len() != rtbl.len() {
+        return Err(anyhow!("ICN: SSET and RTBL size mismatch"));
+    }
 
-        let tile_size = Size {
-            width: info.width as u32,
-            height: info.height as u32,
-        };
+    let tile_size = Size {
+        width: info.width as u32,
+        height: info.height as u32,
+    };
 
-        let tiles = iter::zip(sset.iter(), rtbl.iter())
-            .map(|(raw_data, rpal_index)| {
-                let bpp = info.bit_per_pixels;
-                let mut tile_data = Vec::new();
+    let tiles = iter::zip(sset.iter(), rtbl.iter())
+        .map(|(raw_data, rpal_index)| {
+            let bpp = info.bit_per_pixels;
+            let mut tile_data = Vec::new();
 
-                for b in raw_data {
-                    for i in (0..8/bpp).rev() {
-                        let p = (b >> i*bpp) & ((1 << bpp) - 1);
-                        tile_data.push(rpal[*rpal_index as usize][p as usize]);
-                    }
+            for b in raw_data {
+                for i in (0..8/bpp).rev() {
+                    let p = (b >> i*bpp) & ((1 << bpp) - 1);
+                    tile_data.push(rpal[*rpal_index as usize][p as usize]);
                 }
+            }
 
-                Tile::new(&tile_data[..], tile_size)
-            }).collect::<Vec<_>>();
+            Tile::new(&tile_data[..], tile_size)
+        }).collect::<Vec<_>>();
 
-        Ok(tiles)
-    }
+    Ok(tiles)
+}
 
-    pub fn from_icn_file<P>(
-        path: P,
-    ) -> Result<Vec<Tile>> where P: AsRef<path::Path> {
-        let mut reader = fs::File::open(path)?;
-        Self::from_icn_reader(&mut reader)
-    }
+pub fn read_tiles_from_file<P>(
+    path: P,
+) -> Result<Vec<Tile>> where P: AsRef<path::Path> {
+    let mut reader = fs::File::open(path)?;
+    read_tiles_from_reader(&mut reader)
 }

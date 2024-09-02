@@ -1,4 +1,7 @@
-use std::io::{Error, Read};
+use std::io::{
+    Error,
+    Read,
+};
 
 use paste::paste;
 

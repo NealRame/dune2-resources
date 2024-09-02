@@ -7,6 +7,10 @@ use serde::Deserialize;
 
 use dune2_rc::*;
 
+use crate::{
+    icn,
+    shp,
+};
 
 #[derive(Debug, Deserialize)]
 pub struct PaletteConfig {
@@ -92,8 +96,8 @@ impl Config {
 
         for source in self.sources.iter() {
             tiles.append(&mut match source.kind {
-                SourceType::ICN => Tile::from_icn_file(&source.path)?,
-                SourceType::SHP => Tile::from_shp_file(&source.path)?,
+                SourceType::ICN => icn::read_tiles_from_file(&source.path)?,
+                SourceType::SHP => shp::read_tiles_from_file(&source.path)?,
             });
         }
         Ok(tiles)

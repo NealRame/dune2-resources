@@ -9,8 +9,9 @@ use bitvec::prelude::*;
 
 use serde::{Deserialize, Serialize};
 
+use dune2_rc::{Size, Tile};
+
 use crate::io::*;
-use crate::{Size, Tile};
 
 enum SHPVersion {
     V100,
@@ -238,31 +239,30 @@ fn shp_read_frame<T: Read + Seek>(
     })
 }
 
-impl Tile {
-    pub fn from_shp_reader<T: Read + Seek>(
-        reader: &mut T,
-    ) -> Result<Vec<Tile>> {
-        let shp_version = shp_read_version(reader)?;
-        let shp_offsets = shp_read_frame_offsets(reader, shp_version)?;
 
-        let mut tiles = Vec::<Tile>::new();
+fn read_tiles_from_reader<T: Read + Seek>(
+    reader: &mut T,
+) -> Result<Vec<Tile>> {
+    let shp_version = shp_read_version(reader)?;
+    let shp_offsets = shp_read_frame_offsets(reader, shp_version)?;
 
-        for (offset, size) in shp_offsets.iter().copied() {
-            let shp_frame = shp_read_frame(reader, offset, size as u64)?;
+    let mut tiles = Vec::<Tile>::new();
 
-            tiles.push(Tile::new(
-                &shp_frame.data[..],
-                shp_frame.size,
-            ));
-        }
+    for (offset, size) in shp_offsets.iter().copied() {
+        let shp_frame = shp_read_frame(reader, offset, size as u64)?;
 
-        Ok(tiles)
+        tiles.push(Tile::new(
+            &shp_frame.data[..],
+            shp_frame.size,
+        ));
     }
 
-    pub fn from_shp_file<P>(
-        path: P,
-    ) -> Result<Vec<Tile>> where P: AsRef<path::Path> {
-        let mut reader = fs::File::open(path)?;
-        Self::from_shp_reader(&mut reader)
-    }
+    Ok(tiles)
+}
+
+pub fn read_tiles_from_file<P>(
+    path: P,
+) -> Result<Vec<Tile>> where P: AsRef<path::Path> {
+    let mut reader = fs::File::open(path)?;
+    read_tiles_from_reader(&mut reader)
 }
