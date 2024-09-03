@@ -11,3 +11,5 @@ pub use crate::tileset::*;
 
 #[cfg(feature = "wasm")]
 pub use crate::wasm::*;
+
+pub type Result<T> = core::result::Result<T, Error>;

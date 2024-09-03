@@ -1,9 +1,8 @@
-use anyhow::{anyhow, Result};
-
 use serde::{Deserialize, Serialize};
 
 use crate::prelude::{
     Error,
+    Result,
     Size,
     Tile,
 };
@@ -39,10 +38,10 @@ impl Tileset {
             self.tiles.push(tile);
             Ok(())
         } else {
-            Err(anyhow!(Error::TilesetInvalidTileSize(
+            Err(Error::TilesetInvalidTileSize(
                 self.id.clone(),
                 tile_size,
-            )))
+            ))
         }
     }
 
@@ -56,10 +55,10 @@ impl Tileset {
     ) -> Result<&Tile> {
         self.tiles
             .get(tile_index)
-            .ok_or(anyhow!(Error::TilesetInvalidTileIndex(
+            .ok_or(Error::TilesetInvalidTileIndex(
                 self.id.clone(),
                 tile_index,
-            )))
+            ))
     }
 
     pub fn tile_iter(&self) -> std::slice::Iter<'_, Tile> {

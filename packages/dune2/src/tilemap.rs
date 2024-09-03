@@ -1,5 +1,3 @@
-use anyhow::Result;
-
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "wasm")]
@@ -84,7 +82,7 @@ impl<'a> TilemapBitmap<'a> {
                 let tile = tileset.tile_at(*tile_index)?;
                 Ok(TileBitmap::with_resources(tile, faction, resources))
             })
-            .collect::<Result<Vec<TileBitmap>, _>>()?;
+            .collect::<Result<Vec<TileBitmap>>>()?;
 
         Ok(Self {
             bitmaps,

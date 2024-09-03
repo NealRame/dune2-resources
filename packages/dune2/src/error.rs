@@ -5,6 +5,8 @@ use crate::prelude::Size;
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Error {
     FactionInvalidString(String),
+    #[cfg(feature = "wasm")]
+    FactionInvalidValueType,
 
     TilesetInvalidTileSize(String, Size),
     TilesetInvalidTileIndex(String, usize),

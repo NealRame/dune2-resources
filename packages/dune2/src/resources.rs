@@ -1,7 +1,8 @@
 use std::collections::HashMap;
-use std::io::Read;
-
-use anyhow::{anyhow, Result};
+use std::io::{
+    Read,
+    Write,
+};
 
 use flate2::Compression;
 use flate2::read::DeflateDecoder;
@@ -15,6 +16,7 @@ use crate::prelude::{
     Error,
     Faction,
     Palette,
+    Result,
     TileBitmap,
     Tilemap,
     Tileset,
@@ -35,7 +37,7 @@ impl Resources {
     ) -> Result<&Tileset> {
         self.tilesets
             .get(tileset_id)
-            .ok_or(anyhow!(Error::TilesetInvalidId(tileset_id.into())))
+            .ok_or(Error::TilesetInvalidId(tileset_id.into()))
     }
 
     pub fn get_tile_bitmap(
@@ -52,24 +54,20 @@ impl Resources {
 }
 
 impl Resources {
-    pub fn read_from<R>(
+    pub fn read_from<R: Read>(
         reader: &mut R,
-    ) -> Result<Resources> where R: Read {
+    ) -> core::result::Result<Resources, rmp_serde::decode::Error> {
         let mut inflate_reader = DeflateDecoder::new(reader);
-        let rc = rmp_serde::decode::from_read(&mut inflate_reader)?;
-
-        Ok(rc)
+        rmp_serde::decode::from_read(&mut inflate_reader)
     }
 }
 
 impl Resources {
-    pub fn write_to<W>(
+    pub fn write_to<W: Write>(
         &self,
         writer: &mut W,
-    ) -> Result<()> where W: std::io::Write {
+    ) -> core::result::Result<(), rmp_serde::encode::Error> {
         let mut output = DeflateEncoder::new(writer, Compression::best());
-
-        rmp_serde::encode::write(&mut output, self)?;
-        Ok(())
+        rmp_serde::encode::write(&mut output, self)
     }
 }

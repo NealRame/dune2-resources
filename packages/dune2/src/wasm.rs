@@ -24,11 +24,11 @@ impl Dune2Resources {
     #[wasm_bindgen(js_name = load)]
     pub fn load(
         data: &[u8],
-    ) -> Result<Dune2Resources, JsError> {
+    ) -> core::result::Result<Dune2Resources, JsError> {
         let mut reader = std::io::Cursor::new(data);
-        Resources::read_from(&mut reader)
-            .map(|resources| Self { resources })
-            .map_err(|_| JsError::new("Failed to load resources"))
+        let resources = Resources::read_from(&mut reader)?;
+
+        Ok(Self { resources })
     }
 
     #[wasm_bindgen(js_name = getTilesets)]
@@ -46,22 +46,24 @@ impl Dune2Resources {
     pub fn get_tileset_tile_size(
         &self,
         tileset_id: &str,
-    ) -> Result<Size, JsError> {
-        self.resources
+    ) -> core::result::Result<Size, JsError> {
+        let tile_size = self.resources
             .get_tileset(tileset_id)
-            .map(|tileset| tileset.tile_size())
-            .map_err(|err| JsError::new(err.to_string().as_str()))
+            .map(|tileset| tileset.tile_size())?;
+
+        Ok(tile_size)
     }
 
     #[wasm_bindgen(js_name = getTilesetTileCount)]
     pub fn get_tileset_tile_count(
         &self,
         tileset_id: &str,
-    ) -> Result<usize, JsError> {
-        self.resources
+    ) -> core::result::Result<usize, JsError> {
+        let tile_count = self.resources
             .get_tileset(tileset_id)
-            .map(|tileset| tileset.tile_count())
-            .map_err(|err| JsError::new(err.to_string().as_str()))
+            .map(|tileset| tileset.tile_count())?;
+
+        Ok(tile_count)
     }
 
     #[wasm_bindgen(js_name = getTilesetTextureData)]
@@ -70,22 +72,16 @@ impl Dune2Resources {
         tileset_id: &str,
         columns: u32,
         faction: Option<String>,
-    ) -> Result<Vec<u8>, JsError> {
+    ) -> core::result::Result<Vec<u8>, JsError> {
         let palette = &self.resources.palette;
         let faction =
             if let Some(str) = faction {
-                let faction =
-                    Faction::try_from_str(str.as_ref())
-                        .map_err(|err| JsError::new(err.to_string().as_str()))?;
-                Some(faction)
+                Some(Faction::try_from_str(str.as_ref())?)
             } else {
                 None
             };
 
-        let tileset =
-            self.resources
-                .get_tileset(tileset_id)
-                .map_err(|err| JsError::new(err.to_string().as_str()))?;
+        let tileset = self.resources.get_tileset(tileset_id)?;
 
         let tile_size = tileset.tile_size();
         let tile_count = tileset.tile_count() as u32;
@@ -125,7 +121,7 @@ impl Dune2Resources {
         tile: usize,
         faction: JsValue,
         scale: JsValue,
-    ) -> Result<web_sys::ImageData, JsValue> {
+    ) -> core::result::Result<web_sys::ImageData, JsValue> {
         let faction =
             if faction.is_truthy() {
                 Some(Faction::try_from_js_value(&faction)?)
@@ -171,12 +167,10 @@ impl Dune2Resources {
     pub fn get_tilemap(
         &self,
         tilemap_index: usize,
-    ) -> Result<Tilemap, JsError> {
-        let tilemap = self.resources.tilemaps
+    ) -> Option<Tilemap> {
+        self.resources.tilemaps
             .get(tilemap_index)
-            .ok_or_else(|| JsError::new("Invalid tilemap index value"))?;
-
-        Ok(tilemap.clone())
+            .and_then(|tilemap| Some(tilemap.clone()))
     }
 }
 

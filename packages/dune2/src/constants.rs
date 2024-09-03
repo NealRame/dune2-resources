@@ -1,9 +1,10 @@
-use anyhow::{anyhow, Result};
-
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use crate::prelude::Error;
+use crate::prelude::{
+    Error,
+    Result,
+};
 
 
 pub const COLOR_HARKONNEN: usize = 144;
@@ -46,7 +47,7 @@ impl Faction {
                 Ok(Self::Mercenary)
             },
             _ => {
-                Err(anyhow!(Error::FactionInvalidString(faction.into())))
+                Err(Error::FactionInvalidString(faction.into()))
             }
         }
     }
@@ -54,15 +55,16 @@ impl Faction {
 
 #[cfg(feature = "wasm")]
 impl Faction {
-    pub fn try_from_js_value(value: &JsValue) -> Result<Faction, JsError> {
+    pub fn try_from_js_value(
+        value: &JsValue,
+    ) -> core::result::Result<Faction, JsError> {
         match value.as_string() {
             Some(value) => {
-                Faction::try_from_str(value.as_str()).map_err(|err| {
-                    JsError::new(err.to_string().as_str())
-                })
+                let faction = Faction::try_from_str(value.as_str())?;
+                Ok(faction)
             },
             _ => {
-                Err(JsError::new("Invalid value"))
+                Err(JsError::from(Error::FactionInvalidValueType))
             }
         }
     }
