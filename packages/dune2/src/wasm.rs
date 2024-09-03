@@ -66,13 +66,13 @@ impl Dune2Resources {
         Ok(tile_count)
     }
 
-    #[wasm_bindgen(js_name = getTilesetTextureData)]
-    pub fn get_tileset_texture_data(
+    #[wasm_bindgen(js_name = getTilesetImageData)]
+    pub fn get_tileset_image_data(
         &self,
         tileset_id: &str,
         columns: u32,
         faction: Option<String>,
-    ) -> core::result::Result<Vec<u8>, JsValue> {
+    ) -> core::result::Result<web_sys::ImageData, JsValue> {
         let palette = &self.resources.palette;
         let faction =
             if let Some(str) = faction {
@@ -111,11 +111,15 @@ impl Dune2Resources {
             bitmap_blit(&src, &src_rect, &mut dst, &dst_rect);
         }
 
-        Ok(dst.data)
+        web_sys::ImageData::new_with_u8_clamped_array_and_sh(
+            wasm_bindgen::Clamped(dst.data.as_slice()),
+            dst.width(),
+            dst.height(),
+        )
     }
 
-    #[wasm_bindgen(js_name = getTilesetTile)]
-    pub fn get_tileset_tile(
+    #[wasm_bindgen(js_name = getTilesetTileImageData)]
+    pub fn get_tileset_tile_image_data(
         &self,
         tileset: &str,
         tile: usize,
@@ -151,9 +155,10 @@ impl Dune2Resources {
             &dst_rect
         );
 
-        web_sys::ImageData::new_with_u8_clamped_array(
+        web_sys::ImageData::new_with_u8_clamped_array_and_sh(
             wasm_bindgen::Clamped(dst_bitmap.data.as_slice()),
             dst_bitmap.width(),
+            dst_bitmap.height(),
         )
     }
 
