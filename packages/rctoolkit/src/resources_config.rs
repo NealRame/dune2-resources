@@ -8,8 +8,7 @@ use serde::Deserialize;
 use dune2_rc::*;
 
 use crate::{
-    icn,
-    shp,
+    icn, pal, shp
 };
 
 #[derive(Debug, Deserialize)]
@@ -86,7 +85,7 @@ impl Config {
     pub fn load_palette(
         &self,
     ) -> Result<Palette> {
-        Palette::from_pal_file(&self.palette.path)
+        pal::read_palette_from_file(&self.palette.path)
     }
 
     pub fn load_sources(

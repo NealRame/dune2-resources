@@ -1,12 +1,5 @@
 use std::collections::HashMap;
-
-use std::fs;
-use std::io;
-use std::path;
-
 use std::ops::Mul;
-
-use anyhow::{anyhow, Result};
 
 use serde::{Deserialize, Serialize};
 
@@ -73,33 +66,6 @@ impl Palette {
             colors_index: HashMap::new(),
             colors: Vec::new(),
         }
-    }
-
-    pub fn from_pal_file(
-        path: &path::PathBuf,
-    ) -> Result<Self> {
-        let mut reader = fs::File::open(path)?;
-        Self::from_pal_reader(&mut reader)
-    }
-
-    pub fn from_pal_reader(
-        reader: &mut impl io::Read,
-    ) -> Result<Palette> {
-        let mut palette = Palette::new();
-        let mut buf = [0; 3];
-
-        loop {
-            let color = match reader.read(&mut buf)? {
-                0 => break,
-                3 => Color::from(&buf),
-                _ => return Err(anyhow!("Invalid palette file")),
-            };
-            // We have to multiply each channel by 4 because the palette is 6
-            // bits per channel
-            palette.push(&(4*color));
-        }
-
-        Ok(palette)
     }
 
     pub fn push(&mut self, color: &Color) -> usize {

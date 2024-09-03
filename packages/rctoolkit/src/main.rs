@@ -5,6 +5,7 @@ mod icn;
 mod image;
 mod info;
 mod io;
+mod pal;
 mod resources_config;
 mod shp;
 mod source;
