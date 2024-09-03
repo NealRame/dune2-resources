@@ -46,7 +46,7 @@ impl Dune2Resources {
     pub fn get_tileset_tile_size(
         &self,
         tileset_id: &str,
-    ) -> core::result::Result<Size, JsError> {
+    ) -> core::result::Result<Size, JsValue> {
         let tile_size = self.resources
             .get_tileset(tileset_id)
             .map(|tileset| tileset.tile_size())?;
@@ -58,7 +58,7 @@ impl Dune2Resources {
     pub fn get_tileset_tile_count(
         &self,
         tileset_id: &str,
-    ) -> core::result::Result<usize, JsError> {
+    ) -> core::result::Result<usize, JsValue> {
         let tile_count = self.resources
             .get_tileset(tileset_id)
             .map(|tileset| tileset.tile_count())?;
@@ -72,7 +72,7 @@ impl Dune2Resources {
         tileset_id: &str,
         columns: u32,
         faction: Option<String>,
-    ) -> core::result::Result<Vec<u8>, JsError> {
+    ) -> core::result::Result<Vec<u8>, JsValue> {
         let palette = &self.resources.palette;
         let faction =
             if let Some(str) = faction {
@@ -131,10 +131,11 @@ impl Dune2Resources {
 
         let scale = u32::max(1, scale.as_f64().unwrap_or(1.) as u32);
 
-        let src_bitmap =
-            self.resources
-                .get_tile_bitmap(tileset, tile, faction)
-                .map_err(|err| JsValue::from_str(err.to_string().as_str()))?;
+        let src_bitmap = self.resources.get_tile_bitmap(
+            tileset,
+            tile,
+            faction
+        )?;
         let src_rect = src_bitmap.rect();
 
         let mut dst_bitmap = RGBABitmap::new(
