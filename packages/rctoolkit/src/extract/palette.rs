@@ -4,8 +4,8 @@ use std::path::PathBuf;
 use anyhow::{anyhow, Result};
 
 
-use dune2_rc::{
-    bitmap,
+use dune2_rc::prelude::{
+    bitmap_fill_rect,
     Point,
     Resources,
     Rect,
@@ -49,7 +49,7 @@ pub fn extract(
             palette_watch_size,
         );
 
-        bitmap::fill_rect(&mut palette_image, &rect, color);
+        bitmap_fill_rect(&mut palette_image, &rect, color);
     }
 
     if args.output_filepath.exists() && !args.force_overwrite {

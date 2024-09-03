@@ -1,6 +1,9 @@
 use std::cmp::{max, min};
 
-use crate::*;
+use crate::prelude::{
+    Point,
+    Size,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Rect {

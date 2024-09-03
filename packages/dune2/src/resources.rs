@@ -12,7 +12,13 @@ use serde::{Deserialize, Serialize};
 
 use rmp_serde;
 
-use crate::*;
+use crate::prelude::{
+    Faction,
+    Palette,
+    TileBitmap,
+    Tilemap,
+    Tileset,
+};
 
 
 #[derive(Clone, Debug, PartialEq, Eq)]

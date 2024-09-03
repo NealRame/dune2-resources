@@ -8,7 +8,7 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 
-use dune2_rc;
+use dune2_rc::prelude::Resources;
 
 
 #[derive(clap::Subcommand)]
@@ -32,7 +32,7 @@ pub struct Args {
 
 pub fn run(args: &Args) -> Result<()> {
     let mut reader = fs::File::open(&args.input_rc_file)?;
-    let rc = dune2_rc::Resources::read_from(&mut reader)?;
+    let rc = Resources::read_from(&mut reader)?;
 
     match &args.command {
         Commands::Palette(args) => palette::extract(&rc, args),

@@ -4,8 +4,10 @@ use std::path;
 
 use anyhow::{anyhow, Result};
 
-use dune2_rc::Color;
-use dune2_rc::Palette;
+use dune2_rc::prelude::{
+    Color,
+    Palette,
+};
 
 
 fn read_palette_from_reader(

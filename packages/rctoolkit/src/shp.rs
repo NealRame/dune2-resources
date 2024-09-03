@@ -9,7 +9,10 @@ use bitvec::prelude::*;
 
 use serde::{Deserialize, Serialize};
 
-use dune2_rc::{Size, Tile};
+use dune2_rc::prelude::{
+    Size,
+    Tile,
+};
 
 use crate::io::*;
 

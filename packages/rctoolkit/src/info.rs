@@ -4,8 +4,10 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 
-use dune2_rc::Color;
-use dune2_rc::Resources;
+use dune2_rc::prelude::{
+    Color,
+    Resources,
+};
 
 
 /******************************************************************************

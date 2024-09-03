@@ -5,17 +5,8 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use crate::{
-    Bitmap,
-    BitmapGetPixel,
-    Color,
-    Faction,
-    Point,
-    Resources,
-    Shape,
-    Size,
-    TileBitmap,
-};
+use crate::prelude::*;
+
 
 // Q: Why there is two declartion for struct Tilemap ?
 // A: I cannot use [cfg_attr(feature = "wasm", wasm_bindgen(skip))] because of

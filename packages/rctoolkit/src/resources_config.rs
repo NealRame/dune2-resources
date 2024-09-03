@@ -5,11 +5,19 @@ use anyhow::Result;
 
 use serde::Deserialize;
 
-use dune2_rc::*;
+use dune2_rc::prelude::{
+    Palette,
+    Size,
+    Tile,
+    TileAnchor,
+    Tilemap,
+    TileTransformation,
+};
 
 use crate::{
     icn, pal, shp
 };
+
 
 #[derive(Debug, Deserialize)]
 pub struct PaletteConfig {

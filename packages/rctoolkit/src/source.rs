@@ -3,7 +3,10 @@ use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
 
-use dune2_rc::{bitmap, Bitmap, TileBitmap};
+use dune2_rc::prelude::{
+    Bitmap,
+    TileBitmap
+};
 
 use crate::image::BMPImage;
 use crate::resources_config::*;
@@ -58,7 +61,7 @@ pub fn run(args: &Args) -> Result<()> {
         let mut image = BMPImage::new(scale*bitmap.size());
         let dst_rect = image.rect();
 
-        bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
+        dune2_rc::bitmap::bitmap_blit(&bitmap, &src_rect, &mut image, &dst_rect);
         image.save(args.output_dir.join(filename))?;
     }
 

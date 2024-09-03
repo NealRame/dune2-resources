@@ -1,13 +1,20 @@
 use image::{Rgb, RgbImage};
 
-use dune2_rc::{self as dune2, Bitmap};
+use dune2_rc::prelude::{
+    Color,
+    Bitmap,
+    BitmapPutPixel,
+    Point,
+    Size,
+};
+
 
 pub struct BMPImage {
     pub buffer: RgbImage,
 }
 
 impl BMPImage {
-    pub fn new(size: dune2::Size) -> Self {
+    pub fn new(size: Size) -> Self {
         Self {
             buffer: RgbImage::new(size.width, size.height),
         }
@@ -22,7 +29,7 @@ impl BMPImage {
     }
 }
 
-impl dune2::Bitmap for BMPImage {
+impl Bitmap for BMPImage {
     fn width(&self) -> u32 {
         self.buffer.width()
     }
@@ -32,8 +39,8 @@ impl dune2::Bitmap for BMPImage {
     }
 }
 
-impl dune2::BitmapPutPixel for BMPImage {
-    fn put_pixel(&mut self, p: dune2::Point, color: dune2::Color) -> &mut Self {
+impl BitmapPutPixel for BMPImage {
+    fn put_pixel(&mut self, p: Point, color: Color) -> &mut Self {
         if p.x < 0 || (p.x as u32) >= self.width() {
             return self;
         }

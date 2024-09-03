@@ -27,7 +27,7 @@ pub trait BitmapPutPixel {
     fn put_pixel(&mut self, p: Point, color: Color) -> &mut Self;
 }
 
-pub fn fill_rect<T>(
+pub fn bitmap_fill_rect<T>(
     bitmap: &mut T,
     rect: &Rect,
     color: Color,
@@ -41,11 +41,11 @@ pub fn fill_rect<T>(
     }
 }
 
-pub fn clear<T>(
+pub fn bitmap_clear<T>(
     bitmap: &mut T,
     color: Color,
 ) where T: Bitmap + BitmapPutPixel {
-    fill_rect(bitmap, &bitmap.rect(), color);
+    bitmap_fill_rect(bitmap, &bitmap.rect(), color);
 }
 
 pub enum BlitSizePolicy {
@@ -67,7 +67,7 @@ fn create_range_mapper(
     };
 }
 
-pub fn blit<T, U>(
+pub fn bitmap_blit<T, U>(
     src_bitmap: &T,
     src_rect: &Rect,
     dst_bitmap: &mut U,
@@ -110,18 +110,4 @@ pub fn blit<T, U>(
             dst_bitmap.put_pixel(dst, src_bitmap.get_pixel(src).unwrap());
         }
     }
-}
-
-///
-pub fn point_to_index(
-    p: Point,
-    size: Size,
-) -> Option<usize> {
-    if p.x < 0 && (p.x as u32) >= size.width {
-        return None;
-    }
-    if p.y < 0 && (p.y as u32) >= size.height {
-        return None;
-    }
-    Some(((p.y as u32)*size.width + (p.x as u32)) as usize)
 }

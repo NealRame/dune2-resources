@@ -4,8 +4,8 @@ use std::str::FromStr;
 
 use anyhow::Result;
 
-use dune2_rc::{
-    bitmap,
+use dune2_rc::prelude::{
+    bitmap_blit,
     Bitmap,
     Resources,
     TilemapBitmap,
@@ -51,7 +51,7 @@ pub fn extract(
         let mut image = BMPImage::new(args.scale*bitmap.size());
         let dst_rect = image.rect();
 
-        bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
+        bitmap_blit(&bitmap, &src_rect, &mut image, &dst_rect);
         image.save(output_filepath)?;
     }
 

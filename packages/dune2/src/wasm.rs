@@ -4,9 +4,9 @@ use wasm_bindgen::prelude::*;
 extern crate js_sys;
 extern crate web_sys;
 
-use crate::{
-    point_to_index, Bitmap, BitmapPutPixel, Color, Faction, Point, Rect, Resources, Shape, Size, TileBitmap, Tilemap
-};
+use crate::prelude::*;
+use crate::utils::point_to_index;
+
 
 pub const BLACK: Color = Color {
     red: 0,
@@ -112,7 +112,7 @@ impl Dune2Resources {
             };
             let dst_rect = Rect::from_point_and_size(dst_top_left, tile_size);
 
-            crate::bitmap::blit(&src, &src_rect, &mut dst, &dst_rect);
+            bitmap_blit(&src, &src_rect, &mut dst, &dst_rect);
         }
 
         Ok(dst.data)
@@ -147,7 +147,7 @@ impl Dune2Resources {
         );
         let dst_rect = dst_bitmap.rect();
 
-        crate::bitmap::blit(
+        bitmap_blit(
             &src_bitmap,
             &src_rect,
             &mut dst_bitmap,

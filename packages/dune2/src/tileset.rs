@@ -1,10 +1,13 @@
+use anyhow::{anyhow, Result};
+
 use std::fmt;
 
-use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 
-use crate::Size;
-use crate::Tile;
+use crate::prelude::{
+    Size,
+    Tile,
+};
 
 
 #[derive(Clone, Debug, PartialEq, Eq)]

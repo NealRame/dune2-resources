@@ -1,13 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::bitmap::{self, Bitmap, BitmapGetPixel};
-use crate::{point_to_index, Resources, COLOR_HARKONNEN};
-use crate::Rect;
-use crate::Color;
-use crate::Faction;
-use crate::Palette;
-use crate::Point;
-use crate::Size;
+use crate::prelude::*;
+use crate::utils::point_to_index;
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize)]
 pub struct TileAnchorPosition { left: i32, top: i32 }
@@ -307,7 +301,7 @@ impl BitmapGetPixel for TileBitmap<'_> {
         &self,
         p: Point,
     ) -> Option<Color> {
-        bitmap::point_to_index(p, self.size()).map(|index| {
+        point_to_index(p, self.size()).map(|index| {
             let mut color_index = self.tile.data[index] as usize;
 
             if let Some(faction) = self.faction {

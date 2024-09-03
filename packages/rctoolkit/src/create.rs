@@ -6,7 +6,12 @@ use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
 
-use dune2_rc::{Resources, Tile, Tilemap, Tileset};
+use dune2_rc::prelude::{
+    Resources,
+    Tile,
+    Tilemap,
+    Tileset,
+};
 
 use crate::resources_config::*;
 

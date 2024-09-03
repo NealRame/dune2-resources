@@ -5,7 +5,10 @@ use std::path;
 
 use anyhow::{anyhow, Result};
 
-use dune2_rc::{Size, Tile};
+use dune2_rc::prelude::{
+    Size,
+    Tile,
+};
 
 use crate::io::*;
 

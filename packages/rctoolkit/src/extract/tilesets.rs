@@ -7,10 +7,10 @@ use std::str::FromStr;
 
 use anyhow::Result;
 
-use dune2_rc::{
-    bitmap,
-    constants,
+use dune2_rc::prelude::{
+    bitmap_blit,
     Bitmap,
+    Faction,
     Point,
     Resources,
     Rect,
@@ -50,7 +50,7 @@ pub struct Args {
 fn extract_tileset_image(
     rc: &Resources,
     tileset_id: &str,
-    faction: Option<constants::Faction>,
+    faction: Option<Faction>,
     scale: u32,
     base_output_dir: &Path,
 ) -> Result<()> {
@@ -93,7 +93,7 @@ fn extract_tileset_image(
             },
         );
 
-        bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
+        bitmap_blit(&bitmap, &src_rect, &mut image, &dst_rect);
     }
 
     image.save(output_file)?;
@@ -104,7 +104,7 @@ fn extract_tileset_image(
 fn extract_tileset_tiles(
     rc: &Resources,
     tileset_id: &str,
-    faction: Option<constants::Faction>,
+    faction: Option<Faction>,
     scale: u32,
     base_output_dir: &Path,
 ) -> Result<()> {
@@ -130,7 +130,7 @@ fn extract_tileset_tiles(
         let mut image = BMPImage::new(scale*bitmap.size());
         let dst_rect = image.rect();
 
-        bitmap::blit(&bitmap, &src_rect, &mut image, &dst_rect);
+        bitmap_blit(&bitmap, &src_rect, &mut image, &dst_rect);
         image.save(output_dir.join(filename))?;
     }
 
