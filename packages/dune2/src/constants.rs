@@ -3,6 +3,9 @@ use anyhow::{anyhow, Result};
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+use crate::prelude::Error;
+
+
 pub const COLOR_HARKONNEN: usize = 144;
 pub const COLOR_ATREIDES: usize = 160;
 pub const COLOR_ORDOS: usize = 176;
@@ -43,7 +46,7 @@ impl Faction {
                 Ok(Self::Mercenary)
             },
             _ => {
-                Err(anyhow!("'{faction}' Invalid faction"))
+                Err(anyhow!(Error::FactionInvalidString(faction.into())))
             }
         }
     }

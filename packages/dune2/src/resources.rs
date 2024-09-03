@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::fmt;
 use std::io::Read;
 
 use anyhow::{anyhow, Result};
@@ -13,6 +12,7 @@ use serde::{Deserialize, Serialize};
 use rmp_serde;
 
 use crate::prelude::{
+    Error,
     Faction,
     Palette,
     TileBitmap,
@@ -20,22 +20,6 @@ use crate::prelude::{
     Tileset,
 };
 
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum ResourcesError {
-    TilesetNotFound(String),
-}
-
-impl fmt::Display for ResourcesError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::TilesetNotFound(tileset_id) => write!(
-                f,
-                "Resources: tileset '{tileset_id}' not found"
-            ),
-        }
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Resources {
@@ -51,9 +35,7 @@ impl Resources {
     ) -> Result<&Tileset> {
         self.tilesets
             .get(tileset_id)
-            .ok_or(anyhow!(ResourcesError::TilesetNotFound(
-                tileset_id.into(),
-            )))
+            .ok_or(anyhow!(Error::TilesetInvalidId(tileset_id.into())))
     }
 
     pub fn get_tile_bitmap(

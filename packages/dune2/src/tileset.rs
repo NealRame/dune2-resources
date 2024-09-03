@@ -1,35 +1,13 @@
 use anyhow::{anyhow, Result};
 
-use std::fmt;
-
 use serde::{Deserialize, Serialize};
 
 use crate::prelude::{
+    Error,
     Size,
     Tile,
 };
 
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum TilesetError {
-    InvalidTileSize(String, Size),
-    InvalidTileIndex(String, usize),
-}
-
-impl fmt::Display for TilesetError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::InvalidTileSize(tileset_id, size) => write!(
-                f,
-                "Tileset '{tileset_id}': invalid tile size '{size}'",
-            ),
-            Self::InvalidTileIndex(tileset_id, tile_index) => write!(
-                f,
-                "Tileset '{tileset_id}': invalid tile index '{tile_index}'"
-            )
-        }
-    }
-}
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Tileset {
@@ -61,7 +39,7 @@ impl Tileset {
             self.tiles.push(tile);
             Ok(())
         } else {
-            Err(anyhow!(TilesetError::InvalidTileSize(
+            Err(anyhow!(Error::TilesetInvalidTileSize(
                 self.id.clone(),
                 tile_size,
             )))
@@ -78,7 +56,7 @@ impl Tileset {
     ) -> Result<&Tile> {
         self.tiles
             .get(tile_index)
-            .ok_or(anyhow!(TilesetError::InvalidTileIndex(
+            .ok_or(anyhow!(Error::TilesetInvalidTileIndex(
                 self.id.clone(),
                 tile_index,
             )))

@@ -2,6 +2,7 @@
 
 pub use crate::bitmap::*;
 pub use crate::constants::*;
+pub use crate::error::*;
 pub use crate::resources::*;
 pub use crate::shape::*;
 pub use crate::tile::*;

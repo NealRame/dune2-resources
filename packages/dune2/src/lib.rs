@@ -1,6 +1,7 @@
 pub mod bitmap;
 pub mod color;
 pub mod constants;
+pub mod error;
 pub mod point;
 pub mod rect;
 pub mod resources;
