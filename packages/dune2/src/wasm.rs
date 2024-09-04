@@ -83,30 +83,36 @@ impl Dune2Resources {
 
         let tileset = self.resources.get_tileset(tileset_id)?;
 
-        let tile_size = tileset.tile_size();
         let tile_count = tileset.tile_count() as u32;
-        let rows = if tile_count%columns != 0 {
-            tile_count/columns + 1
-        } else {
+        let tile_size = tileset.tile_size();
+        let rows = if tile_count%columns == 0 {
             tile_count/columns
+        } else {
+            tile_count/columns + 1
         };
 
-        let texture_size = tile_size*Shape{ rows, columns };
-        let mut dst = RGBABitmap::new(texture_size, Some(BLACK));
+        let mut dst = RGBABitmap::new(
+            Size {
+                width: columns*tile_size.width,
+                height: rows*tile_size.height,
+            },
+            Some(BLACK)
+        );
 
-        for tile_index in 0..tile_count {
-            let tile = tileset
-                .tile_at(tile_index as usize)
-                .map_err(|err| JsError::new(err.to_string().as_str()))?;
+        for (tile_index, tile) in tileset.tile_iter().enumerate() {
+            let col = (tile_index as u32)%columns;
+            let row = (tile_index as u32)/columns;
 
             let src = TileBitmap::with_palette(tile, faction, palette);
             let src_rect = src.rect();
 
-            let dst_top_left = Point {
-                x: (tile_size.width*tile_index%columns) as i32,
-                y: (tile_size.height*tile_index/columns) as i32,
-            };
-            let dst_rect = Rect::from_point_and_size(dst_top_left, tile_size);
+            let dst_rect = Rect::from_point_and_size(
+                Point {
+                    x: (col*tile_size.width) as i32,
+                    y: (row*tile_size.height) as i32,
+                },
+                tile_size,
+            );
 
             bitmap_blit(&src, &src_rect, &mut dst, &dst_rect);
         }
