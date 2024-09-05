@@ -17,22 +17,22 @@ pub const COLOR_MERCENARY: usize = 224;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
 pub enum Faction {
-    Harkonnen,
     Atreides,
+    Harkonnen,
     Ordos,
     Fremen,
-    Sardaukar,
     Mercenary,
+    Sardaukar,
 }
 
 impl Faction {
     pub fn try_from_str(faction: &str) -> Result<Self> {
         match faction.to_lowercase().as_str() {
-            "harkonnen" => {
-                Ok(Self::Harkonnen)
-            },
             "atreides" => {
                 Ok(Self::Atreides)
+            },
+            "harkonnen" => {
+                Ok(Self::Harkonnen)
             },
             "ordos" => {
                 Ok(Self::Ordos)
@@ -40,15 +40,15 @@ impl Faction {
             "fremen" => {
                 Ok(Self::Fremen)
             },
-            "sardaukar" => {
-                Ok(Self::Sardaukar)
-            },
             "mercenary" => {
                 Ok(Self::Mercenary)
             },
+            "sardaukar" => {
+                Ok(Self::Sardaukar)
+            },
             _ => {
                 Err(Error::FactionInvalidString(faction.into()))
-            }
+            },
         }
     }
 }
