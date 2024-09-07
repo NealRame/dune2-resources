@@ -22,7 +22,7 @@ pub struct Args {
 
     /// Faction to export.
     #[arg(short = 'F', long)]
-    pub faction: Option<super::cli_config::ArgExtractFaction>,
+    pub faction: Option<super::cli_config::ArgExtractDune2Faction>,
 
     /// Scale factor
     #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..))]

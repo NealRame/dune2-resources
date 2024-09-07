@@ -21,6 +21,15 @@ pub struct Dune2Resources {
 
 #[wasm_bindgen]
 impl Dune2Resources {
+    #[wasm_bindgen()]
+    pub fn factions() -> Vec<String> {
+        let mut factions = Vec::new();
+        for faction in FACTIONS {
+            factions.push(faction.into())
+        }
+        factions
+    }
+
     #[wasm_bindgen(js_name = load)]
     pub fn load(
         data: &[u8],
@@ -76,7 +85,7 @@ impl Dune2Resources {
         let palette = &self.resources.palette;
         let faction =
             if let Some(str) = faction {
-                Some(Faction::try_from_str(str.as_ref())?)
+                Some(Dune2Faction::try_from_str(str.as_ref())?)
             } else {
                 None
             };
@@ -134,7 +143,7 @@ impl Dune2Resources {
     ) -> core::result::Result<web_sys::ImageData, JsValue> {
         let faction =
             if faction.is_truthy() {
-                Some(Faction::try_from_js_value(&faction)?)
+                Some(Dune2Faction::try_from_js_value(&faction)?)
             } else {
                 None
             };

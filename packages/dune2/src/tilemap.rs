@@ -72,7 +72,7 @@ pub struct TilemapBitmap<'a> {
 impl<'a> TilemapBitmap<'a> {
     pub fn try_with_resources(
         tilemap: &Tilemap,
-        faction: Option<Faction>,
+        faction: Option<Dune2Faction>,
         resources: &'a Resources,
     ) -> Result<Self> {
         let tileset = resources.get_tileset(&tilemap.tileset)?;

@@ -10,7 +10,7 @@ use anyhow::Result;
 use dune2_rc::prelude::{
     bitmap_blit,
     Bitmap,
-    Faction,
+    Dune2Faction,
     Point,
     Resources,
     Rect,
@@ -28,7 +28,7 @@ pub struct Args {
 
     /// Faction to export.
     #[arg(short = 'F', long)]
-    pub faction: Option<super::cli_config::ArgExtractFaction>,
+    pub faction: Option<super::cli_config::ArgExtractDune2Faction>,
 
     /// Overwrite existing files.
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
@@ -50,7 +50,7 @@ pub struct Args {
 fn extract_tileset_image(
     rc: &Resources,
     tileset_id: &str,
-    faction: Option<Faction>,
+    faction: Option<Dune2Faction>,
     scale: u32,
     base_output_dir: &Path,
 ) -> Result<()> {
@@ -104,7 +104,7 @@ fn extract_tileset_image(
 fn extract_tileset_tiles(
     rc: &Resources,
     tileset_id: &str,
-    faction: Option<Faction>,
+    faction: Option<Dune2Faction>,
     scale: u32,
     base_output_dir: &Path,
 ) -> Result<()> {

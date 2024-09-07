@@ -13,8 +13,8 @@ use serde::{Deserialize, Serialize};
 use rmp_serde;
 
 use crate::prelude::{
+    Dune2Faction,
     Error,
-    Faction,
     Palette,
     Result,
     TileBitmap,
@@ -44,7 +44,7 @@ impl Resources {
         &self,
         tileset_id: &str,
         tile_index: usize,
-        faction: Option<Faction>,
+        faction: Option<Dune2Faction>,
     ) -> Result<TileBitmap> {
         let tileset = self.get_tileset(tileset_id)?;
         let tile = tileset.tile_at(tile_index)?;

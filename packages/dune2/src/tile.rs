@@ -257,13 +257,13 @@ impl Tile {
 pub struct TileBitmap<'a> {
     tile: &'a Tile,
     palette: &'a Palette,
-    faction: Option<Faction>,
+    faction: Option<Dune2Faction>,
 }
 
 impl<'a> TileBitmap<'a> {
     pub fn with_resources(
         tile: &'a Tile,
-        faction: Option<Faction>,
+        faction: Option<Dune2Faction>,
         resources: &'a Resources,
     ) -> Self {
         Self {
@@ -275,7 +275,7 @@ impl<'a> TileBitmap<'a> {
 
     pub fn with_palette(
         tile: &'a Tile,
-        faction: Option<Faction>,
+        faction: Option<Dune2Faction>,
         palette: &'a Palette,
     ) -> Self {
         Self {

@@ -15,52 +15,47 @@ pub const COLOR_SARDAUKAR: usize = 208;
 pub const COLOR_MERCENARY: usize = 224;
 
 
-#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
-pub enum Faction {
-    Atreides,
-    Harkonnen,
-    Ordos,
-    Fremen,
-    Mercenary,
-    Sardaukar,
+macro_rules! count {
+    () => (0usize);
+    ( $x:tt $($xs:tt)* ) => (1usize + count!($($xs)*));
 }
 
-impl Faction {
-    pub fn try_from_str(faction: &str) -> Result<Self> {
-        match faction.to_lowercase().as_str() {
-            "atreides" => {
-                Ok(Self::Atreides)
-            },
-            "harkonnen" => {
-                Ok(Self::Harkonnen)
-            },
-            "ordos" => {
-                Ok(Self::Ordos)
-            },
-            "fremen" => {
-                Ok(Self::Fremen)
-            },
-            "mercenary" => {
-                Ok(Self::Mercenary)
-            },
-            "sardaukar" => {
-                Ok(Self::Sardaukar)
-            },
-            _ => {
-                Err(Error::FactionInvalidString(faction.into()))
-            },
+macro_rules! factions {
+    ($($faction:ident),+) => {
+        #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
+        #[cfg_attr(feature = "wasm", wasm_bindgen())]
+        pub enum Dune2Faction {
+            $($faction,)*
         }
-    }
+
+        pub const FACTION_COUNT: usize = count!($($faction)*);
+        pub const FACTIONS: [&'static str; FACTION_COUNT] = [
+            $(stringify!($faction),)*
+        ];
+        
+        impl Dune2Faction {
+            pub fn try_from_str(v: &str) -> Result<Self> {
+                $(
+                    if stringify!($faction).to_lowercase() == v.to_lowercase() {
+                        return Ok(Self::$faction);
+                    }
+                )*
+                Err(Error::FactionInvalidString(v.into()))
+            }
+        }
+    };
 }
+
+factions!(Atreides, Harkonnen, Ordos, Fremen, Mercenary, Sardaukar);
 
 #[cfg(feature = "wasm")]
-impl Faction {
+impl Dune2Faction {
     pub fn try_from_js_value(
         value: &JsValue,
-    ) -> core::result::Result<Faction, JsError> {
+    ) -> core::result::Result<Dune2Faction, JsError> {
         match value.as_string() {
             Some(value) => {
-                let faction = Faction::try_from_str(value.as_str())?;
+                let faction = Dune2Faction::try_from_str(value.as_str())?;
                 Ok(faction)
             },
             _ => {
