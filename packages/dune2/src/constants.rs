@@ -46,21 +46,4 @@ macro_rules! factions {
     };
 }
 
-factions!(Atreides, Harkonnen, Ordos, Fremen, Mercenary, Sardaukar);
-
-#[cfg(feature = "wasm")]
-impl Dune2Faction {
-    pub fn try_from_js_value(
-        value: &JsValue,
-    ) -> core::result::Result<Dune2Faction, JsError> {
-        match value.as_string() {
-            Some(value) => {
-                let faction = Dune2Faction::try_from_str(value.as_str())?;
-                Ok(faction)
-            },
-            _ => {
-                Err(JsError::from(Error::FactionInvalidValueType))
-            }
-        }
-    }
-}
+factions!(Harkonnen, Atreides, Ordos, Fremen, Sardaukar, Mercenary);

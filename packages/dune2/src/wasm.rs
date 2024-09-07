@@ -21,13 +21,9 @@ pub struct Dune2Resources {
 
 #[wasm_bindgen]
 impl Dune2Resources {
-    #[wasm_bindgen()]
+    #[wasm_bindgen(getter)]
     pub fn factions() -> Vec<String> {
-        let mut factions = Vec::new();
-        for faction in FACTIONS {
-            factions.push(faction.into())
-        }
-        factions
+        FACTIONS.iter().copied().map(String::from).collect()
     }
 
     #[wasm_bindgen(js_name = load)]
@@ -80,16 +76,9 @@ impl Dune2Resources {
         &self,
         tileset_id: &str,
         columns: u32,
-        faction: Option<String>,
+        faction: Option<Dune2Faction>,
     ) -> core::result::Result<web_sys::ImageData, JsValue> {
         let palette = &self.resources.palette;
-        let faction =
-            if let Some(str) = faction {
-                Some(Dune2Faction::try_from_str(str.as_ref())?)
-            } else {
-                None
-            };
-
         let tileset = self.resources.get_tileset(tileset_id)?;
 
         let tile_count = tileset.tile_count() as u32;
@@ -138,17 +127,10 @@ impl Dune2Resources {
         &self,
         tileset: &str,
         tile: usize,
-        faction: JsValue,
-        scale: JsValue,
+        faction: Option<Dune2Faction>,
+        scale: Option<u32>,
     ) -> core::result::Result<web_sys::ImageData, JsValue> {
-        let faction =
-            if faction.is_truthy() {
-                Some(Dune2Faction::try_from_js_value(&faction)?)
-            } else {
-                None
-            };
-
-        let scale = u32::max(1, scale.as_f64().unwrap_or(1.) as u32);
+        let scale = u32::max(1, scale.unwrap_or(1));
 
         let src_bitmap = self.resources.get_tile_bitmap(
             tileset,
