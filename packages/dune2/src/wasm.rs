@@ -21,11 +21,6 @@ pub struct Dune2Resources {
 
 #[wasm_bindgen]
 impl Dune2Resources {
-    #[wasm_bindgen(getter)]
-    pub fn factions() -> Vec<String> {
-        FACTIONS.iter().copied().map(String::from).collect()
-    }
-
     #[wasm_bindgen(js_name = load)]
     pub fn load(
         data: &[u8],

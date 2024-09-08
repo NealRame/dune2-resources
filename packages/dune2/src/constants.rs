@@ -15,24 +15,16 @@ pub const COLOR_SARDAUKAR: usize = 208;
 pub const COLOR_MERCENARY: usize = 224;
 
 
-macro_rules! count {
-    () => (0usize);
-    ( $x:tt $($xs:tt)* ) => (1usize + count!($($xs)*));
-}
-
 macro_rules! factions {
     ($($faction:ident),+) => {
         #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
         #[cfg_attr(feature = "wasm", wasm_bindgen())]
         pub enum Dune2Faction {
             $($faction,)*
+            #[cfg(feature = "wasm")]
+            Count // ! This must always be the last entry of the enum
         }
 
-        pub const FACTION_COUNT: usize = count!($($faction)*);
-        pub const FACTIONS: [&'static str; FACTION_COUNT] = [
-            $(stringify!($faction),)*
-        ];
-        
         impl Dune2Faction {
             pub fn try_from_str(v: &str) -> Result<Self> {
                 $(
