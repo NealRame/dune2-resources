@@ -83,8 +83,8 @@ impl Palette {
         self.colors_index.get(&color).copied()
     }
 
-    pub fn color_at(&self, index: usize) -> Color {
-        self.colors[index]
+    pub fn color_at(&self, index: usize) -> Option<Color> {
+        self.colors.get(index).copied()
     }
 
     pub fn len(&self) -> usize {

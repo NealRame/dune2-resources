@@ -31,6 +31,30 @@ impl Dune2Resources {
         Ok(Self { resources })
     }
 
+    #[wasm_bindgen(js_name = getColorCount)]
+    pub fn get_color_count(
+        &self,
+    ) -> usize {
+        self.resources.palette.len()
+    }
+
+    #[wasm_bindgen(js_name = getColor)]
+    pub fn get_color(
+        &self,
+        color_index: usize,
+    ) -> wasm_bindgen::Clamped<Vec<u8>> {
+        self.resources.palette
+            .color_at(color_index)
+            .or(Some(BLACK))
+            .map(|color| wasm_bindgen::Clamped(vec![
+                color.red,
+                color.green,
+                color.blue,
+                255
+            ]))
+            .unwrap()
+    }
+
     #[wasm_bindgen(js_name = getTilesets)]
     pub fn get_tilesets(
         &self,

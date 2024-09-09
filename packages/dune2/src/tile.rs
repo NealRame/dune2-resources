@@ -301,7 +301,7 @@ impl BitmapGetPixel for TileBitmap<'_> {
         &self,
         p: Point,
     ) -> Option<Color> {
-        point_to_index(p, self.size()).map(|index| {
+        if let Some(index) = point_to_index(p, self.size()) {
             let mut color_index = self.tile.data[index] as usize;
 
             if let Some(faction) = self.faction {
@@ -314,6 +314,8 @@ impl BitmapGetPixel for TileBitmap<'_> {
             }
 
             self.palette.color_at(color_index)
-        })
+        } else {
+            None
+        }
     }
 }
