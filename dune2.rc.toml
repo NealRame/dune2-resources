@@ -115,6 +115,28 @@ tile_refs = [
 ]
 
 [[tilesets]]
+id = "fog"
+size = { width = 16, height = 16 }
+tile_refs = [
+    { index = 108 },
+    { index = 109 },
+    { index = 110 },
+    { index = 111 },
+    { index = 112 },
+    { index = 113 },
+    { index = 114 },
+    { index = 115 },
+    { index = 116 },
+    { index = 117 },
+    { index = 118 },
+    { index = 119 },
+    { index = 120 },
+    { index = 121 },
+    { index = 122 },
+    { index = 123 },
+]
+
+[[tilesets]]
 id = "buildings"
 size = { width = 16, height = 16 }
 tile_refs = [
