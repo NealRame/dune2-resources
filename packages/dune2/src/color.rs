@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::ops::Mul;
+use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
@@ -54,6 +55,20 @@ impl From<(u8, u8, u8)> for Color {
     }
 }
 
+impl FromStr for Color {
+    type Err = csscolorparser::ParseColorError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let css_color = csscolorparser::parse(s)?.to_rgba8();
+
+        Ok(Color {
+            red: css_color[0],
+            green: css_color[1],
+            blue: css_color[2],
+        })
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Palette {
     colors_index: HashMap<Color, usize>,
@@ -84,7 +99,11 @@ impl Palette {
     }
 
     pub fn color_at(&self, index: usize) -> Option<Color> {
-        self.colors.get(index).copied()
+        if index > 0 {
+            self.colors.get(index).copied()
+        } else {
+            None
+        }
     }
 
     pub fn len(&self) -> usize {

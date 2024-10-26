@@ -5,12 +5,12 @@ use anyhow::{anyhow, Result};
 
 use dune2_rc::prelude::{
     Bitmap,
+    Color,
     TileBitmap
 };
 
-use crate::image::BMPImage;
+use crate::image::BMPImageBuilder;
 use crate::resources_config::*;
-
 
 /******************************************************************************
  * Source run
@@ -21,13 +21,17 @@ pub struct Args {
     /// Input file path
     pub config_filepath: PathBuf,
 
-    /// Output folder path
-    #[arg(long, short, default_value = "sources")]
-    pub output_dir: PathBuf,
+    /// Background color. BACKGROUND_COLOR can be any valid css color string
+    #[arg(short = 'b', long, value_parser = clap::value_parser!(Color), default_value = "black")]
+    pub background_color: Color,
 
     /// Scale factor
     #[arg(short = 's', long, value_parser = clap::value_parser!(u32).range(1..))]
     pub scale: Option<u32>,
+
+    /// Output folder path
+    #[arg(long, short, default_value = "sources")]
+    pub output_dir: PathBuf,
 }
 
 pub fn run(args: &Args) -> Result<()> {
@@ -58,7 +62,9 @@ pub fn run(args: &Args) -> Result<()> {
 
         let src_rect = bitmap.rect();
 
-        let mut image = BMPImage::new(scale*bitmap.size());
+        let mut image = BMPImageBuilder::new(scale*bitmap.size())
+            .with_background_color(args.background_color)
+            .build();
         let dst_rect = image.rect();
 
         dune2_rc::bitmap::bitmap_blit(&bitmap, &src_rect, &mut image, &dst_rect);
