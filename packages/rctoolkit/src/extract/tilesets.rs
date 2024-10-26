@@ -10,6 +10,7 @@ use anyhow::Result;
 use dune2_rc::prelude::{
     bitmap_blit,
     Bitmap,
+    Color,
     Dune2Faction,
     Point,
     Resources,
@@ -18,7 +19,7 @@ use dune2_rc::prelude::{
     TileBitmap,
 };
 
-use crate::image::BMPImage;
+use crate::image::BMPImageBuilder;
 
 
 #[derive(clap::Args)]
@@ -26,25 +27,29 @@ pub struct Args {
     /// Tileset id to extract. If not specified all tileset will be extracted.
     pub tileset_id: Option<String>,
 
+    /// Background color. BACKGROUND_COLOR can be any valid css color string
+    #[arg(short = 'b', long, value_parser = clap::value_parser!(Color), default_value = "black")]
+    pub background_color: Color,
+
     /// Faction to export.
     #[arg(short = 'F', long)]
     pub faction: Option<super::cli_config::ArgExtractDune2Faction>,
 
-    /// Overwrite existing files.
-    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
-    pub force_overwrite: bool,
+    /// Scale factor.
+    #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..))]
+    pub scale: u32,
 
     /// Multiple
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub multiple: bool,
 
+    /// Overwrite existing files.
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub force_overwrite: bool,
+
     /// Output folder path.
     #[arg(short = 'd', long)]
     pub output_dir: Option<PathBuf>,
-
-    /// Scale factor.
-    #[arg(short = 's', long, default_value = "1", value_parser = clap::value_parser!(u32).range(1..))]
-    pub scale: u32,
 }
 
 fn extract_tileset_image(
@@ -52,6 +57,7 @@ fn extract_tileset_image(
     tileset_id: &str,
     faction: Option<Dune2Faction>,
     scale: u32,
+    background_color: Color,
     base_output_dir: &Path,
 ) -> Result<()> {
     let output_file = base_output_dir.join(format!("{tileset_id}.bmp"));
@@ -73,7 +79,9 @@ fn extract_tileset_image(
         height: rows*scale*tile_size.height,
     };
 
-    let mut image = BMPImage::new(image_size);
+    let mut image = BMPImageBuilder::new(
+        image_size,
+    ).with_background_color(background_color).build();
 
     for (index, tile) in tileset.tile_iter().enumerate() {
         let col = (index%16) as i32;
@@ -106,6 +114,7 @@ fn extract_tileset_tiles(
     tileset_id: &str,
     faction: Option<Dune2Faction>,
     scale: u32,
+    background_color: Color,
     base_output_dir: &Path,
 ) -> Result<()> {
     let output_dir = base_output_dir.join(tileset_id);
@@ -127,7 +136,9 @@ fn extract_tileset_tiles(
         let bitmap = TileBitmap::with_resources(tile, faction, rc);
         let src_rect = bitmap.rect();
 
-        let mut image = BMPImage::new(scale*bitmap.size());
+        let mut image = BMPImageBuilder::new(
+            scale*bitmap.size()
+        ).with_background_color(background_color).build();
         let dst_rect = image.rect();
 
         bitmap_blit(&bitmap, &src_rect, &mut image, &dst_rect);
@@ -149,13 +160,14 @@ fn extract_tileset(
         PathBuf::from_str("tilesets")?
     };
     let scale = args.scale;
+    let background_color = args.background_color;
 
     fs::create_dir_all(&base_output_dir)?;
 
     if args.multiple {
-        extract_tileset_tiles(rc, tileset_id, faction, scale, &base_output_dir)
+        extract_tileset_tiles(rc, tileset_id, faction, scale, background_color, &base_output_dir)
     } else {
-        extract_tileset_image(rc, tileset_id, faction, scale, &base_output_dir)
+        extract_tileset_image(rc, tileset_id, faction, scale, background_color, &base_output_dir)
     }
 }
 

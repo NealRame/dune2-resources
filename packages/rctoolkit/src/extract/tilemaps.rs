@@ -6,19 +6,20 @@ use anyhow::Result;
 
 use dune2_rc::prelude::{
     bitmap_blit,
+    Color,
     Bitmap,
     Resources,
     TilemapBitmap,
 };
 
-use crate::image::BMPImage;
+use crate::image::BMPImageBuilder;
 
 
 #[derive(clap::Args)]
 pub struct Args {
-    /// Output folder path
-    #[arg(short = 'd', long)]
-    pub output_dir: Option<PathBuf>,
+    /// Background color. BACKGROUND_COLOR can be any valid css color string
+    #[arg(short = 'b', long, value_parser = clap::value_parser!(Color), default_value = "black")]
+    pub background_color: Color,
 
     /// Faction to export.
     #[arg(short = 'F', long)]
@@ -31,6 +32,10 @@ pub struct Args {
     /// Overwrite existing files
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub force_overwrite: bool,
+
+    /// Output folder path
+    #[arg(short = 'd', long)]
+    pub output_dir: Option<PathBuf>,
 }
 
 pub fn extract(
@@ -48,7 +53,9 @@ pub fn extract(
         let bitmap = TilemapBitmap::try_with_resources(tilemap, faction, rc)?;
         let src_rect = bitmap.rect();
 
-        let mut image = BMPImage::new(args.scale*bitmap.size());
+        let mut image = BMPImageBuilder::new(
+            args.scale*bitmap.size()
+        ).with_background_color(args.background_color).build();
         let dst_rect = image.rect();
 
         bitmap_blit(&bitmap, &src_rect, &mut image, &dst_rect);

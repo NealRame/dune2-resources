@@ -8,12 +8,6 @@ use crate::prelude::*;
 use crate::utils::point_to_index;
 
 
-pub const BLACK: Color = Color {
-    red: 0,
-    green: 0,
-    blue: 0,
-};
-
 #[wasm_bindgen]
 pub struct Dune2Resources {
     resources: Resources,
@@ -45,14 +39,13 @@ impl Dune2Resources {
     ) -> wasm_bindgen::Clamped<Vec<u8>> {
         self.resources.palette
             .color_at(color_index)
-            .or(Some(BLACK))
             .map(|color| wasm_bindgen::Clamped(vec![
                 color.red,
                 color.green,
                 color.blue,
                 255
             ]))
-            .unwrap()
+            .unwrap_or(wasm_bindgen::Clamped(vec![ 0, 0, 0, 0]))
     }
 
     #[wasm_bindgen(js_name = getTilesets)]
@@ -108,13 +101,10 @@ impl Dune2Resources {
             tile_count/columns + 1
         };
 
-        let mut dst = RGBABitmap::new(
-            Size {
-                width: columns*tile_size.width,
-                height: rows*tile_size.height,
-            },
-            Some(BLACK)
-        );
+        let mut dst = RGBABitmap::new(Size {
+            width: columns*tile_size.width,
+            height: rows*tile_size.height,
+        });
 
         for (tile_index, tile) in tileset.tile_iter().enumerate() {
             let col = (tile_index as u32)%columns;
@@ -160,7 +150,6 @@ impl Dune2Resources {
 
         let mut dst_bitmap = RGBABitmap::new(
             src_bitmap.size()*scale,
-            Some(BLACK)
         );
         let dst_rect = dst_bitmap.rect();
 
@@ -197,18 +186,13 @@ impl Dune2Resources {
 }
 
 struct RGBABitmap {
-    color_key: Option<Color>,
     data: Vec<u8>,
     size: Size,
 }
 
 impl RGBABitmap {
-    fn new(
-        size: Size,
-        color_key: Option<Color>,
-    ) -> Self {
+    fn new(size: Size) -> Self {
         Self {
-            color_key,
             data: vec![0; 4*(size.width*size.height) as usize],
             size,
         }
@@ -229,18 +213,24 @@ impl BitmapPutPixel for RGBABitmap {
     fn put_pixel(
         &mut self,
         p: Point,
-        color: Color,
+        color: Option<Color>,
     ) -> &mut Self {
         let size = self.size();
         if let Some(offset) = point_to_index(p, size).map(|offset| 4*offset) {
-            let color = match self.color_key {
-                Some(color_key) if color == color_key => (0, 0, 0, 0),
-                _ => (color.red, color.green, color.blue, 255),
+            match color {
+                Some(color) => {
+                    self.data[offset + 0] = color.red;
+                    self.data[offset + 1] = color.green;
+                    self.data[offset + 2] = color.blue;
+                    self.data[offset + 3] = 255;
+                },
+                None => {
+                    self.data[offset + 0] = 0;
+                    self.data[offset + 1] = 0;
+                    self.data[offset + 2] = 0;
+                    self.data[offset + 3] = 0;
+                },
             };
-            self.data[offset + 0] = color.0;
-            self.data[offset + 1] = color.1;
-            self.data[offset + 2] = color.2;
-            self.data[offset + 3] = color.3;
         }
         self
     }

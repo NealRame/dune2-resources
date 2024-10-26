@@ -24,13 +24,13 @@ pub trait BitmapGetPixel {
 }
 
 pub trait BitmapPutPixel {
-    fn put_pixel(&mut self, p: Point, color: Color) -> &mut Self;
+    fn put_pixel(&mut self, p: Point, color: Option<Color>) -> &mut Self;
 }
 
 pub fn bitmap_fill_rect<T>(
     bitmap: &mut T,
     rect: &Rect,
-    color: Color,
+    color: Option<Color>,
 ) where T: Bitmap + BitmapPutPixel {
     if let Some(rect) = rect.intersected(&bitmap.rect()) {
         for y in rect.top()..rect.bottom() {
@@ -43,7 +43,7 @@ pub fn bitmap_fill_rect<T>(
 
 pub fn bitmap_clear<T>(
     bitmap: &mut T,
-    color: Color,
+    color: Option<Color>,
 ) where T: Bitmap + BitmapPutPixel {
     bitmap_fill_rect(bitmap, &bitmap.rect(), color);
 }
@@ -107,7 +107,8 @@ pub fn bitmap_blit<T, U>(
                 x: x_map(x),
                 y: y_map(y),
             };
-            dst_bitmap.put_pixel(dst, src_bitmap.get_pixel(src).unwrap());
+
+            dst_bitmap.put_pixel(dst, src_bitmap.get_pixel(src));
         }
     }
 }

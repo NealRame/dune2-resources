@@ -3,7 +3,6 @@ use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
 
-
 use dune2_rc::prelude::{
     bitmap_fill_rect,
     Point,
@@ -12,18 +11,18 @@ use dune2_rc::prelude::{
     Size,
 };
 
-use crate::image::BMPImage;
+use crate::image::BMPImageBuilder;
 
 
 #[derive(clap::Args)]
 pub struct Args {
-    /// Output folder path
-    #[arg(short, long, default_value = "palette.bmp")]
-    pub output_filepath: PathBuf,
-
     /// Overwrite existing files
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub force_overwrite: bool,
+
+    /// Output folder path
+    #[arg(short, long, default_value = "palette.bmp")]
+    pub output_filepath: PathBuf,
 }
 
 pub fn extract(
@@ -35,10 +34,10 @@ pub fn extract(
     }
 
     let palette_watch_size = Size { width: 32, height: 32 };
-    let mut palette_image = BMPImage::new(Size {
+    let mut palette_image = BMPImageBuilder::new(Size {
         width: 32*16,
         height: 32*((rc.palette.len() as f32)/16.).ceil() as u32,
-    });
+    }).build();
 
     for (i, color) in rc.palette.iter() {
         let rect = Rect::from_point_and_size(
@@ -49,7 +48,7 @@ pub fn extract(
             palette_watch_size,
         );
 
-        bitmap_fill_rect(&mut palette_image, &rect, color);
+        bitmap_fill_rect(&mut palette_image, &rect, Some(color));
     }
 
     if args.output_filepath.exists() && !args.force_overwrite {
