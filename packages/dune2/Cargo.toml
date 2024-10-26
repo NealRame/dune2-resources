@@ -12,6 +12,7 @@ wasm = ["dep:js-sys", "dep:wasm-bindgen", "dep:web-sys"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+csscolorparser = "0.7.0"
 flate2 = { version = "1.0.26", default-features = false, features = ["rust_backend"] }
 js-sys = { version = "0.3.70", optional = true }
 rmp-serde = "1.1.1"
