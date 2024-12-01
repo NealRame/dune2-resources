@@ -3,14 +3,14 @@ use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
 
-use dune2_rc::prelude::{
+use dune2_assets::prelude::{
     Bitmap,
     Color,
     TileBitmap
 };
 
+use crate::assets_config::*;
 use crate::image::BMPImageBuilder;
-use crate::resources_config::*;
 
 /******************************************************************************
  * Source run
@@ -67,7 +67,7 @@ pub fn run(args: &Args) -> Result<()> {
             .build();
         let dst_rect = image.rect();
 
-        dune2_rc::bitmap::bitmap_blit(&bitmap, &src_rect, &mut image, &dst_rect);
+        dune2_assets::bitmap::bitmap_blit(&bitmap, &src_rect, &mut image, &dst_rect);
         image.save(args.output_dir.join(filename))?;
     }
 

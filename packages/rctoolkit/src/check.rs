@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 
-use crate::resources_config::*;
+use crate::assets_config::*;
 
 pub fn check_tileset(
     config: &Config,

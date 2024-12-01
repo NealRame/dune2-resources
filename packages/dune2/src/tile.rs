@@ -261,14 +261,14 @@ pub struct TileBitmap<'a> {
 }
 
 impl<'a> TileBitmap<'a> {
-    pub fn with_resources(
+    pub fn with_assets(
         tile: &'a Tile,
         faction: Option<Dune2Faction>,
-        resources: &'a Resources,
+        assets: &'a Assets,
     ) -> Self {
         Self {
             faction,
-            palette: &resources.palette,
+            palette: &assets.palette,
             tile,
         }
     }

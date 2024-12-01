@@ -1,3 +1,4 @@
+mod assets_config;
 mod check;
 mod create;
 mod extract;
@@ -6,7 +7,6 @@ mod image;
 mod info;
 mod io;
 mod pal;
-mod resources_config;
 mod shp;
 mod source;
 

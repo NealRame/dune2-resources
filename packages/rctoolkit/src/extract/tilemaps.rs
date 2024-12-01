@@ -4,11 +4,11 @@ use std::str::FromStr;
 
 use anyhow::Result;
 
-use dune2_rc::prelude::{
+use dune2_assets::prelude::{
     bitmap_blit,
     Color,
     Bitmap,
-    Resources,
+    Assets,
     TilemapBitmap,
 };
 
@@ -39,7 +39,7 @@ pub struct Args {
 }
 
 pub fn extract(
-    rc: &Resources,
+    rc: &Assets,
     args: &Args,
 ) -> Result<()> {
     let faction = args.faction.map(|f| f.into());
@@ -50,7 +50,7 @@ pub fn extract(
     for (i, tilemap) in rc.tilemaps.iter().enumerate() {
         let output_filepath = output_dir.join(format!("{:03}.bmp", i));
 
-        let bitmap = TilemapBitmap::try_with_resources(tilemap, faction, rc)?;
+        let bitmap = TilemapBitmap::try_with_assets(tilemap, faction, rc)?;
         let src_rect = bitmap.rect();
 
         let mut image = BMPImageBuilder::new(

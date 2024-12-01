@@ -4,7 +4,7 @@ use std::path;
 
 use anyhow::{anyhow, Result};
 
-use dune2_rc::prelude::{
+use dune2_assets::prelude::{
     Color,
     Palette,
 };

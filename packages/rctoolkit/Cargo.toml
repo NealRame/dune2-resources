@@ -1,5 +1,5 @@
 [package]
-name = "dune2-rc-toolkit"
+name = "dune2-assets-toolkit"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,7 +9,7 @@ edition = "2021"
 anyhow = "1.0.86"
 bitvec = "1.0.1"
 clap = { version = "4.2.7", features = ["derive", "env"] }
-dune2-rc = { path = "../dune2" }
+dune2-assets = { path = "../dune2" }
 image = "0.25.2"
 paste = "1.0.15"
 serde = "1.0.162"

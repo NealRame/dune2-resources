@@ -7,13 +7,13 @@ use std::str::FromStr;
 
 use anyhow::Result;
 
-use dune2_rc::prelude::{
+use dune2_assets::prelude::{
     bitmap_blit,
     Bitmap,
     Color,
     Dune2Faction,
     Point,
-    Resources,
+    Assets,
     Rect,
     Size,
     TileBitmap,
@@ -53,7 +53,7 @@ pub struct Args {
 }
 
 fn extract_tileset_image(
-    rc: &Resources,
+    rc: &Assets,
     tileset_id: &str,
     faction: Option<Dune2Faction>,
     scale: u32,
@@ -87,7 +87,7 @@ fn extract_tileset_image(
         let col = (index%16) as i32;
         let row = (index/16) as i32;
 
-        let bitmap = TileBitmap::with_resources(tile, faction, rc);
+        let bitmap = TileBitmap::with_assets(tile, faction, rc);
         let src_rect = bitmap.rect();
 
         let dst_rect = Rect::from_point_and_size(
@@ -110,7 +110,7 @@ fn extract_tileset_image(
 }
 
 fn extract_tileset_tiles(
-    rc: &Resources,
+    rc: &Assets,
     tileset_id: &str,
     faction: Option<Dune2Faction>,
     scale: u32,
@@ -133,7 +133,7 @@ fn extract_tileset_tiles(
     for (tile_index, tile) in tileset.tile_iter().enumerate() {
         let filename = format!("{:01$}.bmp", tile_index, tile_index_width);
 
-        let bitmap = TileBitmap::with_resources(tile, faction, rc);
+        let bitmap = TileBitmap::with_assets(tile, faction, rc);
         let src_rect = bitmap.rect();
 
         let mut image = BMPImageBuilder::new(
@@ -149,7 +149,7 @@ fn extract_tileset_tiles(
 }
 
 fn extract_tileset(
-    rc: &Resources,
+    rc: &Assets,
     args: &Args,
     tileset_id: &str,
 ) ->  Result<()> {
@@ -172,7 +172,7 @@ fn extract_tileset(
 }
 
 pub fn extract(
-    rc: &Resources,
+    rc: &Assets,
     args: &Args,
 ) -> Result<()> {
     if let Some(tileset_id) = &args.tileset_id {

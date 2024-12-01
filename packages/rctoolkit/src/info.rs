@@ -4,9 +4,9 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 
-use dune2_rc::prelude::{
+use dune2_assets::prelude::{
     Color,
-    Resources,
+    Assets,
 };
 
 
@@ -56,7 +56,7 @@ fn color_array4f_string(color: &Color) -> String {
 }
 
 fn info_palette(
-    rc: &Resources,
+    rc: &Assets,
     args: &PaletteCommandArgs,
 ) -> Result<()> {
     let formatter = match args.format {
@@ -78,7 +78,7 @@ fn info_palette(
  * Info Tiles
  *****************************************************************************/
 fn info_tilesets(
-    rc: &Resources,
+    rc: &Assets,
 ) -> Result<()> {
     rc.tilesets.iter().for_each(|(name, tileset)| {
         println!("{}:", name);
@@ -93,7 +93,7 @@ fn info_tilesets(
  * Info Tilemaps
  *****************************************************************************/
 fn info_tilemaps(
-    rc: &Resources,
+    rc: &Assets,
 ) -> Result<()> {
     let mut classes = HashMap::<String, usize>::from_iter(
         rc.tilemaps.iter().map(|tilemap| {
@@ -140,7 +140,7 @@ pub struct Args {
 
 pub fn run(args: &Args) -> Result<()> {
     let mut reader = File::open(&args.input_rc_file)?;
-    let rc: Resources = Resources::read_from(&mut reader)?;
+    let rc: Assets = Assets::read_from(&mut reader)?;
 
     match &args.command {
         Commands::Palette(args) => info_palette(&rc, &args),
