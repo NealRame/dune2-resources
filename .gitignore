@@ -2,6 +2,7 @@
 
 /.vscode/launch.json
 /.vscode/settings.json
+/.zed/settings.json
 
 /data
 /target
