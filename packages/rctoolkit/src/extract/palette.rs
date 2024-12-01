@@ -3,10 +3,10 @@ use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
 
-use dune2_rc::prelude::{
+use dune2_assets::prelude::{
     bitmap_fill_rect,
     Point,
-    Resources,
+    Assets,
     Rect,
     Size,
 };
@@ -26,7 +26,7 @@ pub struct Args {
 }
 
 pub fn extract(
-    rc: &Resources,
+    rc: &Assets,
     args: &Args,
 ) -> Result<()> {
     if let Some(parent) = args.output_filepath.parent() {

@@ -1,4 +1,4 @@
-use dune2_rc::constants;
+use dune2_assets::constants;
 
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, clap::ValueEnum)]

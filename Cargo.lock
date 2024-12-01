@@ -316,7 +316,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "dune2-rc"
+name = "dune2-assets"
 version = "0.1.0"
 dependencies = [
  "csscolorparser",
@@ -329,13 +329,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "dune2-rc-toolkit"
+name = "dune2-assets-toolkit"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "bitvec",
  "clap",
- "dune2-rc",
+ "dune2-assets",
  "image",
  "paste",
  "serde",

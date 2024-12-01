@@ -9,27 +9,27 @@ use crate::utils::point_to_index;
 
 
 #[wasm_bindgen]
-pub struct Dune2Resources {
-    resources: Resources,
+pub struct Dune2AssetsData {
+    assets: Assets,
 }
 
 #[wasm_bindgen]
-impl Dune2Resources {
+impl Dune2AssetsData {
     #[wasm_bindgen(js_name = load)]
     pub fn load(
         data: &[u8],
-    ) -> core::result::Result<Dune2Resources, JsError> {
+    ) -> core::result::Result<Dune2AssetsData, JsError> {
         let mut reader = std::io::Cursor::new(data);
-        let resources = Resources::read_from(&mut reader)?;
+        let assets = Assets::read_from(&mut reader)?;
 
-        Ok(Self { resources })
+        Ok(Self { assets })
     }
 
     #[wasm_bindgen(js_name = getColorCount)]
     pub fn get_color_count(
         &self,
     ) -> usize {
-        self.resources.palette.len()
+        self.assets.palette.len()
     }
 
     #[wasm_bindgen(js_name = getColor)]
@@ -37,7 +37,7 @@ impl Dune2Resources {
         &self,
         color_index: usize,
     ) -> wasm_bindgen::Clamped<Vec<u8>> {
-        self.resources.palette
+        self.assets.palette
             .color_at(color_index)
             .map(|color| wasm_bindgen::Clamped(vec![
                 color.red,
@@ -52,7 +52,7 @@ impl Dune2Resources {
     pub fn get_tilesets(
         &self,
     ) -> Vec<JsString> {
-        self.resources
+        self.assets
             .tilesets
             .keys()
             .map(|tileset| JsString::from(tileset.as_str()))
@@ -64,7 +64,7 @@ impl Dune2Resources {
         &self,
         tileset_id: &str,
     ) -> core::result::Result<Size, JsValue> {
-        let tile_size = self.resources
+        let tile_size = self.assets
             .get_tileset(tileset_id)
             .map(|tileset| tileset.tile_size())?;
 
@@ -76,7 +76,7 @@ impl Dune2Resources {
         &self,
         tileset_id: &str,
     ) -> core::result::Result<usize, JsValue> {
-        let tile_count = self.resources
+        let tile_count = self.assets
             .get_tileset(tileset_id)
             .map(|tileset| tileset.tile_count())?;
 
@@ -90,8 +90,8 @@ impl Dune2Resources {
         columns: u32,
         faction: Option<Dune2Faction>,
     ) -> core::result::Result<web_sys::ImageData, JsValue> {
-        let palette = &self.resources.palette;
-        let tileset = self.resources.get_tileset(tileset_id)?;
+        let palette = &self.assets.palette;
+        let tileset = self.assets.get_tileset(tileset_id)?;
 
         let tile_count = tileset.tile_count() as u32;
         let tile_size = tileset.tile_size();
@@ -141,7 +141,7 @@ impl Dune2Resources {
     ) -> core::result::Result<web_sys::ImageData, JsValue> {
         let scale = u32::max(1, scale.unwrap_or(1));
 
-        let src_bitmap = self.resources.get_tile_bitmap(
+        let src_bitmap = self.assets.get_tile_bitmap(
             tileset,
             tile,
             faction
@@ -171,7 +171,7 @@ impl Dune2Resources {
     pub fn get_tilemap_count(
         &self,
     ) -> usize {
-        self.resources.tilemaps.len()
+        self.assets.tilemaps.len()
     }
 
     #[wasm_bindgen(js_name = getTilemap)]
@@ -179,7 +179,7 @@ impl Dune2Resources {
         &self,
         tilemap_index: usize,
     ) -> Option<Tilemap> {
-        self.resources.tilemaps
+        self.assets.tilemaps
             .get(tilemap_index)
             .and_then(|tilemap| Some(tilemap.clone()))
     }

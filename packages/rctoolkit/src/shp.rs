@@ -9,7 +9,7 @@ use bitvec::prelude::*;
 
 use serde::{Deserialize, Serialize};
 
-use dune2_rc::prelude::{
+use dune2_assets::prelude::{
     Size,
     Tile,
 };

@@ -1,6 +1,6 @@
 use image::{Rgb, RgbImage};
 
-use dune2_rc::prelude::{
+use dune2_assets::prelude::{
     Color,
     Bitmap,
     BitmapPutPixel,

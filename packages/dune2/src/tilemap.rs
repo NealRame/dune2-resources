@@ -70,17 +70,17 @@ pub struct TilemapBitmap<'a> {
 }
 
 impl<'a> TilemapBitmap<'a> {
-    pub fn try_with_resources(
+    pub fn try_with_assets(
         tilemap: &Tilemap,
         faction: Option<Dune2Faction>,
-        resources: &'a Resources,
+        assets: &'a Assets,
     ) -> Result<Self> {
-        let tileset = resources.get_tileset(&tilemap.tileset)?;
+        let tileset = assets.get_tileset(&tilemap.tileset)?;
         let bitmaps = tilemap.tiles
             .iter()
             .map(|tile_index| -> Result<TileBitmap> {
                 let tile = tileset.tile_at(*tile_index)?;
-                Ok(TileBitmap::with_resources(tile, faction, resources))
+                Ok(TileBitmap::with_assets(tile, faction, assets))
             })
             .collect::<Result<Vec<TileBitmap>>>()?;
 

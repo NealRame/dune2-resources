@@ -6,14 +6,14 @@ use std::path::PathBuf;
 
 use anyhow::{anyhow, Result};
 
-use dune2_rc::prelude::{
-    Resources,
+use dune2_assets::prelude::{
+    Assets,
     Tile,
     Tilemap,
     Tileset,
 };
 
-use crate::resources_config::*;
+use crate::assets_config::*;
 
 
 /******************************************************************************
@@ -138,7 +138,7 @@ pub fn run(args: &Args) -> Result<()> {
 
     check_tilemaps(&tilemaps, &tilesets)?;
 
-    let rc = Resources {
+    let rc = Assets {
         palette,
         tilesets,
         tilemaps,

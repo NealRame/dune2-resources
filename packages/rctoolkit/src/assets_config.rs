@@ -5,7 +5,7 @@ use anyhow::Result;
 
 use serde::Deserialize;
 
-use dune2_rc::prelude::{
+use dune2_assets::prelude::{
     Palette,
     Size,
     Tile,

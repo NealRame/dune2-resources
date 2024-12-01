@@ -24,13 +24,13 @@ use crate::prelude::{
 
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Resources {
+pub struct Assets {
     pub palette: Palette,
     pub tilesets: HashMap<String, Tileset>,
     pub tilemaps: Vec<Tilemap>,
 }
 
-impl Resources {
+impl Assets {
     pub fn get_tileset(
         &self,
         tileset_id: &str,
@@ -49,20 +49,20 @@ impl Resources {
         let tileset = self.get_tileset(tileset_id)?;
         let tile = tileset.tile_at(tile_index)?;
 
-        Ok(TileBitmap::with_resources(tile, faction, self))
+        Ok(TileBitmap::with_assets(tile, faction, self))
     }
 }
 
-impl Resources {
+impl Assets {
     pub fn read_from<R: Read>(
         reader: &mut R,
-    ) -> core::result::Result<Resources, rmp_serde::decode::Error> {
+    ) -> core::result::Result<Assets, rmp_serde::decode::Error> {
         let mut inflate_reader = DeflateDecoder::new(reader);
         rmp_serde::decode::from_read(&mut inflate_reader)
     }
 }
 
-impl Resources {
+impl Assets {
     pub fn write_to<W: Write>(
         &self,
         writer: &mut W,

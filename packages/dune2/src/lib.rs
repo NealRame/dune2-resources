@@ -4,7 +4,7 @@ pub mod constants;
 pub mod error;
 pub mod point;
 pub mod rect;
-pub mod resources;
+pub mod assets;
 pub mod shape;
 pub mod size;
 pub mod tile;
