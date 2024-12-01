@@ -56,7 +56,6 @@ pub struct Config {
     pub sources: Vec<SourceConfig>,
     pub tilesets: Vec<TilesetConfig>,
     pub tilemaps: Vec<Tilemap>,
-    // sprites: HashMap<String, Sprite>,
 }
 
 impl Config {
